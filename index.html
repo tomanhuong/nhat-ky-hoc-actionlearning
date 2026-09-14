@@ -299,6 +299,7 @@ let STATE = {
   search: '',
   personFilter: 'all',
   modalOpen: false,
+  dataLoaded: false,
   data: { problems:[], questions:[], actions:[], learnings:[], bestPractices:[], bpSuggestions:[], presetNames:[] }
 };
 
@@ -311,6 +312,7 @@ function fmtDate(d){ if(!d) return ''; const dt = new Date(d); if(isNaN(dt)) ret
 function todayISO(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'), 2400); }
 function norm(s){ return (s||'').toString().toLowerCase(); }
+function emptyMsg(text){ return STATE.dataLoaded ? text : 'Đang tải dữ liệu...'; }
 
 /* ---------------- API layer ---------------- */
 async function apiGetAll(pwd){
@@ -357,15 +359,10 @@ async function init(){
   if(savedPwd){
     const ping = await apiPing(savedPwd);
     if(ping.ok){
-      document.getElementById('bootLoadingText').textContent = 'Đang tải dữ liệu...';
-      const r = await apiGetAll(savedPwd);
-      if(r.ok){
-        STATE.pwd = savedPwd;
-        STATE.data = Object.assign(STATE.data, r.data);
-        document.getElementById('bootLoading').classList.add('hidden');
-        afterUnlock();
-        return;
-      }
+      STATE.pwd = savedPwd;
+      document.getElementById('bootLoading').classList.add('hidden');
+      proceedAfterAuth();
+      return;
     } else {
       localStorage.removeItem('lcsh_pwd');
     }
@@ -383,27 +380,23 @@ async function tryUnlock(){
 
   btn.disabled = true; btn.textContent = 'Đang kiểm tra...';
   const ping = await apiPing(pwd);
+  btn.disabled = false; btn.textContent = 'Mở khoá';
   if(!ping.ok){
     errBox.textContent = 'Sai mật khẩu. Thử lại nhé.';
-    btn.disabled = false; btn.textContent = 'Mở khoá';
     return;
   }
 
-  btn.textContent = 'Đang tải dữ liệu...';
-  const r = await apiGetAll(pwd);
-  if(r.ok){
-    STATE.pwd = pwd;
-    localStorage.setItem('lcsh_pwd', pwd);
-    STATE.data = Object.assign(STATE.data, r.data);
-    afterUnlock();
-  } else {
-    errBox.textContent = 'Có lỗi khi tải dữ liệu, thử lại.';
-    btn.disabled = false; btn.textContent = 'Mở khoá';
-  }
+  STATE.pwd = pwd;
+  localStorage.setItem('lcsh_pwd', pwd);
+  proceedAfterAuth();
 }
 
-function afterUnlock(){
+// Called the instant the password is confirmed correct. Shows the app
+// right away with whatever data is on hand, then fills in real data
+// quietly in the background once it arrives — never blocks entry.
+function proceedAfterAuth(){
   document.getElementById('lockScreen').classList.add('hidden');
+  document.getElementById('bootLoading').classList.add('hidden');
   const member = localStorage.getItem('lcsh_member');
   if(member){
     STATE.member = member;
@@ -413,6 +406,7 @@ function afterUnlock(){
   }
   if(pollTimer) clearInterval(pollTimer);
   pollTimer = setInterval(()=>{ if(!STATE.modalOpen) loadAll(true); }, 20000);
+  loadAll(true); // fire-and-forget background sync
 }
 
 function doLogout(){
@@ -430,7 +424,7 @@ function renderNameGrid(){
   const grid = document.getElementById('nameGrid');
   grid.innerHTML = (STATE.data.presetNames||[]).map(n=>
     `<button class="name-chip" onclick="chooseMember('${esc(n).replace(/'/g,"\\'")}')">${esc(n)}</button>`
-  ).join('') || '<div class="hint">Chưa có tên nào trong danh sách — gõ tên ở ô bên dưới.</div>';
+  ).join('') || '<div class="hint">'+emptyMsg('Chưa có tên nào trong danh sách — gõ tên ở ô bên dưới.')+'</div>';
 }
 function chooseCustomName(){
   const v = document.getElementById('customNameInput').value.trim();
@@ -491,8 +485,12 @@ async function loadAll(silent){
   const r = await apiGetAll(STATE.pwd);
   if(r.ok){
     STATE.data = Object.assign(STATE.data, r.data);
+    STATE.dataLoaded = true;
     renderPersonFilterOptions();
     renderAll();
+    if(!document.getElementById('nameScreen').classList.contains('hidden')){
+      renderNameGrid();
+    }
     if(!silent) toast('Đã cập nhật dữ liệu mới nhất.');
   }
 }
@@ -619,10 +617,10 @@ function renderProblemsTab(){
 
   const priBlock = `<div class="section-title">Vấn đề ưu tiên (≥ ${PRIORITY_THRESHOLD} điểm)</div>` +
     (priority.length ? priority.map(problemCard).join('') :
-      `<div class="empty-note">Chưa có vấn đề nào đạt ≥ ${PRIORITY_THRESHOLD} điểm.</div>`);
+      `<div class="empty-note">${emptyMsg('Chưa có vấn đề nào đạt ≥ ' + PRIORITY_THRESHOLD + ' điểm.')}</div>`);
 
   const listBlock = `<div class="section-title">Vấn đề đang giải quyết</div>` +
-    (shown.length ? shown.map(problemCard).join('') : `<div class="empty-note">Chưa có vấn đề nào.</div>`);
+    (shown.length ? shown.map(problemCard).join('') : `<div class="empty-note">${emptyMsg('Chưa có vấn đề nào.')}</div>`);
 
   return chipRow + priBlock + listBlock;
 }
@@ -651,10 +649,20 @@ function problemCard(p){
     </div>
     <div class="card-actions">
       <span class="card-date" style="flex:1">${p.plannedDate?('Dự kiến: '+fmtDate(p.plannedDate)):''}</span>
+      <button onclick="cycleProblemStatus('${p.id}')">⟳ Trạng thái</button>
       <button onclick="openProblemModal('${p.id}')">✏️ Sửa</button>
       <button onclick="deleteProblem('${p.id}')">🗑️ Xoá</button>
     </div>
   </div>`;
+}
+async function cycleProblemStatus(id){
+  const p = STATE.data.problems.find(x=>x.id===id);
+  if(!p) return;
+  const order = ['new','inprogress','done'];
+  const next = order[(order.indexOf(p.status)+1)%order.length];
+  await updateRecord('problems', id, {status: next});
+  maybeSuggestFromProblem(STATE.data.problems.find(x=>x.id===id));
+  renderAll();
 }
 async function deleteProblem(id){
   if(!confirm('Xoá vấn đề này? (câu hỏi/hành động/bài học liên quan sẽ vẫn còn nhưng mất liên kết)')) return;
@@ -837,12 +845,6 @@ function renderProblemDetailSections(p, questions, actions, learnings){
       <button class="btn btn-teal btn-sm" onclick="addProblemLearning()">Lưu</button>
     </div>
     <div class="hint">💡 Mỗi bài học sẽ tự động xuất hiện ở thẻ KEY LEARNINGS ngay sau khi Lưu.</div>
-
-    <div class="section-title">Chia sẻ</div>
-    <div class="mini-add">
-      <input id="shareEmail" type="text" placeholder="Email người nhận..."/>
-      <button class="btn btn-ghost btn-sm" onclick="shareProblemByEmail()">Gửi email</button>
-    </div>
   `;
 }
 function renderModalQuestions(list){
@@ -993,15 +995,6 @@ async function markLearningApplied(id){
   if(MODAL.problem) document.getElementById('modalLearnings').innerHTML = renderModalLearnings(STATE.data.learnings.filter(l=>l.problemId===MODAL.problem.id).sort((a,b)=>(a.order||0)-(b.order||0)));
   else renderContent();
 }
-function shareProblemByEmail(){
-  if(!MODAL.problem.id){ toast('Lưu vấn đề trước đã.'); return; }
-  const email = document.getElementById('shareEmail').value.trim();
-  const p = MODAL.problem;
-  const subject = 'Chia sẻ vấn đề: ' + p.title;
-  const body = `Vấn đề: ${p.title}\n\nMô tả: ${document.getElementById('f_desc').value}\n\nKết quả đạt được: ${document.getElementById('f_result')?document.getElementById('f_result').value:''}\n\n— Gửi từ LÀM CHỦ SỰ HỌC bởi ${STATE.member}`;
-  const mailto = 'mailto:'+encodeURIComponent(email)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
-  window.location.href = mailto;
-}
 
 /* ---------------- QUICK ADD MODAL (standalone Question/Action/Learning) ---------------- */
 function renderQuickAddModal(){
@@ -1049,7 +1042,7 @@ async function saveQuickAdd(){
 function renderQuestionsTab(){
   let list = filteredByPerson('questions').filter(q=>matchesSearch(q.text));
   list = list.slice().sort((a,b)=> (b.star?1:0)-(a.star?1:0) || new Date(b.createdAt||0)-new Date(a.createdAt||0));
-  if(!list.length) return '<div class="section-title">Tất cả câu hỏi</div><div class="empty-note">Chưa có câu hỏi nào.</div>';
+  if(!list.length) return '<div class="section-title">Tất cả câu hỏi</div><div class="empty-note">'+emptyMsg('Chưa có câu hỏi nào.')+'</div>';
   return '<div class="section-title">Tất cả câu hỏi</div>' + list.map(q=>{
     const problem = STATE.data.problems.find(p=>p.id===q.problemId);
     return `<div class="list-row">
@@ -1070,7 +1063,7 @@ async function deleteStandalone(type,id){ if(!confirm('Xoá mục này?'))return
 function renderActionsTab(){
   let list = filteredByPerson('actions').filter(a=>matchesSearch(a.text));
   list = list.slice().sort((a,b)=> new Date(b.createdAt||0)-new Date(a.createdAt||0));
-  if(!list.length) return '<div class="section-title">Tất cả hành động</div><div class="empty-note">Chưa có hành động nào.</div>';
+  if(!list.length) return '<div class="section-title">Tất cả hành động</div><div class="empty-note">'+emptyMsg('Chưa có hành động nào.')+'</div>';
   return '<div class="section-title">Tất cả hành động</div>' + list.map(a=>{
     const problem = STATE.data.problems.find(p=>p.id===a.problemId);
     return `<div class="list-row">
@@ -1095,7 +1088,7 @@ async function cycleStandaloneAStatus(id){
 function renderLearningsTab(){
   let list = filteredByPerson('learnings').filter(l=>matchesSearch(l.text));
   list = list.slice().sort((a,b)=> (a.order||0)-(b.order||0));
-  if(!list.length) return '<div class="section-title">Tất cả bài học</div><div class="empty-note">Chưa có bài học nào.</div>';
+  if(!list.length) return '<div class="section-title">Tất cả bài học</div><div class="empty-note">'+emptyMsg('Chưa có bài học nào.')+'</div>';
   return '<div class="section-title">Tất cả bài học</div>' + list.map(l=>{
     const problem = STATE.data.problems.find(p=>p.id===l.problemId);
     return `<div class="list-row">
@@ -1151,14 +1144,14 @@ function renderBestPracticesTab(){
         <button class="btn btn-teal btn-sm" onclick="confirmSuggestion('${s.id}')">✓ Thêm vào</button>
         <button class="btn btn-ghost btn-sm" onclick="dismissSuggestion('${s.id}')">✕ Bỏ qua</button>
       </div>
-    </div>`).join('') : '<div class="empty-note">Chưa có gợi ý nào chờ duyệt.</div>';
+    </div>`).join('') : '<div class="empty-note">'+emptyMsg('Chưa có gợi ý nào chờ duyệt.')+'</div>';
 
   html += '<div class="section-title">Đã xác nhận</div>';
   html += confirmed.length ? confirmed.slice().sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)).map(b=>`
     <div class="list-row">
       <div class="txt">${esc(b.text)}<span class="src">${BP_SOURCE[b.source]||b.source}${b.member?(' · 👤 '+esc(b.member)):''}</span></div>
       <div class="acts"><button onclick="deleteStandalone('bestPractices','${b.id}')">🗑️</button></div>
-    </div>`).join('') : '<div class="empty-note">Chưa có thực hành hiệu quả nào được xác nhận.</div>';
+    </div>`).join('') : '<div class="empty-note">'+emptyMsg('Chưa có thực hành hiệu quả nào được xác nhận.')+'</div>';
 
   return html;
 }

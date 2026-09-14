@@ -115,6 +115,11 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .chip{flex-shrink:0;padding:6px 12px;border-radius:999px;background:var(--panel);border:1px solid var(--border);font-size:12px;font-family:'Space Mono',monospace;color:var(--ink-dim);}
 .chip.active{background:var(--teal-bg);color:var(--teal);border-color:var(--teal);}
 
+.date-filter-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:8px;}
+.date-filter-field{flex:1;min-width:140px;}
+.date-filter-field label{display:block;font-size:11px;font-family:'Space Mono',monospace;color:var(--ink-dim);margin-bottom:4px;}
+.date-filter-field input{padding:9px 10px;font-size:14px;}
+
 /* ---- section / cards ---- */
 .section-title{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.05em;color:var(--ink-dim);margin:18px 0 8px;text-transform:uppercase;}
 .section-title:first-child{margin-top:0;}
@@ -302,6 +307,8 @@ let STATE = {
   problemSubTab: 'all',
   search: '',
   personFilter: 'all',
+  dateFrom: '',
+  dateTo: '',
   modalOpen: false,
   dataLoaded: false,
   data: { problems:[], questions:[], actions:[], learnings:[], bestPractices:[], bpSuggestions:[], presetNames:[] }
@@ -585,6 +592,24 @@ function matchesSearch(text){
   if(!STATE.search) return true;
   return norm(text).includes(norm(STATE.search));
 }
+function matchesDateRange(dateStr){
+  if(!STATE.dateFrom && !STATE.dateTo) return true;
+  if(!dateStr) return true; // don't hide items with no date on them
+  const d = new Date(dateStr);
+  if(isNaN(d)) return true;
+  if(STATE.dateFrom && d < new Date(STATE.dateFrom+'T00:00:00')) return false;
+  if(STATE.dateTo && d > new Date(STATE.dateTo+'T23:59:59')) return false;
+  return true;
+}
+function onDateFilterChange(){
+  STATE.dateFrom = document.getElementById('dateFromInput').value;
+  STATE.dateTo = document.getElementById('dateToInput').value;
+  renderContent();
+}
+function clearDateFilter(){
+  STATE.dateFrom = ''; STATE.dateTo = '';
+  renderContent();
+}
 
 function renderTabs(){
   const tabs = [
@@ -658,19 +683,38 @@ function renderContent(){
 
 /* ---------------- PROBLEMS ---------------- */
 function renderProblemsTab(){
-  let problems = filteredByPerson('problems').filter(p=>matchesSearch(p.title+' '+p.desc+' '+(p.tags||[]).join(' ')));
   const sub = STATE.problemSubTab;
-  const counts = {
-    all: problems.length,
-    new: problems.filter(p=>p.status==='new').length,
-    inprogress: problems.filter(p=>p.status==='inprogress').length,
-    done: problems.filter(p=>p.status==='done').length
-  };
-  let shown = problems;
-  if(sub!=='all') shown = problems.filter(p=>p.status===sub);
-  shown = shown.slice().sort((a,b)=> new Date(b.createdAt||0) - new Date(a.createdAt||0));
 
-  const priority = problems.filter(p=>Number(p.score)>=PRIORITY_THRESHOLD).sort((a,b)=>b.score-a.score);
+  // Base set: person + search + date range combined
+  let base = filteredByPerson('problems')
+    .filter(p=>matchesSearch(p.title+' '+p.desc+' '+(p.tags||[]).join(' ')))
+    .filter(p=>matchesDateRange(p.createdAt));
+
+  const counts = {
+    all: base.length,
+    new: base.filter(p=>p.status==='new').length,
+    inprogress: base.filter(p=>p.status==='inprogress').length,
+    done: base.filter(p=>p.status==='done').length
+  };
+
+  // Now also apply the status filter — priority + list both reflect all 3 combined
+  let filtered = sub==='all' ? base : base.filter(p=>p.status===sub);
+  const shown = filtered.slice().sort((a,b)=> new Date(b.createdAt||0) - new Date(a.createdAt||0));
+  const priority = filtered.filter(p=>Number(p.score)>=PRIORITY_THRESHOLD).sort((a,b)=>b.score-a.score);
+
+  const hasDateFilter = STATE.dateFrom || STATE.dateTo;
+  const dateFilterRow = `<div class="date-filter-row">
+    <div class="date-filter-field">
+      <label>Từ ngày</label>
+      <input id="dateFromInput" type="date" value="${STATE.dateFrom}" onchange="onDateFilterChange()"/>
+    </div>
+    <div class="date-filter-field">
+      <label>Đến ngày</label>
+      <input id="dateToInput" type="date" value="${STATE.dateTo}" onchange="onDateFilterChange()"/>
+    </div>
+    ${hasDateFilter ? `<button class="btn btn-ghost btn-sm" onclick="clearDateFilter()">✕ Xoá lọc ngày</button>` : ''}
+  </div>
+  <div class="hint" style="margin-top:-8px;margin-bottom:14px">Lọc theo ngày tạo vấn đề — kết hợp cùng lúc với bộ lọc người và trạng thái bên dưới.</div>`;
 
   const chipRow = `<div class="chip-row">
     <button class="chip ${sub==='all'?'active':''}" onclick="setProblemSub('all')">Tất cả ${counts.all}</button>
@@ -681,12 +725,12 @@ function renderProblemsTab(){
 
   const priBlock = `<div class="section-title">Vấn đề ưu tiên (≥ ${PRIORITY_THRESHOLD} điểm)</div>` +
     (priority.length ? priority.map(problemCard).join('') :
-      `<div class="empty-note">${emptyMsg('Chưa có vấn đề nào đạt ≥ ' + PRIORITY_THRESHOLD + ' điểm.')}</div>`);
+      `<div class="empty-note">${emptyMsg('Chưa có vấn đề nào đạt ≥ ' + PRIORITY_THRESHOLD + ' điểm khớp bộ lọc hiện tại.')}</div>`);
 
   const listBlock = `<div class="section-title">Vấn đề đang giải quyết</div>` +
-    (shown.length ? shown.map(problemCard).join('') : `<div class="empty-note">${emptyMsg('Chưa có vấn đề nào.')}</div>`);
+    (shown.length ? shown.map(problemCard).join('') : `<div class="empty-note">${emptyMsg('Không có vấn đề nào khớp bộ lọc hiện tại.')}</div>`);
 
-  return chipRow + priBlock + listBlock;
+  return dateFilterRow + chipRow + priBlock + listBlock;
 }
 function setProblemSub(s){ STATE.problemSubTab = s; renderContent(); }
 

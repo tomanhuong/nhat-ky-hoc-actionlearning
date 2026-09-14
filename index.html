@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover"/>
+<title>LÀM CHỦ SỰ HỌC</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%AD%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --navy1:#1C1A4A; --navy2:#2B296D; --navy3:#131230;
+  --ink:#EDEFFB; --ink-dim:rgba(237,239,251,.64); --ink-faint:rgba(237,239,251,.4);
+  --panel:rgba(255,255,255,.045); --panel-hover:rgba(255,255,255,.075);
+  --border:rgba(255,255,255,.12); --border-soft:rgba(255,255,255,.06);
+  --teal:#00A79D; --teal-bg:rgba(0,167,157,.16);
+  --gold:#FFD400; --gold-ink:#241D00;
+  --amber:#FDB913; --amber-bg:rgba(253,185,19,.16);
+  --red:#f85149; --red-bg:rgba(248,81,73,.16);
+  --radius:16px; --radius-sm:10px;
+  --sib: env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-tap-highlight-color:transparent;}
+body{
+  min-height:100vh;
+  background:var(--navy3);
+  background-image:radial-gradient(circle at 10% 8%, rgba(0,167,157,.10), transparent 30%),
+                    radial-gradient(circle at 92% 88%, rgba(255,212,0,.07), transparent 32%),
+                    linear-gradient(135deg,var(--navy1) 0%,var(--navy2) 55%,var(--navy3) 100%);
+  background-attachment:fixed;
+  color:var(--ink);
+  font-family:'Crimson Text',Georgia,serif;
+  font-size:16px;
+  line-height:1.55;
+}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:4px;}
+.mono{font-family:'Space Mono',monospace;}
+button{cursor:pointer;font-family:'Space Mono',monospace;border:none;background:none;color:inherit;font-size:13px;}
+input,textarea,select{
+  font-family:'Crimson Text',Georgia,serif;background:rgba(255,255,255,.06);
+  border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;
+  color:var(--ink);font-size:16px;outline:none;width:100%;transition:border-color .15s;
+}
+input:focus,textarea:focus,select:focus{border-color:var(--teal);}
+textarea{resize:vertical;line-height:1.55;min-height:70px;}
+select option{background:#242159;color:#fff;}
+label.field-label{display:block;font-size:13px;letter-spacing:.02em;color:var(--ink-dim);margin-bottom:6px;font-family:'Space Mono',monospace;}
+.req{color:var(--amber);}
+a{color:var(--teal);}
+
+/* ---- shell / layout ---- */
+.shell{max-width:900px;margin:0 auto;padding:22px 16px calc(100px + var(--sib));}
+.hidden{display:none !important;}
+.flex{display:flex;}
+.gap8{gap:8px;} .gap10{gap:10px;} .gap12{gap:12px;}
+.wrap{flex-wrap:wrap;}
+.between{justify-content:space-between;} .center{align-items:center;}
+
+/* ---- lock / name screens ---- */
+.gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+.gate-box{width:100%;max-width:380px;background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:32px 26px;text-align:center;backdrop-filter:blur(6px);}
+.gate-emoji{font-size:38px;margin-bottom:6px;}
+.gate-title{font-size:22px;font-weight:600;margin-bottom:4px;}
+.gate-sub{font-size:14px;color:var(--ink-dim);margin-bottom:22px;font-style:italic;}
+.gate-box input{margin-bottom:12px;text-align:center;}
+.gate-error{color:var(--red);font-size:13px;margin-top:-4px;margin-bottom:12px;min-height:16px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:700;letter-spacing:.02em;transition:transform .1s, opacity .15s;}
+.btn:active{transform:scale(.97);}
+.btn-gold{background:var(--gold);color:var(--gold-ink);}
+.btn-ghost{background:var(--panel);border:1px solid var(--border);color:var(--ink);}
+.btn-ghost:hover{background:var(--panel-hover);}
+.btn-teal{background:var(--teal-bg);color:var(--teal);border:1px solid rgba(0,167,157,.4);}
+.btn-red{background:var(--red-bg);color:var(--red);border:1px solid rgba(248,81,73,.4);}
+.btn-block{width:100%;}
+.btn-sm{padding:7px 12px;font-size:12px;}
+.btn[disabled]{opacity:.4;cursor:not-allowed;}
+
+.name-grid{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:16px;}
+.name-chip{padding:10px 16px;border-radius:999px;background:var(--panel);border:1px solid var(--border);font-family:'Space Mono',monospace;font-size:13px;}
+.name-chip:hover{background:var(--panel-hover);border-color:var(--teal);}
+.name-manage{margin-top:18px;padding-top:16px;border-top:1px dashed var(--border);}
+.name-manage-row{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:14px;}
+.name-manage-row .x{color:var(--red);font-family:'Space Mono',monospace;font-size:14px;padding:2px 8px;}
+
+/* ---- header / stats ---- */
+header.app-header{text-align:center;margin-bottom:18px;}
+header.app-header h1{font-size:26px;font-weight:600;letter-spacing:.01em;}
+header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin-top:4px;}
+.who-row{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:10px;font-size:12px;color:var(--ink-dim);font-family:'Space Mono',monospace;}
+.who-row button{color:var(--teal);text-decoration:underline;}
+
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px;}
+.stat-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:left;transition:border-color .15s, background .15s;}
+.stat-card:hover{background:var(--panel-hover);}
+.stat-card.active{border-color:var(--teal);background:var(--teal-bg);}
+.stat-label{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.03em;color:var(--ink-dim);margin-bottom:6px;}
+.stat-num{font-family:'Space Mono',monospace;font-size:26px;font-weight:700;}
+.stat-sub{font-size:12px;color:var(--ink-faint);margin-top:4px;line-height:1.4;}
+
+/* ---- toolbar / tabs ---- */
+.toolbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.toolbar input[type=text]{flex:1;min-width:160px;}
+.toolbar select{width:auto;min-width:120px;}
+.icon-btn{width:40px;height:40px;flex-shrink:0;border-radius:var(--radius-sm);background:var(--panel);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;}
+.icon-btn:hover{background:var(--panel-hover);}
+
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px;}
+.tab-btn{flex-shrink:0;padding:9px 14px;border-radius:999px;background:var(--panel);border:1px solid var(--border);font-size:12.5px;font-weight:700;letter-spacing:.02em;color:var(--ink-dim);}
+.tab-btn.active{background:var(--gold);color:var(--gold-ink);border-color:var(--gold);}
+
+.chip-row{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:2px;}
+.chip{flex-shrink:0;padding:6px 12px;border-radius:999px;background:var(--panel);border:1px solid var(--border);font-size:12px;font-family:'Space Mono',monospace;color:var(--ink-dim);}
+.chip.active{background:var(--teal-bg);color:var(--teal);border-color:var(--teal);}
+
+/* ---- section / cards ---- */
+.section-title{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.05em;color:var(--ink-dim);margin:18px 0 8px;text-transform:uppercase;}
+.section-title:first-child{margin-top:0;}
+.empty-note{padding:18px;text-align:center;color:var(--ink-faint);font-style:italic;font-size:14px;background:var(--panel);border:1px dashed var(--border);border-radius:var(--radius);}
+
+.card{background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;transition:background .15s;}
+.card:hover{background:var(--panel-hover);}
+.card.ok{border-left-color:var(--teal);}
+.card.wa{border-left-color:var(--amber);}
+.card.pri{border-left-color:var(--gold);}
+.card-top{display:flex;justify-content:space-between;gap:10px;}
+.card-title{font-size:16.5px;font-weight:600;line-height:1.35;}
+.card-desc{font-size:14px;color:var(--ink-dim);margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.card-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px;}
+.badge{font-family:'Space Mono',monospace;font-size:10.5px;padding:3px 8px;border-radius:999px;background:var(--panel-hover);color:var(--ink-dim);border:1px solid var(--border-soft);}
+.badge.st-new{color:var(--ink-dim);}
+.badge.st-inprogress{color:var(--amber);background:var(--amber-bg);border-color:transparent;}
+.badge.st-done{color:var(--teal);background:var(--teal-bg);border-color:transparent;}
+.card-score{text-align:right;flex-shrink:0;}
+.card-score .n{font-family:'Space Mono',monospace;font-size:20px;font-weight:700;}
+.card-score .l{font-size:10px;color:var(--ink-faint);font-family:'Space Mono',monospace;}
+.card-actions{display:flex;gap:14px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border-soft);}
+.card-actions button{font-size:12px;color:var(--ink-dim);}
+.card-actions button:hover{color:var(--teal);}
+.card-date{font-size:11px;color:var(--ink-faint);font-family:'Space Mono',monospace;}
+
+.list-row{display:flex;align-items:flex-start;gap:10px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:8px;}
+.list-row .txt{flex:1;font-size:14.5px;}
+.list-row .txt .src{display:block;font-size:11px;color:var(--ink-faint);font-family:'Space Mono',monospace;margin-top:3px;}
+.list-row .acts{display:flex;gap:6px;flex-shrink:0;align-items:center;}
+.star-btn{font-size:16px;color:var(--ink-faint);}
+.star-btn.on{color:var(--gold);}
+
+/* ---- fab / modal ---- */
+.fab{position:fixed;right:20px;bottom:calc(24px + var(--sib));width:56px;height:56px;border-radius:50%;background:var(--gold);color:var(--gold-ink);font-size:26px;font-weight:700;box-shadow:0 8px 22px rgba(0,0,0,.4);z-index:40;}
+.modal-overlay{position:fixed;inset:0;background:rgba(10,9,30,.72);backdrop-filter:blur(3px);z-index:100;display:flex;align-items:flex-end;justify-content:center;}
+@media(min-width:640px){.modal-overlay{align-items:center;}}
+.modal-box{background:#1a1850;border:1px solid var(--border);width:100%;max-width:600px;max-height:92vh;overflow-y:auto;border-radius:20px 20px 0 0;padding:22px 20px calc(20px + var(--sib));}
+@media(min-width:640px){.modal-box{border-radius:20px;}}
+.modal-title{font-size:19px;font-weight:600;}
+.modal-sub{font-size:13px;color:var(--ink-dim);font-style:italic;margin-bottom:18px;}
+.field{margin-bottom:16px;}
+.tag-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.tag{display:flex;align-items:center;gap:6px;background:var(--teal-bg);color:var(--teal);border-radius:999px;padding:4px 5px 4px 12px;font-size:12px;font-family:'Space Mono',monospace;}
+.tag button{color:var(--teal);font-size:14px;}
+.level-row{display:flex;gap:8px;}
+.level-btn{flex:1;padding:10px;border-radius:var(--radius-sm);background:var(--panel);border:1px solid var(--border);font-family:'Crimson Text',serif;font-size:14px;}
+.level-btn.active{background:var(--teal-bg);border-color:var(--teal);color:var(--teal);font-weight:600;}
+.slider-row{margin-bottom:12px;}
+.slider-row .lbl{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-dim);margin-bottom:4px;font-family:'Space Mono',monospace;}
+.slider-row input[type=range]{width:100%;accent-color:var(--teal);padding:0;background:none;border:none;}
+.score-box{text-align:center;background:rgba(255,212,0,.08);border:1px solid rgba(255,212,0,.3);border-radius:var(--radius-sm);padding:14px;margin:14px 0;}
+.score-box .n{font-family:'Space Mono',monospace;font-size:32px;font-weight:700;color:var(--gold);}
+.score-box .l{font-size:12px;color:var(--ink-dim);margin-top:2px;}
+.score-box.pri{background:rgba(255,212,0,.16);}
+.result-box textarea{border-color:rgba(0,167,157,.5);}
+.mini-add{display:flex;gap:8px;margin-top:8px;}
+.mini-add input{flex:1;}
+.hint{font-size:12px;color:var(--ink-faint);margin-top:6px;font-style:italic;}
+.disabled-panel{opacity:.45;pointer-events:none;}
+.lock-note{font-size:12.5px;color:var(--amber);background:var(--amber-bg);padding:10px 12px;border-radius:var(--radius-sm);margin:10px 0 16px;}
+.modal-footer{display:flex;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border-soft);}
+.modal-footer .btn{flex:1;}
+
+/* ---- best practices ---- */
+.pending-row{background:var(--gold-ink);background:rgba(255,212,0,.09);border:1px solid rgba(255,212,0,.35);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:9px;}
+.pending-row .txt{font-size:14.5px;margin-bottom:8px;}
+.pending-row .src{font-size:11px;color:var(--ink-faint);font-family:'Space Mono',monospace;margin-bottom:8px;display:block;}
+.pending-actions{display:flex;gap:8px;}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#0e0c2e;border:1px solid var(--teal);color:var(--ink);padding:11px 18px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:all .25s;z-index:200;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+.top-actions{display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px;}
+</style>
+</head>
+<body>
+
+<!-- LOCK SCREEN -->
+<div id="lockScreen" class="gate">
+  <div class="gate-box">
+    <div class="gate-emoji">🧭</div>
+    <div class="gate-title">LÀM CHỦ SỰ HỌC</div>
+    <div class="gate-sub">Không gian để bạn tự quản lý việc ứng dụng học tập</div>
+    <input id="pwdInput" type="password" placeholder="Nhập mật khẩu truy cập..." onkeydown="if(event.key==='Enter')tryUnlock()"/>
+    <div class="gate-error" id="pwdError"></div>
+    <button class="btn btn-gold btn-block" onclick="tryUnlock()">Mở khoá</button>
+  </div>
+</div>
+
+<!-- NAME SCREEN -->
+<div id="nameScreen" class="gate hidden">
+  <div class="gate-box" style="max-width:420px;">
+    <div class="gate-emoji">👋</div>
+    <div class="gate-title">Bạn là ai?</div>
+    <div class="gate-sub">Chọn tên để hệ thống ghi nhận đúng người</div>
+    <div class="name-grid" id="nameGrid"></div>
+    <div class="mini-add">
+      <input id="customNameInput" type="text" placeholder="+ Tên khác..." onkeydown="if(event.key==='Enter')chooseCustomName()"/>
+      <button class="btn btn-teal" onclick="chooseCustomName()">Chọn</button>
+    </div>
+    <div class="name-manage">
+      <button class="btn btn-ghost btn-sm btn-block" onclick="toggleNameManage()">⚙️ Quản lý danh sách tên có sẵn</button>
+      <div id="nameManageBox" class="hidden" style="margin-top:12px;text-align:left;">
+        <div id="nameManageList"></div>
+        <div class="mini-add">
+          <input id="newPresetNameInput" type="text" placeholder="Thêm tên mới vào danh sách..." onkeydown="if(event.key==='Enter')addPresetName()"/>
+          <button class="btn btn-teal btn-sm" onclick="addPresetName()">Thêm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" class="hidden">
+  <div class="shell">
+    <header class="app-header">
+      <h1>LÀM CHỦ SỰ HỌC</h1>
+      <p>Không gian để bạn tự quản lý việc ứng dụng học tập, giải quyết vấn đề thực tế, tạo ra kết quả đột phá.</p>
+      <div class="who-row">
+        <span id="whoLabel"></span>
+        <button onclick="changeMember()">Đổi người dùng</button>
+        <span>·</span>
+        <button onclick="exportBackup()">Xuất dữ liệu</button>
+        <span>·</span>
+        <button onclick="doLogout()">Đăng xuất</button>
+      </div>
+    </header>
+
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <div class="toolbar">
+      <input id="searchInput" type="text" placeholder="Tìm kiếm nội dung..." oninput="onSearchInput()"/>
+      <select id="personFilterSel" onchange="onPersonFilterChange()"></select>
+      <button class="icon-btn" title="Làm mới" onclick="loadAll(false)">⟳</button>
+    </div>
+
+    <div class="tabs" id="tabsBar"></div>
+
+    <div id="content"></div>
+  </div>
+  <button class="fab" onclick="onAddClick()">+</button>
+</div>
+
+<div id="modalOverlay" class="modal-overlay hidden">
+  <div class="modal-box" id="modalBox"></div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* ============================================================
+   LÀM CHỦ SỰ HỌC — frontend
+   Backend: Google Apps Script Web App (Sheet làm database)
+   ============================================================ */
+
+const API_URL = "https://script.google.com/macros/s/AKfycbyVgfJ47VBvZJYKWdVgSjz_Eroud6712RUoHpvCxyIn_ZSxrn85gW89kKVrQDih5AudDw/exec";
+
+const PROBLEM_STATUS   = {new:'Mới tạo', inprogress:'Đang tiến hành', done:'Hoàn thành'};
+const QUESTION_STATUS  = {clarifying:'Đang làm rõ', answered:'Đã trả lời'};
+const ACTION_STATUS    = {new:'Mới tạo', inprogress:'Đang tiến hành', done:'Hoàn thành'};
+const LEARNING_STATUS  = {available:'Đang có', applied:'Đã áp dụng'};
+const BP_SOURCE        = {problem:'Giải quyết vấn đề', learning:'Áp dụng bài học', action:'Hành động đột phá'};
+const LEVELS           = {personal:'Bản thân', team:'Đội nhóm', org:'Tổ chức'};
+const PRIORITY_THRESHOLD = 800;
+
+let STATE = {
+  pwd: null,
+  member: null,
+  tab: 'problems',
+  problemSubTab: 'all',
+  search: '',
+  personFilter: 'all',
+  modalOpen: false,
+  data: { problems:[], questions:[], actions:[], learnings:[], bestPractices:[], bpSuggestions:[], presetNames:[] }
+};
+
+let pollTimer = null;
+
+/* ---------------- helpers ---------------- */
+function esc(s){ if(s===undefined||s===null) return ''; return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function uid(){ return (crypto.randomUUID ? crypto.randomUUID() : 'id-'+Date.now()+'-'+Math.random().toString(16).slice(2)); }
+function fmtDate(d){ if(!d) return ''; const dt = new Date(d); if(isNaN(dt)) return d; return String(dt.getDate()).padStart(2,'0')+'/'+String(dt.getMonth()+1).padStart(2,'0')+'/'+dt.getFullYear(); }
+function todayISO(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'), 2400); }
+function norm(s){ return (s||'').toString().toLowerCase(); }
+
+/* ---------------- API layer ---------------- */
+async function apiGetAll(pwd){
+  const url = API_URL + '?action=all&pwd=' + encodeURIComponent(pwd);
+  const res = await fetch(url);
+  return res.json();
+}
+async function apiPost(payload){
+  const res = await fetch(API_URL, { method:'POST', body: JSON.stringify(Object.assign({pwd: STATE.pwd}, payload)) });
+  return res.json();
+}
+async function createRecord(type, record){
+  const r = await apiPost({type, op:'create', record});
+  if(r.ok){ STATE.data[type].push(r.record); }
+  else toast('Lỗi lưu dữ liệu: '+(r.error||''));
+  return r;
+}
+async function updateRecord(type, id, patch){
+  const r = await apiPost({type, op:'update', id, patch});
+  if(r.ok){
+    const arr = STATE.data[type];
+    const idx = arr.findIndex(x=>x.id===id);
+    if(idx>-1) arr[idx] = Object.assign({}, arr[idx], r.record);
+  } else toast('Lỗi cập nhật: '+(r.error||''));
+  return r;
+}
+async function deleteRecord(type, id){
+  const r = await apiPost({type, op:'delete', id});
+  if(r.ok){ STATE.data[type] = STATE.data[type].filter(x=>x.id!==id); }
+  else toast('Lỗi xoá: '+(r.error||''));
+  return r;
+}
+
+/* ---------------- boot / auth ---------------- */
+window.addEventListener('DOMContentLoaded', init);
+
+async function init(){
+  const savedPwd = localStorage.getItem('lcsh_pwd');
+  if(savedPwd){
+    const r = await apiGetAll(savedPwd);
+    if(r.ok){
+      STATE.pwd = savedPwd;
+      STATE.data = Object.assign(STATE.data, r.data);
+      afterUnlock();
+      return;
+    } else {
+      localStorage.removeItem('lcsh_pwd');
+    }
+  }
+  document.getElementById('lockScreen').classList.remove('hidden');
+}
+
+async function tryUnlock(){
+  const pwd = document.getElementById('pwdInput').value;
+  const errBox = document.getElementById('pwdError');
+  errBox.textContent = '';
+  if(!pwd){ errBox.textContent = 'Vui lòng nhập mật khẩu.'; return; }
+  const r = await apiGetAll(pwd);
+  if(r.ok){
+    STATE.pwd = pwd;
+    localStorage.setItem('lcsh_pwd', pwd);
+    STATE.data = Object.assign(STATE.data, r.data);
+    afterUnlock();
+  } else {
+    errBox.textContent = 'Sai mật khẩu. Thử lại nhé.';
+  }
+}
+
+function afterUnlock(){
+  document.getElementById('lockScreen').classList.add('hidden');
+  const member = localStorage.getItem('lcsh_member');
+  if(member){
+    STATE.member = member;
+    enterApp();
+  } else {
+    showNameScreen();
+  }
+  if(pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(()=>{ if(!STATE.modalOpen) loadAll(true); }, 20000);
+}
+
+function doLogout(){
+  if(!confirm('Đăng xuất khỏi thiết bị này?')) return;
+  localStorage.removeItem('lcsh_pwd');
+  location.reload();
+}
+
+/* ---------------- name screen ---------------- */
+function showNameScreen(){
+  renderNameGrid();
+  document.getElementById('nameScreen').classList.remove('hidden');
+}
+function renderNameGrid(){
+  const grid = document.getElementById('nameGrid');
+  grid.innerHTML = (STATE.data.presetNames||[]).map(n=>
+    `<button class="name-chip" onclick="chooseMember('${esc(n).replace(/'/g,"\\'")}')">${esc(n)}</button>`
+  ).join('') || '<div class="hint">Chưa có tên nào trong danh sách — gõ tên ở ô bên dưới.</div>';
+}
+function chooseCustomName(){
+  const v = document.getElementById('customNameInput').value.trim();
+  if(!v){ toast('Nhập tên trước đã.'); return; }
+  chooseMember(v);
+}
+function chooseMember(name){
+  STATE.member = name;
+  localStorage.setItem('lcsh_member', name);
+  document.getElementById('nameScreen').classList.add('hidden');
+  enterApp();
+}
+function changeMember(){
+  localStorage.removeItem('lcsh_member');
+  document.getElementById('app').classList.add('hidden');
+  showNameScreen();
+}
+function toggleNameManage(){
+  const box = document.getElementById('nameManageBox');
+  box.classList.toggle('hidden');
+  if(!box.classList.contains('hidden')) renderNameManageList();
+}
+function renderNameManageList(){
+  const list = document.getElementById('nameManageList');
+  list.innerHTML = (STATE.data.presetNames||[]).map(n=>
+    `<div class="name-manage-row"><span style="flex:1">${esc(n)}</span><button class="x" onclick="removePresetName('${esc(n).replace(/'/g,"\\'")}')">✕</button></div>`
+  ).join('') || '<div class="hint">Danh sách trống.</div>';
+}
+async function addPresetName(){
+  const input = document.getElementById('newPresetNameInput');
+  const v = input.value.trim();
+  if(!v) return;
+  const names = (STATE.data.presetNames||[]).slice();
+  if(names.includes(v)){ toast('Tên đã có trong danh sách.'); return; }
+  names.push(v);
+  const r = await apiPost({type:'config', op:'setPresetNames', names});
+  if(r.ok){ STATE.data.presetNames = r.presetNames; input.value=''; renderNameManageList(); renderNameGrid(); toast('Đã thêm tên.'); }
+  else toast('Lỗi: '+(r.error||''));
+}
+async function removePresetName(name){
+  if(!confirm('Xoá "'+name+'" khỏi danh sách có sẵn?')) return;
+  const names = (STATE.data.presetNames||[]).filter(n=>n!==name);
+  const r = await apiPost({type:'config', op:'setPresetNames', names});
+  if(r.ok){ STATE.data.presetNames = r.presetNames; renderNameManageList(); renderNameGrid(); toast('Đã xoá.'); }
+  else toast('Lỗi: '+(r.error||''));
+}
+
+/* ---------------- app shell ---------------- */
+function enterApp(){
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('whoLabel').textContent = '👤 ' + STATE.member;
+  renderPersonFilterOptions();
+  renderTabs();
+  renderAll();
+}
+async function loadAll(silent){
+  if(!silent) toast('Đang làm mới...');
+  const r = await apiGetAll(STATE.pwd);
+  if(r.ok){
+    STATE.data = Object.assign(STATE.data, r.data);
+    renderPersonFilterOptions();
+    renderAll();
+    if(!silent) toast('Đã cập nhật dữ liệu mới nhất.');
+  }
+}
+function renderPersonFilterOptions(){
+  const sel = document.getElementById('personFilterSel');
+  const members = new Set(STATE.data.presetNames||[]);
+  ['problems','questions','actions','learnings'].forEach(t=>{
+    (STATE.data[t]||[]).forEach(x=>{ if(x.member) members.add(x.member); });
+  });
+  const prev = STATE.personFilter;
+  sel.innerHTML = '<option value="all">Tất cả mọi người</option>' +
+    Array.from(members).map(m=>`<option value="${esc(m)}">${esc(m)}</option>`).join('');
+  sel.value = prev && (prev==='all' || members.has(prev)) ? prev : 'all';
+  STATE.personFilter = sel.value;
+}
+function onPersonFilterChange(){
+  STATE.personFilter = document.getElementById('personFilterSel').value;
+  renderAll();
+}
+function onSearchInput(){
+  STATE.search = document.getElementById('searchInput').value;
+  renderContent();
+}
+function matchesPerson(rec){
+  return STATE.personFilter==='all' || rec.member === STATE.personFilter;
+}
+function matchesSearch(text){
+  if(!STATE.search) return true;
+  return norm(text).includes(norm(STATE.search));
+}
+
+function renderTabs(){
+  const tabs = [
+    {id:'problems', label:'VẤN ĐỀ'},
+    {id:'questions', label:'CÂU HỎI'},
+    {id:'actions', label:'HÀNH ĐỘNG'},
+    {id:'learnings', label:'BÀI HỌC'},
+    {id:'bestPractices', label:'THỰC HÀNH HIỆU QUẢ'}
+  ];
+  document.getElementById('tabsBar').innerHTML = tabs.map(t=>
+    `<button class="tab-btn ${STATE.tab===t.id?'active':''}" onclick="setTab('${t.id}')">${t.label}</button>`
+  ).join('');
+}
+function setTab(tab){ STATE.tab = tab; renderTabs(); renderContent(); }
+
+function renderAll(){ renderStats(); renderContent(); }
+
+/* ---------------- dashboard stats ---------------- */
+function filteredByPerson(type){ return (STATE.data[type]||[]).filter(matchesPerson); }
+
+function renderStats(){
+  const problems = filteredByPerson('problems');
+  const questions = filteredByPerson('questions');
+  const actions = filteredByPerson('actions');
+  const learnings = filteredByPerson('learnings');
+  const bps = filteredByPerson('bestPractices');
+
+  const pNew = problems.filter(p=>p.status==='new').length;
+  const pProg = problems.filter(p=>p.status==='inprogress').length;
+  const pDone = problems.filter(p=>p.status==='done').length;
+
+  const qClar = questions.filter(q=>q.status!=='answered').length;
+  const qAns = questions.filter(q=>q.status==='answered').length;
+
+  const aNew = actions.filter(a=>a.status==='new').length;
+  const aProg = actions.filter(a=>a.status==='inprogress').length;
+  const aDone = actions.filter(a=>a.status==='done').length;
+
+  const lAvail = learnings.filter(l=>l.status!=='applied').length;
+  const lApplied = learnings.filter(l=>l.status==='applied').length;
+
+  const bpP = bps.filter(b=>b.source==='problem').length;
+  const bpL = bps.filter(b=>b.source==='learning').length;
+  const bpA = bps.filter(b=>b.source==='action').length;
+
+  const cards = [
+    {id:'problems', label:'PROBLEMS', total:problems.length, sub:`${pNew} Mới tạo · ${pProg} Đang tiến hành · ${pDone} Hoàn thành`},
+    {id:'questions', label:'QUESTIONS', total:questions.length, sub:`${questions.length} Đã hỏi · ${qClar} Đang làm rõ · ${qAns} Đã trả lời`},
+    {id:'learnings', label:'KEY LEARNINGS', total:learnings.length, sub:`${lAvail} Bài học đang có · ${lApplied} Đã áp dụng`},
+    {id:'actions', label:'ACTIONS', total:actions.length, sub:`${aNew} Mới tạo · ${aProg} Đang tiến hành · ${aDone} Hoàn thành`},
+    {id:'bestPractices', label:'BEST PRACTICES', total:bps.length, sub:`${bpP} Giải quyết vấn đề · ${bpL} Áp dụng bài học · ${bpA} Hành động đột phá`}
+  ];
+  document.getElementById('statsGrid').innerHTML = cards.map(c=>
+    `<button class="stat-card ${STATE.tab===c.id?'active':''}" onclick="setTab('${c.id}')">
+       <div class="stat-label">${c.label}</div>
+       <div class="stat-num">${c.total}</div>
+       <div class="stat-sub">${c.sub}</div>
+     </button>`
+  ).join('');
+}
+
+/* ---------------- content router ---------------- */
+function renderContent(){
+  const el = document.getElementById('content');
+  if(STATE.tab==='problems') el.innerHTML = renderProblemsTab();
+  else if(STATE.tab==='questions') el.innerHTML = renderQuestionsTab();
+  else if(STATE.tab==='actions') el.innerHTML = renderActionsTab();
+  else if(STATE.tab==='learnings') el.innerHTML = renderLearningsTab();
+  else if(STATE.tab==='bestPractices') el.innerHTML = renderBestPracticesTab();
+}
+
+/* ---------------- PROBLEMS ---------------- */
+function renderProblemsTab(){
+  let problems = filteredByPerson('problems').filter(p=>matchesSearch(p.title+' '+p.desc+' '+(p.tags||[]).join(' ')));
+  const sub = STATE.problemSubTab;
+  const counts = {
+    all: problems.length,
+    new: problems.filter(p=>p.status==='new').length,
+    inprogress: problems.filter(p=>p.status==='inprogress').length,
+    done: problems.filter(p=>p.status==='done').length
+  };
+  let shown = problems;
+  if(sub!=='all') shown = problems.filter(p=>p.status===sub);
+  shown = shown.slice().sort((a,b)=> new Date(b.createdAt||0) - new Date(a.createdAt||0));
+
+  const priority = problems.filter(p=>Number(p.score)>=PRIORITY_THRESHOLD).sort((a,b)=>b.score-a.score);
+
+  const chipRow = `<div class="chip-row">
+    <button class="chip ${sub==='all'?'active':''}" onclick="setProblemSub('all')">Tất cả ${counts.all}</button>
+    <button class="chip ${sub==='new'?'active':''}" onclick="setProblemSub('new')">Mới tạo ${counts.new}</button>
+    <button class="chip ${sub==='inprogress'?'active':''}" onclick="setProblemSub('inprogress')">Đang tiến hành ${counts.inprogress}</button>
+    <button class="chip ${sub==='done'?'active':''}" onclick="setProblemSub('done')">Hoàn thành ${counts.done}</button>
+  </div>`;
+
+  const priBlock = `<div class="section-title">Vấn đề ưu tiên (≥ ${PRIORITY_THRESHOLD} điểm)</div>` +
+    (priority.length ? priority.map(problemCard).join('') :
+      `<div class="empty-note">Chưa có vấn đề nào đạt ≥ ${PRIORITY_THRESHOLD} điểm.</div>`);
+
+  const listBlock = `<div class="section-title">Vấn đề đang giải quyết</div>` +
+    (shown.length ? shown.map(problemCard).join('') : `<div class="empty-note">Chưa có vấn đề nào.</div>`);
+
+  return chipRow + priBlock + listBlock;
+}
+function setProblemSub(s){ STATE.problemSubTab = s; renderContent(); }
+
+function problemCard(p){
+  const st = PROBLEM_STATUS[p.status]||p.status;
+  const stClass = 'st-'+p.status;
+  const cardClass = p.status==='done' ? 'ok' : (Number(p.score)>=PRIORITY_THRESHOLD ? 'pri' : '');
+  return `<div class="card ${cardClass}">
+    <div class="card-top">
+      <div style="flex:1">
+        <div class="card-title">${esc(p.title)}</div>
+        <div class="card-desc">${esc(p.desc)}</div>
+        <div class="card-meta">
+          <span class="badge ${stClass}">${st}</span>
+          <span class="badge">${esc(LEVELS[p.level]||p.level||'')}</span>
+          ${p.member?`<span class="badge">👤 ${esc(p.member)}</span>`:''}
+          ${(p.tags||[]).map(t=>`<span class="badge">#${esc(t)}</span>`).join('')}
+        </div>
+      </div>
+      <div class="card-score">
+        <div class="n">${p.score||0}</div>
+        <div class="l">/1000</div>
+      </div>
+    </div>
+    <div class="card-actions">
+      <span class="card-date" style="flex:1">${p.plannedDate?('Dự kiến: '+fmtDate(p.plannedDate)):''}</span>
+      <button onclick="openProblemModal('${p.id}')">✏️ Sửa</button>
+      <button onclick="deleteProblem('${p.id}')">🗑️ Xoá</button>
+    </div>
+  </div>`;
+}
+async function deleteProblem(id){
+  if(!confirm('Xoá vấn đề này? (câu hỏi/hành động/bài học liên quan sẽ vẫn còn nhưng mất liên kết)')) return;
+  await deleteRecord('problems', id);
+  renderAll();
+}
+
+/* ---- Problem modal ---- */
+let MODAL = { mode:'create', problem:null, tags:[] };
+
+function onAddClick(){
+  if(STATE.tab==='problems') openProblemModal(null);
+  else if(STATE.tab==='questions') openQuickAddModal('questions');
+  else if(STATE.tab==='actions') openQuickAddModal('actions');
+  else if(STATE.tab==='learnings') openQuickAddModal('learnings');
+  else toast('Chọn tab Vấn đề / Câu hỏi / Hành động / Bài học để thêm mới.');
+}
+
+function openProblemModal(id){
+  const existing = id ? STATE.data.problems.find(p=>p.id===id) : null;
+  MODAL = {
+    mode: existing ? 'edit' : 'create',
+    problem: existing ? Object.assign({}, existing) : {
+      id:null, title:'', desc:'', tags:[], level:'personal',
+      important:5, urgent:5, complex:5, score:125,
+      plannedDate:'', actualDate:'', status:'new',
+      result:'', effectiveness:1, member: STATE.member
+    },
+    tags: existing ? (existing.tags||[]).slice() : []
+  };
+  renderModal();
+  showModal();
+}
+function openQuickAddModal(type){
+  MODAL = { mode:'quick', type, problem:null, tags:[] };
+  renderModal();
+  showModal();
+}
+function showModal(){ STATE.modalOpen=true; document.getElementById('modalOverlay').classList.remove('hidden'); }
+function closeModal(){ STATE.modalOpen=false; document.getElementById('modalOverlay').classList.add('hidden'); renderAll(); }
+
+function currentScore(){
+  const p = MODAL.problem;
+  return Number(p.important)*Number(p.urgent)*Number(p.complex);
+}
+
+function renderModal(){
+  if(MODAL.mode==='quick'){ renderQuickAddModal(); return; }
+  const p = MODAL.problem;
+  const isEdit = MODAL.mode==='edit';
+  const score = currentScore();
+  const pri = score>=PRIORITY_THRESHOLD;
+
+  const questions = isEdit ? STATE.data.questions.filter(q=>q.problemId===p.id) : [];
+  const actions = isEdit ? STATE.data.actions.filter(a=>a.problemId===p.id) : [];
+  const learnings = isEdit ? STATE.data.learnings.filter(l=>l.problemId===p.id).sort((a,b)=>(a.order||0)-(b.order||0)) : [];
+
+  document.getElementById('modalBox').innerHTML = `
+    <div class="modal-title">${isEdit?'Chỉnh sửa':'Thêm mới'} — VẤN ĐỀ &amp; THỬ THÁCH</div>
+    <div class="modal-sub">Điền thông tin chi tiết bên dưới</div>
+
+    <div class="field">
+      <label class="field-label">Phát biểu Vấn đề ngắn gọn <span class="req">*</span></label>
+      <input id="f_title" type="text" placeholder="Mô tả vấn đề bạn đang đối mặt..." value="${esc(p.title)}"/>
+    </div>
+    <div class="field">
+      <label class="field-label">Nội dung chi tiết hơn về Vấn đề <span class="req">*</span></label>
+      <textarea id="f_desc" placeholder="Mô tả chi tiết vấn đề, bối cảnh, ảnh hưởng...">${esc(p.desc)}</textarea>
+    </div>
+    <div class="field">
+      <label class="field-label">Thuộc khía cạnh</label>
+      <input id="f_tagInput" type="text" placeholder="Gõ từ khoá rồi nhấn Enter..." onkeydown="if(event.key==='Enter'){event.preventDefault();addModalTag();}"/>
+      <div class="tag-list" id="tagList">${renderTagChips()}</div>
+    </div>
+    <div class="field">
+      <label class="field-label">Cấp độ Vấn đề <span class="req">*</span></label>
+      <div class="level-row">
+        ${Object.keys(LEVELS).map(k=>`<button class="level-btn ${p.level===k?'active':''}" onclick="setModalLevel('${k}')">${LEVELS[k]}</button>`).join('')}
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Đánh giá mức độ (1-10)</label>
+      <div class="slider-row">
+        <div class="lbl"><span>Quan trọng</span><span id="v_important">${p.important}</span></div>
+        <input type="range" min="1" max="10" value="${p.important}" oninput="onSlider('important', this.value)"/>
+      </div>
+      <div class="slider-row">
+        <div class="lbl"><span>Khẩn cấp</span><span id="v_urgent">${p.urgent}</span></div>
+        <input type="range" min="1" max="10" value="${p.urgent}" oninput="onSlider('urgent', this.value)"/>
+      </div>
+      <div class="slider-row">
+        <div class="lbl"><span>Phức tạp</span><span id="v_complex">${p.complex}</span></div>
+        <input type="range" min="1" max="10" value="${p.complex}" oninput="onSlider('complex', this.value)"/>
+      </div>
+      <div class="score-box ${pri?'pri':''}" id="scoreBox">
+        <div class="n" id="scoreVal">${score}</div>
+        <div class="l">/ 1000 điểm ${pri?' — ĐẠT NGƯỠNG ƯU TIÊN':''}</div>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Dự kiến hoàn thành <span class="req">*</span></label>
+      <input id="f_planned" type="date" value="${p.plannedDate||''}"/>
+    </div>
+    <div class="field">
+      <label class="field-label">Thực tế hoàn thành</label>
+      <input id="f_actual" type="date" value="${p.actualDate||''}"/>
+    </div>
+    <div class="field">
+      <label class="field-label">Trạng thái</label>
+      <select id="f_status">
+        ${Object.keys(PROBLEM_STATUS).map(k=>`<option value="${k}" ${p.status===k?'selected':''}>${PROBLEM_STATUS[k]}</option>`).join('')}
+      </select>
+    </div>
+
+    ${isEdit ? renderProblemDetailSections(p, questions, actions, learnings) :
+      `<div class="lock-note">Lưu vấn đề trước để mở khoá câu hỏi làm rõ, hành động, kết quả, bài học và chia sẻ email.</div>`}
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Huỷ</button>
+      <button class="btn btn-gold" onclick="saveProblemTop()">${isEdit?'Cập nhật':'Lưu vấn đề'}</button>
+    </div>
+  `;
+}
+function renderTagChips(){
+  return (MODAL.tags||[]).map((t,i)=>`<span class="tag">${esc(t)}<button onclick="removeModalTag(${i})">✕</button></span>`).join('');
+}
+function addModalTag(){
+  const input = document.getElementById('f_tagInput');
+  const v = input.value.trim();
+  if(!v) return;
+  MODAL.tags.push(v);
+  input.value='';
+  document.getElementById('tagList').innerHTML = renderTagChips();
+}
+function removeModalTag(i){ MODAL.tags.splice(i,1); document.getElementById('tagList').innerHTML = renderTagChips(); }
+function setModalLevel(k){ MODAL.problem.level = k; renderModal(); }
+function onSlider(key, val){
+  MODAL.problem[key] = Number(val);
+  document.getElementById('v_'+key).textContent = val;
+  const score = currentScore();
+  document.getElementById('scoreVal').textContent = score;
+  const box = document.getElementById('scoreBox');
+  const pri = score>=PRIORITY_THRESHOLD;
+  box.className = 'score-box' + (pri?' pri':'');
+  box.querySelector('.l').textContent = '/ 1000 điểm' + (pri?' — ĐẠT NGƯỠNG ƯU TIÊN':'');
+}
+
+function renderProblemDetailSections(p, questions, actions, learnings){
+  return `
+    <div class="section-title" style="margin-top:22px">Câu hỏi làm rõ về vấn đề</div>
+    <div id="modalQuestions">${renderModalQuestions(questions)}</div>
+    <div class="mini-add">
+      <input id="newQuestionText" type="text" placeholder="Gõ câu hỏi làm rõ rồi nhấn Enter..." onkeydown="if(event.key==='Enter'){event.preventDefault();addProblemQuestion();}"/>
+      <button class="btn btn-teal btn-sm" onclick="addProblemQuestion()">Lưu</button>
+    </div>
+    <div class="hint">Bấm ★ để đưa vào Câu hỏi ưu tiên. Câu hỏi sẽ xuất hiện luôn ở tab CÂU HỎI.</div>
+
+    <div class="section-title">Phát biểu hành động để giải quyết</div>
+    <div id="modalActions">${renderModalActions(actions)}</div>
+    <div class="mini-add">
+      <input id="newActionText" type="text" placeholder="Gõ hành động rồi nhấn Enter..." onkeydown="if(event.key==='Enter'){event.preventDefault();addProblemAction();}"/>
+      <button class="btn btn-teal btn-sm" onclick="addProblemAction()">+ Thêm dòng</button>
+    </div>
+
+    <div class="section-title">Cập nhật kết quả đạt được</div>
+    <div class="field result-box">
+      <textarea id="f_result" placeholder="Ghi lại những kết quả chính đã đạt được trong quá trình giải quyết vấn đề này...">${esc(p.result)}</textarea>
+    </div>
+
+    <div class="section-title">Tự đánh giá việc giải quyết vấn đề</div>
+    <div class="slider-row">
+      <div class="lbl"><span>Sự hiệu quả (1 = Chưa hiệu quả → 10 = Rất hiệu quả)</span><span id="v_effectiveness">${p.effectiveness}</span></div>
+      <input type="range" min="1" max="10" value="${p.effectiveness}" oninput="document.getElementById('v_effectiveness').textContent=this.value; MODAL.problem.effectiveness=Number(this.value);"/>
+    </div>
+
+    <div class="section-title">Bài học từ vấn đề</div>
+    <div id="modalLearnings">${renderModalLearnings(learnings)}</div>
+    <div class="mini-add">
+      <input id="newLearningText" type="text" placeholder="Gõ bài học bạn đúc kết được..." onkeydown="if(event.key==='Enter'){event.preventDefault();addProblemLearning();}"/>
+      <button class="btn btn-teal btn-sm" onclick="addProblemLearning()">Lưu</button>
+    </div>
+    <div class="hint">💡 Mỗi bài học sẽ tự động xuất hiện ở thẻ KEY LEARNINGS ngay sau khi Lưu.</div>
+
+    <div class="section-title">Chia sẻ</div>
+    <div class="mini-add">
+      <input id="shareEmail" type="text" placeholder="Email người nhận..."/>
+      <button class="btn btn-ghost btn-sm" onclick="shareProblemByEmail()">Gửi email</button>
+    </div>
+  `;
+}
+function renderModalQuestions(list){
+  if(!list.length) return '<div class="hint">Chưa có câu hỏi nào.</div>';
+  return list.map(q=>`<div class="list-row">
+      <button class="star-btn ${q.star?'on':''}" onclick="toggleQuestionStar('${q.id}')">★</button>
+      <div class="txt">${esc(q.text)}<span class="src">${QUESTION_STATUS[q.status]||q.status}</span></div>
+      <div class="acts">
+        <button onclick="cycleQuestionStatus('${q.id}')">⟳</button>
+        <button onclick="removeInModal('questions','${q.id}')">✕</button>
+      </div>
+    </div>`).join('');
+}
+function renderModalActions(list){
+  if(!list.length) return '<div class="hint">Chưa có hành động nào. Nhấn "Thêm dòng" để bắt đầu.</div>';
+  return list.map(a=>`<div class="list-row">
+      <div class="txt">${esc(a.text)}<span class="src">${ACTION_STATUS[a.status]||a.status}${a.breakthrough?' · ⚡ Đột phá':''}</span></div>
+      <div class="acts">
+        <button onclick="cycleActionStatus('${a.id}')">⟳</button>
+        <button onclick="removeInModal('actions','${a.id}')">✕</button>
+      </div>
+    </div>`).join('');
+}
+function renderModalLearnings(list){
+  if(!list.length) return '<div class="hint">Chưa có bài học nào.</div>';
+  return list.map((l,i)=>`<div class="list-row">
+      <div class="txt">${esc(l.text)}<span class="src">${LEARNING_STATUS[l.status]||l.status}</span></div>
+      <div class="acts">
+        ${i>0?`<button onclick="moveLearning('${l.id}',-1)">↑</button>`:''}
+        ${i<list.length-1?`<button onclick="moveLearning('${l.id}',1)">↓</button>`:''}
+        ${l.status!=='applied'?`<button onclick="markLearningApplied('${l.id}')">✓ Đã áp dụng</button>`:''}
+        <button onclick="removeInModal('learnings','${l.id}')">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+async function saveProblemTop(){
+  const p = MODAL.problem;
+  const title = document.getElementById('f_title').value.trim();
+  const desc = document.getElementById('f_desc').value.trim();
+  const planned = document.getElementById('f_planned').value;
+  if(!title || !desc){ toast('Vui lòng điền Phát biểu vấn đề và Nội dung chi tiết.'); return; }
+  if(!planned){ toast('Vui lòng chọn Dự kiến hoàn thành.'); return; }
+
+  const record = {
+    id: p.id, title, desc,
+    tags: MODAL.tags.slice(),
+    level: p.level,
+    important: p.important, urgent: p.urgent, complex: p.complex,
+    score: currentScore(),
+    plannedDate: planned,
+    actualDate: document.getElementById('f_actual').value,
+    status: document.getElementById('f_status').value,
+    result: document.getElementById('f_result') ? document.getElementById('f_result').value : (p.result||''),
+    effectiveness: p.effectiveness,
+    member: p.member || STATE.member
+  };
+
+  if(MODAL.mode==='create'){
+    const r = await createRecord('problems', record);
+    if(r.ok){
+      toast('Đã lưu vấn đề.');
+      MODAL.mode='edit'; MODAL.problem = Object.assign({}, r.record);
+      renderModal();
+    }
+  } else {
+    const patch = Object.assign({}, record); delete patch.id;
+    const r = await updateRecord('problems', p.id, patch);
+    if(r.ok){
+      toast('Đã cập nhật.');
+      maybeSuggestFromProblem(STATE.data.problems.find(x=>x.id===p.id));
+      MODAL.problem = Object.assign({}, MODAL.problem, patch);
+    }
+  }
+}
+
+async function addProblemQuestion(){
+  if(!MODAL.problem.id){ toast('Lưu vấn đề trước đã.'); return; }
+  const input = document.getElementById('newQuestionText');
+  const text = input.value.trim();
+  if(!text) return;
+  await createRecord('questions', {id:uid(), problemId:MODAL.problem.id, text, star:false, status:'clarifying', member:STATE.member});
+  input.value='';
+  document.getElementById('modalQuestions').innerHTML = renderModalQuestions(STATE.data.questions.filter(q=>q.problemId===MODAL.problem.id));
+}
+async function addProblemAction(){
+  if(!MODAL.problem.id){ toast('Lưu vấn đề trước đã.'); return; }
+  const input = document.getElementById('newActionText');
+  const text = input.value.trim();
+  if(!text) return;
+  await createRecord('actions', {id:uid(), problemId:MODAL.problem.id, text, status:'new', breakthrough:false, member:STATE.member});
+  input.value='';
+  document.getElementById('modalActions').innerHTML = renderModalActions(STATE.data.actions.filter(a=>a.problemId===MODAL.problem.id));
+}
+async function addProblemLearning(){
+  if(!MODAL.problem.id){ toast('Lưu vấn đề trước đã.'); return; }
+  const input = document.getElementById('newLearningText');
+  const text = input.value.trim();
+  if(!text) return;
+  const existing = STATE.data.learnings.filter(l=>l.problemId===MODAL.problem.id);
+  const order = existing.length;
+  await createRecord('learnings', {id:uid(), problemId:MODAL.problem.id, text, order, status:'available', member:STATE.member});
+  input.value='';
+  document.getElementById('modalLearnings').innerHTML = renderModalLearnings(STATE.data.learnings.filter(l=>l.problemId===MODAL.problem.id).sort((a,b)=>(a.order||0)-(b.order||0)));
+  toast('Đã lưu bài học — đã xuất hiện ở Key Learnings.');
+}
+async function removeInModal(type, id){
+  if(!confirm('Xoá mục này?')) return;
+  await deleteRecord(type, id);
+  if(type==='questions') document.getElementById('modalQuestions').innerHTML = renderModalQuestions(STATE.data.questions.filter(q=>q.problemId===MODAL.problem.id));
+  if(type==='actions') document.getElementById('modalActions').innerHTML = renderModalActions(STATE.data.actions.filter(a=>a.problemId===MODAL.problem.id));
+  if(type==='learnings') document.getElementById('modalLearnings').innerHTML = renderModalLearnings(STATE.data.learnings.filter(l=>l.problemId===MODAL.problem.id).sort((a,b)=>(a.order||0)-(b.order||0)));
+}
+async function toggleQuestionStar(id){
+  const q = STATE.data.questions.find(x=>x.id===id);
+  await updateRecord('questions', id, {star: !q.star});
+  document.getElementById('modalQuestions').innerHTML = renderModalQuestions(STATE.data.questions.filter(x=>x.problemId===MODAL.problem.id));
+}
+async function cycleQuestionStatus(id){
+  const q = STATE.data.questions.find(x=>x.id===id);
+  const next = q.status==='clarifying' ? 'answered' : 'clarifying';
+  await updateRecord('questions', id, {status: next});
+  document.getElementById('modalQuestions').innerHTML = renderModalQuestions(STATE.data.questions.filter(x=>x.problemId===MODAL.problem.id));
+}
+async function cycleActionStatus(id){
+  const a = STATE.data.actions.find(x=>x.id===id);
+  const order = ['new','inprogress','done'];
+  const next = order[(order.indexOf(a.status)+1)%order.length];
+  await updateRecord('actions', id, {status: next});
+  const updated = STATE.data.actions.find(x=>x.id===id);
+  maybeSuggestFromAction(updated);
+  if(MODAL.problem) document.getElementById('modalActions').innerHTML = renderModalActions(STATE.data.actions.filter(x=>x.problemId===MODAL.problem.id));
+}
+async function moveLearning(id, dir){
+  const list = STATE.data.learnings.filter(l=>l.problemId===MODAL.problem.id).sort((a,b)=>(a.order||0)-(b.order||0));
+  const idx = list.findIndex(l=>l.id===id);
+  const swapIdx = idx+dir;
+  if(swapIdx<0 || swapIdx>=list.length) return;
+  const a = list[idx], b = list[swapIdx];
+  await updateRecord('learnings', a.id, {order: b.order});
+  await updateRecord('learnings', b.id, {order: a.order});
+  document.getElementById('modalLearnings').innerHTML = renderModalLearnings(STATE.data.learnings.filter(l=>l.problemId===MODAL.problem.id).sort((x,y)=>(x.order||0)-(y.order||0)));
+}
+async function markLearningApplied(id){
+  await updateRecord('learnings', id, {status:'applied'});
+  const updated = STATE.data.learnings.find(l=>l.id===id);
+  maybeSuggestFromLearning(updated);
+  if(MODAL.problem) document.getElementById('modalLearnings').innerHTML = renderModalLearnings(STATE.data.learnings.filter(l=>l.problemId===MODAL.problem.id).sort((a,b)=>(a.order||0)-(b.order||0)));
+  else renderContent();
+}
+function shareProblemByEmail(){
+  if(!MODAL.problem.id){ toast('Lưu vấn đề trước đã.'); return; }
+  const email = document.getElementById('shareEmail').value.trim();
+  const p = MODAL.problem;
+  const subject = 'Chia sẻ vấn đề: ' + p.title;
+  const body = `Vấn đề: ${p.title}\n\nMô tả: ${document.getElementById('f_desc').value}\n\nKết quả đạt được: ${document.getElementById('f_result')?document.getElementById('f_result').value:''}\n\n— Gửi từ LÀM CHỦ SỰ HỌC bởi ${STATE.member}`;
+  const mailto = 'mailto:'+encodeURIComponent(email)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+  window.location.href = mailto;
+}
+
+/* ---------------- QUICK ADD MODAL (standalone Question/Action/Learning) ---------------- */
+function renderQuickAddModal(){
+  const type = MODAL.type;
+  const labels = {questions:'CÂU HỎI', actions:'HÀNH ĐỘNG', learnings:'BÀI HỌC'};
+  const problems = STATE.data.problems;
+  document.getElementById('modalBox').innerHTML = `
+    <div class="modal-title">Thêm mới — ${labels[type]}</div>
+    <div class="modal-sub">Mục độc lập, không bắt buộc gắn với 1 Vấn đề cụ thể</div>
+    <div class="field">
+      <label class="field-label">Nội dung <span class="req">*</span></label>
+      <textarea id="qa_text" placeholder="Nhập nội dung..."></textarea>
+    </div>
+    <div class="field">
+      <label class="field-label">Thuộc vấn đề (tuỳ chọn)</label>
+      <select id="qa_problem">
+        <option value="">— Độc lập, không gắn vấn đề —</option>
+        ${problems.map(p=>`<option value="${p.id}">${esc(p.title)}</option>`).join('')}
+      </select>
+    </div>
+    ${type==='actions' ? `<div class="field"><label class="field-label"><input type="checkbox" id="qa_breakthrough" style="width:auto;display:inline-block;margin-right:8px;"/>Đây là hành động đột phá</label></div>` : ''}
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Huỷ</button>
+      <button class="btn btn-gold" onclick="saveQuickAdd()">Lưu</button>
+    </div>
+  `;
+}
+async function saveQuickAdd(){
+  const type = MODAL.type;
+  const text = document.getElementById('qa_text').value.trim();
+  if(!text){ toast('Vui lòng nhập nội dung.'); return; }
+  const problemId = document.getElementById('qa_problem').value || null;
+  let record = {id:uid(), problemId, text, member:STATE.member};
+  if(type==='questions') record = Object.assign(record, {star:false, status:'clarifying'});
+  if(type==='actions') record = Object.assign(record, {status:'new', breakthrough: document.getElementById('qa_breakthrough').checked});
+  if(type==='learnings'){
+    const order = STATE.data.learnings.filter(l=>l.problemId===problemId).length;
+    record = Object.assign(record, {order, status:'available'});
+  }
+  const r = await createRecord(type, record);
+  if(r.ok){ toast('Đã thêm.'); closeModal(); }
+}
+
+/* ---------------- QUESTIONS TAB ---------------- */
+function renderQuestionsTab(){
+  let list = filteredByPerson('questions').filter(q=>matchesSearch(q.text));
+  list = list.slice().sort((a,b)=> (b.star?1:0)-(a.star?1:0) || new Date(b.createdAt||0)-new Date(a.createdAt||0));
+  if(!list.length) return '<div class="section-title">Tất cả câu hỏi</div><div class="empty-note">Chưa có câu hỏi nào.</div>';
+  return '<div class="section-title">Tất cả câu hỏi</div>' + list.map(q=>{
+    const problem = STATE.data.problems.find(p=>p.id===q.problemId);
+    return `<div class="list-row">
+      <button class="star-btn ${q.star?'on':''}" onclick="toggleStandaloneStar('${q.id}')">★</button>
+      <div class="txt">${esc(q.text)}<span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'} · ${QUESTION_STATUS[q.status]||q.status}${q.member?(' · 👤 '+esc(q.member)):''}</span></div>
+      <div class="acts">
+        <button onclick="cycleStandaloneQStatus('${q.id}')">⟳</button>
+        <button onclick="deleteStandalone('questions','${q.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+async function toggleStandaloneStar(id){ const q=STATE.data.questions.find(x=>x.id===id); await updateRecord('questions',id,{star:!q.star}); renderContent(); }
+async function cycleStandaloneQStatus(id){ const q=STATE.data.questions.find(x=>x.id===id); await updateRecord('questions',id,{status:q.status==='clarifying'?'answered':'clarifying'}); renderContent(); }
+async function deleteStandalone(type,id){ if(!confirm('Xoá mục này?'))return; await deleteRecord(type,id); renderAll(); }
+
+/* ---------------- ACTIONS TAB ---------------- */
+function renderActionsTab(){
+  let list = filteredByPerson('actions').filter(a=>matchesSearch(a.text));
+  list = list.slice().sort((a,b)=> new Date(b.createdAt||0)-new Date(a.createdAt||0));
+  if(!list.length) return '<div class="section-title">Tất cả hành động</div><div class="empty-note">Chưa có hành động nào.</div>';
+  return '<div class="section-title">Tất cả hành động</div>' + list.map(a=>{
+    const problem = STATE.data.problems.find(p=>p.id===a.problemId);
+    return `<div class="list-row">
+      <div class="txt">${esc(a.text)}<span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'} · ${ACTION_STATUS[a.status]||a.status}${a.breakthrough?' · ⚡ Đột phá':''}${a.member?(' · 👤 '+esc(a.member)):''}</span></div>
+      <div class="acts">
+        <button onclick="cycleStandaloneAStatus('${a.id}')">⟳</button>
+        <button onclick="deleteStandalone('actions','${a.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+async function cycleStandaloneAStatus(id){
+  const a = STATE.data.actions.find(x=>x.id===id);
+  const order=['new','inprogress','done'];
+  const next = order[(order.indexOf(a.status)+1)%order.length];
+  await updateRecord('actions', id, {status:next});
+  maybeSuggestFromAction(STATE.data.actions.find(x=>x.id===id));
+  renderContent();
+}
+
+/* ---------------- LEARNINGS TAB ---------------- */
+function renderLearningsTab(){
+  let list = filteredByPerson('learnings').filter(l=>matchesSearch(l.text));
+  list = list.slice().sort((a,b)=> (a.order||0)-(b.order||0));
+  if(!list.length) return '<div class="section-title">Tất cả bài học</div><div class="empty-note">Chưa có bài học nào.</div>';
+  return '<div class="section-title">Tất cả bài học</div>' + list.map(l=>{
+    const problem = STATE.data.problems.find(p=>p.id===l.problemId);
+    return `<div class="list-row">
+      <div class="txt">${esc(l.text)}<span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'} · ${LEARNING_STATUS[l.status]||l.status}${l.member?(' · 👤 '+esc(l.member)):''}</span></div>
+      <div class="acts">
+        ${l.status!=='applied'?`<button onclick="markStandaloneApplied('${l.id}')">✓ Đã áp dụng</button>`:''}
+        <button onclick="deleteStandalone('learnings','${l.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+async function markStandaloneApplied(id){
+  await updateRecord('learnings', id, {status:'applied'});
+  maybeSuggestFromLearning(STATE.data.learnings.find(l=>l.id===id));
+  renderContent();
+}
+
+/* ---------------- BEST PRACTICES TAB + suggestion engine ---------------- */
+function bpKey(source, refId){ return source+':'+refId; }
+
+async function ensureSuggestion(source, refId, text, member){
+  const already = STATE.data.bpSuggestions.some(s=>s.source===source && s.refId===refId)
+                || STATE.data.bestPractices.some(b=>b.source===source && b.refId===refId);
+  if(already) return;
+  await createRecord('bpSuggestions', {id:uid(), source, refId, text, member: member||STATE.member});
+  if(STATE.tab==='bestPractices') renderContent();
+}
+function maybeSuggestFromProblem(p){
+  if(!p) return;
+  if(p.status==='done' && Number(p.effectiveness)>=8){
+    ensureSuggestion('problem', p.id, p.result || p.title, p.member);
+  }
+}
+function maybeSuggestFromLearning(l){
+  if(!l) return;
+  if(l.status==='applied'){ ensureSuggestion('learning', l.id, l.text, l.member); }
+}
+function maybeSuggestFromAction(a){
+  if(!a) return;
+  if(a.status==='done' && a.breakthrough){ ensureSuggestion('action', a.id, a.text, a.member); }
+}
+
+function renderBestPracticesTab(){
+  const pending = filteredByPerson('bpSuggestions');
+  const confirmed = filteredByPerson('bestPractices').filter(b=>matchesSearch(b.text));
+
+  let html = '<div class="section-title">Gợi ý chờ duyệt</div>';
+  html += pending.length ? pending.map(s=>`
+    <div class="pending-row">
+      <span class="src">${BP_SOURCE[s.source]||s.source}${s.member?(' · 👤 '+esc(s.member)):''}</span>
+      <div class="txt">${esc(s.text)}</div>
+      <div class="pending-actions">
+        <button class="btn btn-teal btn-sm" onclick="confirmSuggestion('${s.id}')">✓ Thêm vào</button>
+        <button class="btn btn-ghost btn-sm" onclick="dismissSuggestion('${s.id}')">✕ Bỏ qua</button>
+      </div>
+    </div>`).join('') : '<div class="empty-note">Chưa có gợi ý nào chờ duyệt.</div>';
+
+  html += '<div class="section-title">Đã xác nhận</div>';
+  html += confirmed.length ? confirmed.slice().sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)).map(b=>`
+    <div class="list-row">
+      <div class="txt">${esc(b.text)}<span class="src">${BP_SOURCE[b.source]||b.source}${b.member?(' · 👤 '+esc(b.member)):''}</span></div>
+      <div class="acts"><button onclick="deleteStandalone('bestPractices','${b.id}')">🗑️</button></div>
+    </div>`).join('') : '<div class="empty-note">Chưa có thực hành hiệu quả nào được xác nhận.</div>';
+
+  return html;
+}
+async function confirmSuggestion(id){
+  const s = STATE.data.bpSuggestions.find(x=>x.id===id);
+  if(!s) return;
+  await createRecord('bestPractices', {id:uid(), source:s.source, refId:s.refId, text:s.text, member:s.member});
+  await deleteRecord('bpSuggestions', id);
+  toast('Đã thêm vào Best Practices.');
+  renderAll();
+}
+async function dismissSuggestion(id){
+  await deleteRecord('bpSuggestions', id);
+  renderContent();
+}
+
+/* ---------------- export backup ---------------- */
+function exportBackup(){
+  const blob = new Blob([JSON.stringify(STATE.data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'lam-chu-su-hoc-backup-'+todayISO()+'.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+  toast('Đã tải file sao lưu.');
+}
+</script>
+</body>
+</html>

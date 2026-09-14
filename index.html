@@ -193,15 +193,24 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 </head>
 <body>
 
+<!-- BOOT LOADING (shown immediately, before we know login state) -->
+<div id="bootLoading" class="gate">
+  <div class="gate-box">
+    <div class="gate-emoji">🧭</div>
+    <div class="gate-title">LÀM CHỦ SỰ HỌC</div>
+    <div class="gate-sub" id="bootLoadingText">Đang kiểm tra đăng nhập...</div>
+  </div>
+</div>
+
 <!-- LOCK SCREEN -->
-<div id="lockScreen" class="gate">
+<div id="lockScreen" class="gate hidden">
   <div class="gate-box">
     <div class="gate-emoji">🧭</div>
     <div class="gate-title">LÀM CHỦ SỰ HỌC</div>
     <div class="gate-sub">Không gian để bạn tự quản lý việc ứng dụng học tập</div>
     <input id="pwdInput" type="password" placeholder="Nhập mật khẩu truy cập..." onkeydown="if(event.key==='Enter')tryUnlock()"/>
     <div class="gate-error" id="pwdError"></div>
-    <button class="btn btn-gold btn-block" onclick="tryUnlock()">Mở khoá</button>
+    <button id="unlockBtn" class="btn btn-gold btn-block" onclick="tryUnlock()">Mở khoá</button>
   </div>
 </div>
 
@@ -309,6 +318,11 @@ async function apiGetAll(pwd){
   const res = await fetch(url);
   return res.json();
 }
+async function apiPing(pwd){
+  const url = API_URL + '?action=ping&pwd=' + encodeURIComponent(pwd);
+  const res = await fetch(url);
+  return res.json();
+}
 async function apiPost(payload){
   const res = await fetch(API_URL, { method:'POST', body: JSON.stringify(Object.assign({pwd: STATE.pwd}, payload)) });
   return res.json();
@@ -341,24 +355,41 @@ window.addEventListener('DOMContentLoaded', init);
 async function init(){
   const savedPwd = localStorage.getItem('lcsh_pwd');
   if(savedPwd){
-    const r = await apiGetAll(savedPwd);
-    if(r.ok){
-      STATE.pwd = savedPwd;
-      STATE.data = Object.assign(STATE.data, r.data);
-      afterUnlock();
-      return;
+    const ping = await apiPing(savedPwd);
+    if(ping.ok){
+      document.getElementById('bootLoadingText').textContent = 'Đang tải dữ liệu...';
+      const r = await apiGetAll(savedPwd);
+      if(r.ok){
+        STATE.pwd = savedPwd;
+        STATE.data = Object.assign(STATE.data, r.data);
+        document.getElementById('bootLoading').classList.add('hidden');
+        afterUnlock();
+        return;
+      }
     } else {
       localStorage.removeItem('lcsh_pwd');
     }
   }
+  document.getElementById('bootLoading').classList.add('hidden');
   document.getElementById('lockScreen').classList.remove('hidden');
 }
 
 async function tryUnlock(){
   const pwd = document.getElementById('pwdInput').value;
   const errBox = document.getElementById('pwdError');
+  const btn = document.getElementById('unlockBtn');
   errBox.textContent = '';
   if(!pwd){ errBox.textContent = 'Vui lòng nhập mật khẩu.'; return; }
+
+  btn.disabled = true; btn.textContent = 'Đang kiểm tra...';
+  const ping = await apiPing(pwd);
+  if(!ping.ok){
+    errBox.textContent = 'Sai mật khẩu. Thử lại nhé.';
+    btn.disabled = false; btn.textContent = 'Mở khoá';
+    return;
+  }
+
+  btn.textContent = 'Đang tải dữ liệu...';
   const r = await apiGetAll(pwd);
   if(r.ok){
     STATE.pwd = pwd;
@@ -366,7 +397,8 @@ async function tryUnlock(){
     STATE.data = Object.assign(STATE.data, r.data);
     afterUnlock();
   } else {
-    errBox.textContent = 'Sai mật khẩu. Thử lại nhé.';
+    errBox.textContent = 'Có lỗi khi tải dữ liệu, thử lại.';
+    btn.disabled = false; btn.textContent = 'Mở khoá';
   }
 }
 

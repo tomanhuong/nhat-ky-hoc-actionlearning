@@ -176,6 +176,10 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .hint{font-size:12px;color:var(--ink-faint);margin-top:6px;font-style:italic;}
 .disabled-panel{opacity:.45;pointer-events:none;}
 .lock-note{font-size:12.5px;color:var(--amber);background:var(--amber-bg);padding:10px 12px;border-radius:var(--radius-sm);margin:10px 0 16px;}
+.progress-steps{display:flex;gap:6px;margin-bottom:18px;}
+.progress-step{flex:1;text-align:center;padding:8px 4px;border-radius:var(--radius-sm);background:var(--panel);border:1px solid var(--border);font-size:10.5px;font-family:'Space Mono',monospace;color:var(--ink-faint);line-height:1.3;}
+.progress-step.done{background:var(--teal-bg);color:var(--teal);border-color:var(--teal);}
+.progress-step.current{background:rgba(255,212,0,.14);color:var(--gold);border-color:var(--gold);font-weight:700;}
 .modal-footer{display:flex;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border-soft);}
 .modal-footer .btn{flex:1;}
 
@@ -329,26 +333,62 @@ async function apiPost(payload){
   const res = await fetch(API_URL, { method:'POST', body: JSON.stringify(Object.assign({pwd: STATE.pwd}, payload)) });
   return res.json();
 }
-async function createRecord(type, record){
-  const r = await apiPost({type, op:'create', record});
-  if(r.ok){ STATE.data[type].push(r.record); }
-  else toast('Lỗi lưu dữ liệu: '+(r.error||''));
-  return r;
+// Optimistic create: the record (with its id already set by the caller)
+// appears in STATE.data instantly. Sync to the sheet happens in the
+// background; on failure the insert is rolled back and the user is told.
+function createRecord(type, record){
+  STATE.data[type].push(record);
+  apiPost({type, op:'create', record}).then(r=>{
+    if(!r.ok){
+      STATE.data[type] = STATE.data[type].filter(x=>x.id!==record.id);
+      toast('Lưu thất bại — đã hoàn tác, thử lại nhé.');
+      renderAll();
+    }
+  }).catch(()=>{
+    STATE.data[type] = STATE.data[type].filter(x=>x.id!==record.id);
+    toast('Mất kết nối — đã hoàn tác, thử lại nhé.');
+    renderAll();
+  });
 }
-async function updateRecord(type, id, patch){
-  const r = await apiPost({type, op:'update', id, patch});
-  if(r.ok){
-    const arr = STATE.data[type];
-    const idx = arr.findIndex(x=>x.id===id);
-    if(idx>-1) arr[idx] = Object.assign({}, arr[idx], r.record);
-  } else toast('Lỗi cập nhật: '+(r.error||''));
-  return r;
+// Optimistic update: patch applies to local state immediately; rolled
+// back to the previous values if the background save fails.
+function updateRecord(type, id, patch){
+  const arr = STATE.data[type];
+  const idx = arr.findIndex(x=>x.id===id);
+  if(idx===-1) return;
+  const prev = Object.assign({}, arr[idx]);
+  arr[idx] = Object.assign({}, arr[idx], patch);
+  apiPost({type, op:'update', id, patch}).then(r=>{
+    if(!r.ok){
+      arr[idx] = prev;
+      toast('Cập nhật thất bại — đã hoàn tác, thử lại nhé.');
+      renderAll();
+    }
+  }).catch(()=>{
+    arr[idx] = prev;
+    toast('Mất kết nối — đã hoàn tác, thử lại nhé.');
+    renderAll();
+  });
 }
-async function deleteRecord(type, id){
-  const r = await apiPost({type, op:'delete', id});
-  if(r.ok){ STATE.data[type] = STATE.data[type].filter(x=>x.id!==id); }
-  else toast('Lỗi xoá: '+(r.error||''));
-  return r;
+// Optimistic delete: item disappears immediately; restored if the
+// background delete fails.
+function deleteRecord(type, id){
+  const arr = STATE.data[type];
+  const idx = arr.findIndex(x=>x.id===id);
+  if(idx===-1) return;
+  const removed = arr[idx];
+  STATE.data[type] = arr.filter(x=>x.id!==id);
+  apiPost({type, op:'delete', id}).then(r=>{
+    if(!r.ok){
+      STATE.data[type].push(removed);
+      toast('Xoá thất bại — đã khôi phục, thử lại nhé.');
+      renderAll();
+    }
+  }).catch(()=>{
+    STATE.data[type].push(removed);
+    toast('Mất kết nối — đã khôi phục, thử lại nhé.');
+    renderAll();
+  });
 }
 
 /* ---------------- boot / auth ---------------- */
@@ -453,23 +493,47 @@ function renderNameManageList(){
     `<div class="name-manage-row"><span style="flex:1">${esc(n)}</span><button class="x" onclick="removePresetName('${esc(n).replace(/'/g,"\\'")}')">✕</button></div>`
   ).join('') || '<div class="hint">Danh sách trống.</div>';
 }
-async function addPresetName(){
+function addPresetName(){
   const input = document.getElementById('newPresetNameInput');
   const v = input.value.trim();
   if(!v) return;
-  const names = (STATE.data.presetNames||[]).slice();
-  if(names.includes(v)){ toast('Tên đã có trong danh sách.'); return; }
-  names.push(v);
-  const r = await apiPost({type:'config', op:'setPresetNames', names});
-  if(r.ok){ STATE.data.presetNames = r.presetNames; input.value=''; renderNameManageList(); renderNameGrid(); toast('Đã thêm tên.'); }
-  else toast('Lỗi: '+(r.error||''));
+  const prev = (STATE.data.presetNames||[]).slice();
+  if(prev.includes(v)){ toast('Tên đã có trong danh sách.'); return; }
+  const names = prev.concat([v]);
+  STATE.data.presetNames = names; // instant
+  input.value = '';
+  renderNameManageList(); renderNameGrid();
+  toast('Đã thêm tên.');
+  apiPost({type:'config', op:'setPresetNames', names}).then(r=>{
+    if(!r.ok){
+      STATE.data.presetNames = prev;
+      toast('Lỗi lưu tên — đã hoàn tác: '+(r.error||''));
+      renderNameManageList(); renderNameGrid();
+    }
+  }).catch(()=>{
+    STATE.data.presetNames = prev;
+    toast('Mất kết nối — đã hoàn tác.');
+    renderNameManageList(); renderNameGrid();
+  });
 }
-async function removePresetName(name){
+function removePresetName(name){
   if(!confirm('Xoá "'+name+'" khỏi danh sách có sẵn?')) return;
-  const names = (STATE.data.presetNames||[]).filter(n=>n!==name);
-  const r = await apiPost({type:'config', op:'setPresetNames', names});
-  if(r.ok){ STATE.data.presetNames = r.presetNames; renderNameManageList(); renderNameGrid(); toast('Đã xoá.'); }
-  else toast('Lỗi: '+(r.error||''));
+  const prev = (STATE.data.presetNames||[]).slice();
+  const names = prev.filter(n=>n!==name);
+  STATE.data.presetNames = names; // instant
+  renderNameManageList(); renderNameGrid();
+  toast('Đã xoá.');
+  apiPost({type:'config', op:'setPresetNames', names}).then(r=>{
+    if(!r.ok){
+      STATE.data.presetNames = prev;
+      toast('Lỗi xoá — đã hoàn tác: '+(r.error||''));
+      renderNameManageList(); renderNameGrid();
+    }
+  }).catch(()=>{
+    STATE.data.presetNames = prev;
+    toast('Mất kết nối — đã hoàn tác.');
+    renderNameManageList(); renderNameGrid();
+  });
 }
 
 /* ---------------- app shell ---------------- */
@@ -650,23 +714,24 @@ function problemCard(p){
     <div class="card-actions">
       <span class="card-date" style="flex:1">${p.plannedDate?('Dự kiến: '+fmtDate(p.plannedDate)):''}</span>
       <button onclick="cycleProblemStatus('${p.id}')">⟳ Trạng thái</button>
-      <button onclick="openProblemModal('${p.id}')">✏️ Sửa</button>
+      <button onclick="openProblemModal('${p.id}')">✏️ Mở / Bổ sung</button>
       <button onclick="deleteProblem('${p.id}')">🗑️ Xoá</button>
     </div>
+    <div class="hint" style="margin-top:8px">Bấm "Mở / Bổ sung" để thêm câu hỏi, hành động, kết quả hoặc bài học bất cứ lúc nào.</div>
   </div>`;
 }
-async function cycleProblemStatus(id){
+function cycleProblemStatus(id){
   const p = STATE.data.problems.find(x=>x.id===id);
   if(!p) return;
   const order = ['new','inprogress','done'];
   const next = order[(order.indexOf(p.status)+1)%order.length];
-  await updateRecord('problems', id, {status: next});
+  updateRecord('problems', id, {status: next});
   maybeSuggestFromProblem(STATE.data.problems.find(x=>x.id===id));
   renderAll();
 }
-async function deleteProblem(id){
+function deleteProblem(id){
   if(!confirm('Xoá vấn đề này? (câu hỏi/hành động/bài học liên quan sẽ vẫn còn nhưng mất liên kết)')) return;
-  await deleteRecord('problems', id);
+  deleteRecord('problems', id);
   renderAll();
 }
 
@@ -709,6 +774,22 @@ function currentScore(){
   return Number(p.important)*Number(p.urgent)*Number(p.complex);
 }
 
+function renderProgressSteps(p, isEdit, questions, actions, learnings){
+  const steps = [
+    {label:'① Vấn đề', done: isEdit},
+    {label:'② Câu hỏi / Hành động', done: isEdit && (questions.length>0 || actions.length>0)},
+    {label:'③ Kết quả', done: isEdit && !!(p.result && p.result.trim())},
+    {label:'④ Bài học', done: isEdit && learnings.length>0}
+  ];
+  let currentSet = false;
+  return '<div class="progress-steps">' + steps.map(s=>{
+    let cls = '';
+    if(s.done) cls = 'done';
+    else if(!currentSet){ cls = 'current'; currentSet = true; }
+    return `<div class="progress-step ${cls}">${s.label}${s.done?' ✓':''}</div>`;
+  }).join('') + '</div>';
+}
+
 function renderModal(){
   if(MODAL.mode==='quick'){ renderQuickAddModal(); return; }
   const p = MODAL.problem;
@@ -723,6 +804,7 @@ function renderModal(){
   document.getElementById('modalBox').innerHTML = `
     <div class="modal-title">${isEdit?'Chỉnh sửa':'Thêm mới'} — VẤN ĐỀ &amp; THỬ THÁCH</div>
     <div class="modal-sub">Điền thông tin chi tiết bên dưới</div>
+    ${renderProgressSteps(p, isEdit, questions, actions, learnings)}
 
     <div class="field">
       <label class="field-label">Phát biểu Vấn đề ngắn gọn <span class="req">*</span></label>
@@ -778,7 +860,7 @@ function renderModal(){
     </div>
 
     ${isEdit ? renderProblemDetailSections(p, questions, actions, learnings) :
-      `<div class="lock-note">Lưu vấn đề trước để mở khoá câu hỏi làm rõ, hành động, kết quả, bài học và chia sẻ email.</div>`}
+      `<div class="hint">Lưu vấn đề để mở khoá câu hỏi làm rõ, hành động, kết quả và bài học.</div>`}
 
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal()">Huỷ</button>
@@ -881,7 +963,7 @@ function renderModalLearnings(list){
     </div>`).join('');
 }
 
-async function saveProblemTop(){
+function saveProblemTop(){
   const p = MODAL.problem;
   const title = document.getElementById('f_title').value.trim();
   const desc = document.getElementById('f_desc').value.trim();
@@ -890,7 +972,7 @@ async function saveProblemTop(){
   if(!planned){ toast('Vui lòng chọn Dự kiến hoàn thành.'); return; }
 
   const record = {
-    id: p.id, title, desc,
+    id: p.id || uid(), title, desc,
     tags: MODAL.tags.slice(),
     level: p.level,
     important: p.important, urgent: p.urgent, complex: p.complex,
@@ -900,24 +982,25 @@ async function saveProblemTop(){
     status: document.getElementById('f_status').value,
     result: document.getElementById('f_result') ? document.getElementById('f_result').value : (p.result||''),
     effectiveness: p.effectiveness,
-    member: p.member || STATE.member
+    member: p.member || STATE.member,
+    createdAt: p.createdAt || new Date().toISOString()
   };
 
   if(MODAL.mode==='create'){
-    const r = await createRecord('problems', record);
-    if(r.ok){
-      toast('Đã lưu vấn đề.');
-      MODAL.mode='edit'; MODAL.problem = Object.assign({}, r.record);
-      renderModal();
-    }
+    createRecord('problems', record); // instant — appears right away, syncs in the background
+    toast('Đã lưu vấn đề.');
+    MODAL.mode='edit';
+    MODAL.problem = Object.assign({}, record);
+    renderModal();
+    renderAll();
   } else {
     const patch = Object.assign({}, record); delete patch.id;
-    const r = await updateRecord('problems', p.id, patch);
-    if(r.ok){
-      toast('Đã cập nhật.');
-      maybeSuggestFromProblem(STATE.data.problems.find(x=>x.id===p.id));
-      MODAL.problem = Object.assign({}, MODAL.problem, patch);
-    }
+    updateRecord('problems', p.id, patch); // instant
+    toast('Đã cập nhật.');
+    MODAL.problem = Object.assign({}, MODAL.problem, patch);
+    maybeSuggestFromProblem(Object.assign({id:p.id}, MODAL.problem));
+    renderModal();
+    renderAll();
   }
 }
 
@@ -926,7 +1009,7 @@ async function addProblemQuestion(){
   const input = document.getElementById('newQuestionText');
   const text = input.value.trim();
   if(!text) return;
-  await createRecord('questions', {id:uid(), problemId:MODAL.problem.id, text, star:false, status:'clarifying', member:STATE.member});
+  createRecord('questions', {id:uid(), problemId:MODAL.problem.id, text, star:false, status:'clarifying', member:STATE.member, createdAt:new Date().toISOString()});
   input.value='';
   document.getElementById('modalQuestions').innerHTML = renderModalQuestions(STATE.data.questions.filter(q=>q.problemId===MODAL.problem.id));
 }
@@ -935,7 +1018,7 @@ async function addProblemAction(){
   const input = document.getElementById('newActionText');
   const text = input.value.trim();
   if(!text) return;
-  await createRecord('actions', {id:uid(), problemId:MODAL.problem.id, text, status:'new', breakthrough:false, member:STATE.member});
+  createRecord('actions', {id:uid(), problemId:MODAL.problem.id, text, status:'new', breakthrough:false, member:STATE.member, createdAt:new Date().toISOString()});
   input.value='';
   document.getElementById('modalActions').innerHTML = renderModalActions(STATE.data.actions.filter(a=>a.problemId===MODAL.problem.id));
 }
@@ -946,7 +1029,7 @@ async function addProblemLearning(){
   if(!text) return;
   const existing = STATE.data.learnings.filter(l=>l.problemId===MODAL.problem.id);
   const order = existing.length;
-  await createRecord('learnings', {id:uid(), problemId:MODAL.problem.id, text, order, status:'available', member:STATE.member});
+  createRecord('learnings', {id:uid(), problemId:MODAL.problem.id, text, order, status:'available', member:STATE.member, createdAt:new Date().toISOString()});
   input.value='';
   document.getElementById('modalLearnings').innerHTML = renderModalLearnings(STATE.data.learnings.filter(l=>l.problemId===MODAL.problem.id).sort((a,b)=>(a.order||0)-(b.order||0)));
   toast('Đã lưu bài học — đã xuất hiện ở Key Learnings.');
@@ -1022,20 +1105,21 @@ function renderQuickAddModal(){
     </div>
   `;
 }
-async function saveQuickAdd(){
+function saveQuickAdd(){
   const type = MODAL.type;
   const text = document.getElementById('qa_text').value.trim();
   if(!text){ toast('Vui lòng nhập nội dung.'); return; }
   const problemId = document.getElementById('qa_problem').value || null;
-  let record = {id:uid(), problemId, text, member:STATE.member};
+  let record = {id:uid(), problemId, text, member:STATE.member, createdAt: new Date().toISOString()};
   if(type==='questions') record = Object.assign(record, {star:false, status:'clarifying'});
   if(type==='actions') record = Object.assign(record, {status:'new', breakthrough: document.getElementById('qa_breakthrough').checked});
   if(type==='learnings'){
     const order = STATE.data.learnings.filter(l=>l.problemId===problemId).length;
     record = Object.assign(record, {order, status:'available'});
   }
-  const r = await createRecord(type, record);
-  if(r.ok){ toast('Đã thêm.'); closeModal(); }
+  createRecord(type, record);
+  toast('Đã thêm.');
+  closeModal();
 }
 
 /* ---------------- QUESTIONS TAB ---------------- */
@@ -1113,7 +1197,7 @@ async function ensureSuggestion(source, refId, text, member){
   const already = STATE.data.bpSuggestions.some(s=>s.source===source && s.refId===refId)
                 || STATE.data.bestPractices.some(b=>b.source===source && b.refId===refId);
   if(already) return;
-  await createRecord('bpSuggestions', {id:uid(), source, refId, text, member: member||STATE.member});
+  createRecord('bpSuggestions', {id:uid(), source, refId, text, member: member||STATE.member, createdAt:new Date().toISOString()});
   if(STATE.tab==='bestPractices') renderContent();
 }
 function maybeSuggestFromProblem(p){
@@ -1155,16 +1239,16 @@ function renderBestPracticesTab(){
 
   return html;
 }
-async function confirmSuggestion(id){
+function confirmSuggestion(id){
   const s = STATE.data.bpSuggestions.find(x=>x.id===id);
   if(!s) return;
-  await createRecord('bestPractices', {id:uid(), source:s.source, refId:s.refId, text:s.text, member:s.member});
-  await deleteRecord('bpSuggestions', id);
+  createRecord('bestPractices', {id:uid(), source:s.source, refId:s.refId, text:s.text, member:s.member, createdAt:new Date().toISOString()});
+  deleteRecord('bpSuggestions', id);
   toast('Đã thêm vào Best Practices.');
   renderAll();
 }
-async function dismissSuggestion(id){
-  await deleteRecord('bpSuggestions', id);
+function dismissSuggestion(id){
+  deleteRecord('bpSuggestions', id);
   renderContent();
 }
 

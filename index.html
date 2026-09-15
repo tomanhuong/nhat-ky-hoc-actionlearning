@@ -170,6 +170,13 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .action-add-row{display:flex;gap:8px;}
 .action-add-row input[type=date]{flex:1;}
 .overdue{color:var(--red);font-weight:600;}
+.bp-intro{background:rgba(255,212,0,.06);border:1px solid rgba(255,212,0,.28);border-radius:var(--radius);padding:16px 18px;margin-bottom:18px;font-size:14px;line-height:1.6;}
+.bp-intro-title{font-family:'Space Mono',monospace;font-size:13px;color:var(--gold);font-weight:700;margin-bottom:6px;}
+.bp-intro p{color:var(--ink-dim);margin-bottom:2px;}
+.bp-rules{list-style:none;padding:0;margin:6px 0 0;}
+.bp-rules li{padding:7px 0 7px 22px;position:relative;color:var(--ink);border-top:1px solid var(--border-soft);}
+.bp-rules li::before{content:'→';position:absolute;left:2px;color:var(--teal);}
+.bp-rules li:first-child{border-top:none;}
 .member-badge{display:inline-block;font-family:'Space Mono',monospace;font-size:10.5px;padding:2px 8px;border-radius:999px;border:1px solid;font-weight:700;white-space:nowrap;}
 .status-pill{cursor:pointer;position:relative;}
 .status-pill::after{content:'✎';margin-left:6px;font-size:11px;opacity:.75;}
@@ -1255,7 +1262,7 @@ async function addProblemQuestion(){
   const input = document.getElementById('newQuestionText');
   const text = input.value.trim();
   if(!text) return;
-  createRecord('questions', {id:uid(), problemId:MODAL.problem.id, text, star:false, status:'clarifying', member:STATE.member, createdAt:new Date().toISOString()});
+  createRecord('questions', {id:uid(), problemId:MODAL.problem.id, text, answer:'', star:false, status:'clarifying', member:(MODAL.problem.member||STATE.member), createdAt:new Date().toISOString()});
   input.value='';
   document.getElementById('modalQuestions').innerHTML = renderModalQuestions(STATE.data.questions.filter(q=>q.problemId===MODAL.problem.id));
 }
@@ -1266,7 +1273,7 @@ async function addProblemAction(){
   if(!text) return;
   const outcome = document.getElementById('newActionOutcome').value.trim();
   const deadline = document.getElementById('newActionDeadline').value;
-  createRecord('actions', {id:uid(), problemId:MODAL.problem.id, text, outcome, deadline, status:'new', breakthrough:false, member:STATE.member, createdAt:new Date().toISOString()});
+  createRecord('actions', {id:uid(), problemId:MODAL.problem.id, text, outcome, deadline, status:'new', breakthrough:false, member:(MODAL.problem.member||STATE.member), createdAt:new Date().toISOString()});
   input.value='';
   document.getElementById('newActionOutcome').value='';
   document.getElementById('newActionDeadline').value='';
@@ -1279,7 +1286,7 @@ async function addProblemLearning(){
   if(!text) return;
   const existing = STATE.data.learnings.filter(l=>l.problemId===MODAL.problem.id);
   const order = existing.length;
-  createRecord('learnings', {id:uid(), problemId:MODAL.problem.id, text, order, status:'available', member:STATE.member, createdAt:new Date().toISOString()});
+  createRecord('learnings', {id:uid(), problemId:MODAL.problem.id, text, order, status:'available', member:(MODAL.problem.member||STATE.member), createdAt:new Date().toISOString()});
   input.value='';
   document.getElementById('modalLearnings').innerHTML = renderModalLearnings(STATE.data.learnings.filter(l=>l.problemId===MODAL.problem.id).sort((a,b)=>(a.order||0)-(b.order||0)));
   toast('Đã lưu bài học — đã xuất hiện ở Key Learnings.');
@@ -1382,8 +1389,10 @@ function saveQuickAdd(){
   const text = document.getElementById('qa_text').value.trim();
   if(!text){ toast('Vui lòng nhập nội dung.'); return; }
   const problemId = document.getElementById('qa_problem').value || null;
-  let record = {id:uid(), problemId, text, member:STATE.member, createdAt: new Date().toISOString()};
-  if(type==='questions') record = Object.assign(record, {star:false, status:'clarifying'});
+  const linkedProblem = problemId ? STATE.data.problems.find(p=>p.id===problemId) : null;
+  const owner = linkedProblem ? (linkedProblem.member||STATE.member) : STATE.member;
+  let record = {id:uid(), problemId, text, member:owner, createdAt: new Date().toISOString()};
+  if(type==='questions') record = Object.assign(record, {answer:'', star:false, status:'clarifying'});
   if(type==='actions') record = Object.assign(record, {status:'new', breakthrough: document.getElementById('qa_breakthrough').checked, outcome: document.getElementById('qa_outcome').value.trim(), deadline: document.getElementById('qa_deadline').value});
   if(type==='learnings'){
     const order = STATE.data.learnings.filter(l=>l.problemId===problemId).length;
@@ -1519,13 +1528,25 @@ function renderBestPracticesTab(){
   const pending = filteredByPerson('bpSuggestions');
   const confirmed = filteredByPerson('bestPractices').filter(b=>matchesSearch(b.text));
 
-  let html = '<div class="section-title">Gợi ý chờ duyệt</div>';
+  let html = `<div class="bp-intro">
+    <div class="bp-intro-title">💎 Thực hành hiệu quả (Best Practices) là gì?</div>
+    <p>Là những cách làm đã được <strong>chứng minh mang lại kết quả tốt</strong> qua thực tế của bạn — đáng để lặp lại và nhân rộng cho lần sau hoặc cho người khác. Đây là "kho vàng" đúc kết từ trải nghiệm, không phải lý thuyết.</p>
+    <div class="bp-intro-title" style="margin-top:12px">Khi nào nên chuyển một mục sang đây?</div>
+    <ul class="bp-rules">
+      <li><strong>Từ Vấn đề:</strong> khi một vấn đề đã <em>Hoàn thành</em> và bạn tự chấm <em>Sự hiệu quả ≥ 8/10</em> → cách bạn giải quyết nó xứng đáng thành thực hành mẫu.</li>
+      <li><strong>Từ Bài học:</strong> khi một bài học đã được đánh dấu <em>Đã áp dụng</em> vào thực tế và cho kết quả tốt.</li>
+      <li><strong>Từ Hành động:</strong> khi một hành động được đánh dấu <em>⚡ Đột phá</em> và đã <em>Hoàn thành</em> — tức nó tạo ra thay đổi lớn.</li>
+    </ul>
+    <p style="margin-top:8px;color:var(--ink-faint)">Hệ thống tự động phát hiện các mục đạt điều kiện trên và đưa vào "Gợi ý chờ duyệt" bên dưới. Bạn xem lại rồi bấm ✓ để đưa vào kho, hoặc ✕ nếu chưa muốn.</p>
+  </div>`;
+
+  html += '<div class="section-title">Gợi ý chờ duyệt</div>';
   html += pending.length ? pending.map(s=>`
     <div class="pending-row">
-      <span class="src">${BP_SOURCE[s.source]||s.source}</span>${s.member?' '+memberBadge(s.member):''}
+      <span class="src">Nguồn: ${BP_SOURCE[s.source]||s.source}</span>${s.member?' '+memberBadge(s.member):''}
       <div class="txt">${esc(s.text)}</div>
       <div class="pending-actions">
-        <button class="btn btn-teal btn-sm" onclick="confirmSuggestion('${s.id}')">✓ Thêm vào</button>
+        <button class="btn btn-teal btn-sm" onclick="confirmSuggestion('${s.id}')">✓ Thêm vào kho</button>
         <button class="btn btn-ghost btn-sm" onclick="dismissSuggestion('${s.id}')">✕ Bỏ qua</button>
       </div>
     </div>`).join('') : '<div class="empty-note">'+emptyMsg('Chưa có gợi ý nào chờ duyệt.')+'</div>';
@@ -1533,7 +1554,7 @@ function renderBestPracticesTab(){
   html += '<div class="section-title">Đã xác nhận</div>';
   html += confirmed.length ? confirmed.slice().sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)).map(b=>`
     <div class="list-row">
-      <div class="txt">${esc(b.text)}<span class="src">${BP_SOURCE[b.source]||b.source}</span>${b.member?' '+memberBadge(b.member):''}</div>
+      <div class="txt">${esc(b.text)}<span class="src">Nguồn: ${BP_SOURCE[b.source]||b.source}</span>${b.member?' '+memberBadge(b.member):''}</div>
       <div class="acts"><button onclick="deleteStandalone('bestPractices','${b.id}')">🗑️</button></div>
     </div>`).join('') : '<div class="empty-note">'+emptyMsg('Chưa có thực hành hiệu quả nào được xác nhận.')+'</div>';
 

@@ -157,6 +157,12 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .star-btn{font-size:16px;color:var(--ink-faint);}
 .star-btn.on{color:var(--gold);}
 
+.qa-block{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:10px;}
+.qa-block .list-row{background:none;border:none;padding:0;margin:0;}
+.qa-answer{padding-left:26px;}
+.qa-answer-text{font-size:14px;color:var(--teal);background:var(--teal-bg);border-radius:8px;padding:8px 11px;margin-bottom:8px;line-height:1.5;}
+.qa-answer .mini-add input{font-size:14px;padding:8px 10px;}
+
 /* ---- fab / modal ---- */
 .fab{position:fixed;right:20px;bottom:calc(24px + var(--sib));width:56px;height:56px;border-radius:50%;background:var(--gold);color:var(--gold-ink);font-size:26px;font-weight:700;box-shadow:0 8px 22px rgba(0,0,0,.4);z-index:40;}
 .modal-overlay{position:fixed;inset:0;background:rgba(10,9,30,.72);backdrop-filter:blur(3px);z-index:100;display:flex;align-items:flex-end;justify-content:center;}
@@ -1108,14 +1114,22 @@ function renderProblemDetailSections(p, questions, actions, learnings){
 }
 function renderModalQuestions(list){
   if(!list.length) return '<div class="hint">Chưa có câu hỏi nào.</div>';
-  return list.map(q=>`<div class="list-row">
+  return list.map(q=>`<div class="qa-block">
+    <div class="list-row" style="margin-bottom:6px">
       <button class="star-btn ${q.star?'on':''}" onclick="toggleQuestionStar('${q.id}')">★</button>
       <div class="txt">${esc(q.text)}<span class="src">${QUESTION_STATUS[q.status]||q.status}</span></div>
       <div class="acts">
-        <button onclick="cycleQuestionStatus('${q.id}')">⟳</button>
         <button onclick="removeInModal('questions','${q.id}')">✕</button>
       </div>
-    </div>`).join('');
+    </div>
+    <div class="qa-answer">
+      ${q.answer ? `<div class="qa-answer-text">💬 ${esc(q.answer)}</div>` : ''}
+      <div class="mini-add">
+        <input id="ans_${q.id}" type="text" placeholder="${q.answer?'Sửa câu trả lời...':'Trả lời câu hỏi này...'}" value="${esc(q.answer||'')}" onkeydown="if(event.key==='Enter'){event.preventDefault();saveQuestionAnswer('${q.id}');}"/>
+        <button class="btn btn-teal btn-sm" onclick="saveQuestionAnswer('${q.id}')">${q.answer?'Cập nhật':'Lưu'}</button>
+      </div>
+    </div>
+  </div>`).join('');
 }
 function renderModalActions(list){
   if(!list.length) return '<div class="hint">Chưa có hành động nào. Nhấn "Thêm dòng" để bắt đầu.</div>';
@@ -1225,6 +1239,18 @@ async function toggleQuestionStar(id){
   await updateRecord('questions', id, {star: !q.star});
   document.getElementById('modalQuestions').innerHTML = renderModalQuestions(STATE.data.questions.filter(x=>x.problemId===MODAL.problem.id));
 }
+function saveQuestionAnswer(id){
+  const input = document.getElementById('ans_'+id);
+  if(!input) return;
+  const answer = input.value.trim();
+  const patch = {answer};
+  // Answering marks it answered; clearing the answer reverts to clarifying
+  patch.status = answer ? 'answered' : 'clarifying';
+  updateRecord('questions', id, patch);
+  toast(answer ? 'Đã lưu câu trả lời.' : 'Đã xoá câu trả lời.');
+  if(MODAL.problem) document.getElementById('modalQuestions').innerHTML = renderModalQuestions(STATE.data.questions.filter(x=>x.problemId===MODAL.problem.id));
+  else refreshKeepScroll();
+}
 async function cycleQuestionStatus(id){
   const q = STATE.data.questions.find(x=>x.id===id);
   const next = q.status==='clarifying' ? 'answered' : 'clarifying';
@@ -1322,12 +1348,20 @@ function renderQuestionsTab(){
   list = list.slice().sort((a,b)=> (b.star?1:0)-(a.star?1:0) || new Date(b.createdAt||0)-new Date(a.createdAt||0));
   return renderListTab('Tất cả câu hỏi', list, q=>{
     const problem = STATE.data.problems.find(p=>p.id===q.problemId);
-    return `<div class="list-row">
-      <button class="star-btn ${q.star?'on':''}" onclick="toggleStandaloneStar('${q.id}')">★</button>
-      <div class="txt">${esc(q.text)}<span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'} · ${QUESTION_STATUS[q.status]||q.status}${q.member?(' · 👤 '+esc(q.member)):''}</span></div>
-      <div class="acts">
-        <button onclick="cycleStandaloneQStatus('${q.id}')">⟳</button>
-        <button onclick="deleteStandalone('questions','${q.id}')">🗑️</button>
+    return `<div class="qa-block">
+      <div class="list-row" style="margin-bottom:6px">
+        <button class="star-btn ${q.star?'on':''}" onclick="toggleStandaloneStar('${q.id}')">★</button>
+        <div class="txt">${esc(q.text)}<span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'} · ${QUESTION_STATUS[q.status]||q.status}${q.member?(' · 👤 '+esc(q.member)):''}</span></div>
+        <div class="acts">
+          <button onclick="deleteStandalone('questions','${q.id}')">🗑️</button>
+        </div>
+      </div>
+      <div class="qa-answer">
+        ${q.answer ? `<div class="qa-answer-text">💬 ${esc(q.answer)}</div>` : ''}
+        <div class="mini-add">
+          <input id="ans_${q.id}" type="text" placeholder="${q.answer?'Sửa câu trả lời...':'Trả lời câu hỏi này...'}" value="${esc(q.answer||'')}" onkeydown="if(event.key==='Enter'){event.preventDefault();saveQuestionAnswer('${q.id}');}"/>
+          <button class="btn btn-teal btn-sm" onclick="saveQuestionAnswer('${q.id}')">${q.answer?'Cập nhật':'Lưu'}</button>
+        </div>
       </div>
     </div>`;
   }, 'Chưa có câu hỏi nào.');
@@ -1364,8 +1398,7 @@ function cycleStandaloneAStatus(id){
 function renderLearningsTab(){
   let list = filteredByPerson('learnings').filter(l=>matchesSearch(l.text));
   list = list.slice().sort((a,b)=> (a.order||0)-(b.order||0));
-  if(!list.length) return '<div class="section-title">Tất cả bài học</div><div class="empty-note">'+emptyMsg('Chưa có bài học nào.')+'</div>';
-  return '<div class="section-title">Tất cả bài học</div>' + list.map(l=>{
+  return renderListTab('Tất cả bài học', list, l=>{
     const problem = STATE.data.problems.find(p=>p.id===l.problemId);
     return `<div class="list-row">
       <div class="txt">${esc(l.text)}<span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'} · ${LEARNING_STATUS[l.status]||l.status}${l.member?(' · 👤 '+esc(l.member)):''}</span></div>
@@ -1374,7 +1407,7 @@ function renderLearningsTab(){
         <button onclick="deleteStandalone('learnings','${l.id}')">🗑️</button>
       </div>
     </div>`;
-  }).join('');
+  }, 'Chưa có bài học nào.');
 }
 function markStandaloneApplied(id){
   updateRecord('learnings', id, {status:'applied'});

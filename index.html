@@ -162,6 +162,14 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .qa-answer{padding-left:26px;}
 .qa-answer-text{font-size:14px;color:var(--teal);background:var(--teal-bg);border-radius:8px;padding:8px 11px;margin-bottom:8px;line-height:1.5;}
 .qa-answer .mini-add input{font-size:14px;padding:8px 10px;}
+.status-pill{font-family:'Space Mono',monospace;font-size:11px;padding:5px 10px;border-radius:999px;background:var(--panel-hover);border:1px solid var(--border);color:var(--ink-dim);white-space:nowrap;}
+.status-pill.new{color:var(--ink-dim);}
+.status-pill.inprogress{color:var(--amber);background:var(--amber-bg);border-color:transparent;}
+.status-pill.done{color:var(--teal);background:var(--teal-bg);border-color:transparent;}
+.action-add-form{display:flex;flex-direction:column;gap:8px;background:var(--panel);border:1px solid var(--border-soft);border-radius:var(--radius-sm);padding:12px;}
+.action-add-row{display:flex;gap:8px;}
+.action-add-row input[type=date]{flex:1;}
+.overdue{color:var(--red);font-weight:600;}
 
 /* ---- fab / modal ---- */
 .fab{position:fixed;right:20px;bottom:calc(24px + var(--sib));width:56px;height:56px;border-radius:50%;background:var(--gold);color:var(--gold-ink);font-size:26px;font-weight:700;box-shadow:0 8px 22px rgba(0,0,0,.4);z-index:40;}
@@ -281,6 +289,18 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
       <select id="personFilterSel" onchange="onPersonFilterChange()"></select>
       <button class="icon-btn" title="Làm mới" onclick="loadAll(false)">⟳</button>
     </div>
+    <div class="toolbar" style="align-items:flex-end">
+      <div style="flex:1;min-width:130px">
+        <label style="display:block;font-size:11px;font-family:'Space Mono',monospace;color:var(--ink-dim);margin-bottom:4px">Từ ngày</label>
+        <input id="dateFromInput" type="date" value="" onchange="onDateFilterChange()"/>
+      </div>
+      <div style="flex:1;min-width:130px">
+        <label style="display:block;font-size:11px;font-family:'Space Mono',monospace;color:var(--ink-dim);margin-bottom:4px">Đến ngày</label>
+        <input id="dateToInput" type="date" value="" onchange="onDateFilterChange()"/>
+      </div>
+      <button id="clearDateBtn" class="btn btn-ghost btn-sm hidden" onclick="clearDateFilter()">✕ Xoá lọc ngày</button>
+    </div>
+    <div class="hint" style="margin-bottom:12px">Lọc theo ngày tạo — áp dụng cho mọi tab, kết hợp cùng lúc với tìm kiếm, người và trạng thái.</div>
 
     <div class="tabs" id="tabsBar"></div>
 
@@ -692,14 +712,24 @@ function matchesDateRange(dateStr){
   if(STATE.dateTo && d > new Date(STATE.dateTo+'T23:59:59')) return false;
   return true;
 }
+function updateClearDateBtn(){
+  const btn = document.getElementById('clearDateBtn');
+  if(!btn) return;
+  if(STATE.dateFrom || STATE.dateTo) btn.classList.remove('hidden');
+  else btn.classList.add('hidden');
+}
 function onDateFilterChange(){
   STATE.dateFrom = document.getElementById('dateFromInput').value;
   STATE.dateTo = document.getElementById('dateToInput').value;
-  renderContent();
+  updateClearDateBtn();
+  renderAll();
 }
 function clearDateFilter(){
   STATE.dateFrom = ''; STATE.dateTo = '';
-  renderContent();
+  const f = document.getElementById('dateFromInput'), t = document.getElementById('dateToInput');
+  if(f) f.value=''; if(t) t.value='';
+  updateClearDateBtn();
+  renderAll();
 }
 
 function renderTabs(){
@@ -801,20 +831,6 @@ function renderProblemsTab(){
   const shown = filtered.slice().sort((a,b)=> new Date(b.createdAt||0) - new Date(a.createdAt||0));
   const priority = filtered.filter(p=>Number(p.score)>=PRIORITY_THRESHOLD).sort((a,b)=>b.score-a.score);
 
-  const hasDateFilter = STATE.dateFrom || STATE.dateTo;
-  const dateFilterRow = `<div class="date-filter-row">
-    <div class="date-filter-field">
-      <label>Từ ngày</label>
-      <input id="dateFromInput" type="date" value="${STATE.dateFrom}" onchange="onDateFilterChange()"/>
-    </div>
-    <div class="date-filter-field">
-      <label>Đến ngày</label>
-      <input id="dateToInput" type="date" value="${STATE.dateTo}" onchange="onDateFilterChange()"/>
-    </div>
-    ${hasDateFilter ? `<button class="btn btn-ghost btn-sm" onclick="clearDateFilter()">✕ Xoá lọc ngày</button>` : ''}
-  </div>
-  <div class="hint" style="margin-top:-8px;margin-bottom:14px">Lọc theo ngày tạo vấn đề — kết hợp cùng lúc với bộ lọc người và trạng thái bên dưới.</div>`;
-
   const chipRow = `<div class="chip-row">
     <button class="chip ${sub==='all'?'active':''}" onclick="setProblemSub('all')">Tất cả ${counts.all}</button>
     <button class="chip ${sub==='new'?'active':''}" onclick="setProblemSub('new')">Mới tạo ${counts.new}</button>
@@ -844,7 +860,7 @@ function renderProblemsTab(){
   }
   const listBlock = `<div class="section-title">Vấn đề đang giải quyết</div>` + listBody;
 
-  return dateFilterRow + chipRow + priBlock + listBlock;
+  return chipRow + priBlock + listBlock;
 }
 function loadMore(){ STATE.shownCount += STATE.pageSize; refreshKeepScroll(); }
 function setProblemSub(s){ STATE.problemSubTab = s; STATE.shownCount = STATE.pageSize; renderContent(); }
@@ -991,11 +1007,11 @@ function renderModal(){
 
     <div class="field">
       <label class="field-label">Phát biểu Vấn đề ngắn gọn <span class="req">*</span></label>
-      <input id="f_title" type="text" placeholder="Mô tả vấn đề bạn đang đối mặt..." value="${esc(p.title)}"/>
+      <input id="f_title" type="text" placeholder="Mô tả vấn đề bạn đang đối mặt..." value="${esc(p.title)}" oninput="markDirty()"/>
     </div>
     <div class="field">
       <label class="field-label">Nội dung chi tiết hơn về Vấn đề <span class="req">*</span></label>
-      <textarea id="f_desc" placeholder="Mô tả chi tiết vấn đề, bối cảnh, ảnh hưởng...">${esc(p.desc)}</textarea>
+      <textarea id="f_desc" placeholder="Mô tả chi tiết vấn đề, bối cảnh, ảnh hưởng..." oninput="markDirty()">${esc(p.desc)}</textarea>
     </div>
     <div class="field">
       <label class="field-label">Thuộc khía cạnh</label>
@@ -1004,7 +1020,7 @@ function renderModal(){
     </div>
     <div class="field">
       <label class="field-label">Cấp độ Vấn đề <span class="req">*</span></label>
-      <div class="level-row">
+      <div class="level-row" id="levelRow">
         ${Object.keys(LEVELS).map(k=>`<button class="level-btn ${p.level===k?'active':''}" onclick="setModalLevel('${k}')">${LEVELS[k]}</button>`).join('')}
       </div>
     </div>
@@ -1063,7 +1079,17 @@ function addModalTag(){
   document.getElementById('tagList').innerHTML = renderTagChips();
 }
 function removeModalTag(i){ MODAL.tags.splice(i,1); document.getElementById('tagList').innerHTML = renderTagChips(); }
-function setModalLevel(k){ MODAL.problem.level = k; renderModal(); }
+function setModalLevel(k){
+  MODAL.problem.level = k;
+  markDirty();
+  // Update only the buttons — re-rendering the whole modal would wipe unsaved text inputs
+  const row = document.getElementById('levelRow');
+  if(row){
+    row.innerHTML = Object.keys(LEVELS).map(key=>
+      `<button class="level-btn ${k===key?'active':''}" onclick="setModalLevel('${key}')">${LEVELS[key]}</button>`
+    ).join('');
+  }
+}
 function onSlider(key, val){
   MODAL.problem[key] = Number(val);
   document.getElementById('v_'+key).textContent = val;
@@ -1087,14 +1113,18 @@ function renderProblemDetailSections(p, questions, actions, learnings){
 
     <div class="section-title">Phát biểu hành động để giải quyết</div>
     <div id="modalActions">${renderModalActions(actions)}</div>
-    <div class="mini-add">
-      <input id="newActionText" type="text" placeholder="Gõ hành động rồi nhấn Enter..." onkeydown="if(event.key==='Enter'){event.preventDefault();addProblemAction();}"/>
-      <button class="btn btn-teal btn-sm" onclick="addProblemAction()">+ Thêm dòng</button>
+    <div class="action-add-form">
+      <input id="newActionText" type="text" placeholder="Hành động cần làm..." onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('newActionOutcome').focus();}"/>
+      <input id="newActionOutcome" type="text" placeholder="Kết quả đầu ra mong đợi..."/>
+      <div class="action-add-row">
+        <input id="newActionDeadline" type="date" title="Thời hạn hoàn thành"/>
+        <button class="btn btn-teal btn-sm" onclick="addProblemAction()">+ Thêm dòng</button>
+      </div>
     </div>
 
     <div class="section-title">Cập nhật kết quả đạt được</div>
     <div class="field result-box">
-      <textarea id="f_result" placeholder="Ghi lại những kết quả chính đã đạt được trong quá trình giải quyết vấn đề này...">${esc(p.result)}</textarea>
+      <textarea id="f_result" placeholder="Ghi lại những kết quả chính đã đạt được trong quá trình giải quyết vấn đề này..." oninput="markDirty()">${esc(p.result)}</textarea>
     </div>
 
     <div class="section-title">Tự đánh giá việc giải quyết vấn đề</div>
@@ -1133,13 +1163,19 @@ function renderModalQuestions(list){
 }
 function renderModalActions(list){
   if(!list.length) return '<div class="hint">Chưa có hành động nào. Nhấn "Thêm dòng" để bắt đầu.</div>';
-  return list.map(a=>`<div class="list-row">
-      <div class="txt">${esc(a.text)}<span class="src">${ACTION_STATUS[a.status]||a.status}${a.breakthrough?' · ⚡ Đột phá':''}</span></div>
+  return list.map(a=>{
+    const overdue = a.deadline && a.status!=='done' && a.deadline < todayISO();
+    return `<div class="list-row">
+      <div class="txt">${esc(a.text)}
+        ${a.outcome?`<span class="src">🎯 ${esc(a.outcome)}</span>`:''}
+        <span class="src">${a.deadline?`<span class="${overdue?'overdue':''}">📅 Hạn: ${fmtDate(a.deadline)}${overdue?' (quá hạn)':''}</span>`:''}${a.breakthrough?' · ⚡ Đột phá':''}</span>
+      </div>
       <div class="acts">
-        <button onclick="cycleActionStatus('${a.id}')">⟳</button>
+        <button class="status-pill ${a.status}" onclick="cycleActionStatus('${a.id}')">${ACTION_STATUS[a.status]||a.status}</button>
         <button onclick="removeInModal('actions','${a.id}')">✕</button>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 function renderModalLearnings(list){
   if(!list.length) return '<div class="hint">Chưa có bài học nào.</div>';
@@ -1211,8 +1247,12 @@ async function addProblemAction(){
   const input = document.getElementById('newActionText');
   const text = input.value.trim();
   if(!text) return;
-  createRecord('actions', {id:uid(), problemId:MODAL.problem.id, text, status:'new', breakthrough:false, member:STATE.member, createdAt:new Date().toISOString()});
+  const outcome = document.getElementById('newActionOutcome').value.trim();
+  const deadline = document.getElementById('newActionDeadline').value;
+  createRecord('actions', {id:uid(), problemId:MODAL.problem.id, text, outcome, deadline, status:'new', breakthrough:false, member:STATE.member, createdAt:new Date().toISOString()});
   input.value='';
+  document.getElementById('newActionOutcome').value='';
+  document.getElementById('newActionDeadline').value='';
   document.getElementById('modalActions').innerHTML = renderModalActions(STATE.data.actions.filter(a=>a.problemId===MODAL.problem.id));
 }
 async function addProblemLearning(){
@@ -1303,7 +1343,17 @@ function renderQuickAddModal(){
         ${problems.map(p=>`<option value="${p.id}">${esc(p.title)}</option>`).join('')}
       </select>
     </div>
-    ${type==='actions' ? `<div class="field"><label class="field-label"><input type="checkbox" id="qa_breakthrough" style="width:auto;display:inline-block;margin-right:8px;"/>Đây là hành động đột phá</label></div>` : ''}
+    ${type==='actions' ? `
+      <div class="field">
+        <label class="field-label">Kết quả đầu ra mong đợi</label>
+        <input type="text" id="qa_outcome" placeholder="Hành động này tạo ra kết quả gì?"/>
+      </div>
+      <div class="field">
+        <label class="field-label">Thời hạn hoàn thành</label>
+        <input type="date" id="qa_deadline"/>
+      </div>
+      <div class="field"><label class="field-label"><input type="checkbox" id="qa_breakthrough" style="width:auto;display:inline-block;margin-right:8px;"/>Đây là hành động đột phá</label></div>
+    ` : ''}
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal()">Huỷ</button>
       <button class="btn btn-gold" onclick="saveQuickAdd()">Lưu</button>
@@ -1317,7 +1367,7 @@ function saveQuickAdd(){
   const problemId = document.getElementById('qa_problem').value || null;
   let record = {id:uid(), problemId, text, member:STATE.member, createdAt: new Date().toISOString()};
   if(type==='questions') record = Object.assign(record, {star:false, status:'clarifying'});
-  if(type==='actions') record = Object.assign(record, {status:'new', breakthrough: document.getElementById('qa_breakthrough').checked});
+  if(type==='actions') record = Object.assign(record, {status:'new', breakthrough: document.getElementById('qa_breakthrough').checked, outcome: document.getElementById('qa_outcome').value.trim(), deadline: document.getElementById('qa_deadline').value});
   if(type==='learnings'){
     const order = STATE.data.learnings.filter(l=>l.problemId===problemId).length;
     record = Object.assign(record, {order, status:'available'});
@@ -1344,7 +1394,7 @@ function renderListTab(title, list, rowFn, emptyText){
 
 /* ---------------- QUESTIONS TAB ---------------- */
 function renderQuestionsTab(){
-  let list = filteredByPerson('questions').filter(q=>matchesSearch(q.text));
+  let list = filteredByPerson('questions').filter(q=>matchesSearch(q.text)).filter(q=>matchesDateRange(q.createdAt));
   list = list.slice().sort((a,b)=> (b.star?1:0)-(a.star?1:0) || new Date(b.createdAt||0)-new Date(a.createdAt||0));
   return renderListTab('Tất cả câu hỏi', list, q=>{
     const problem = STATE.data.problems.find(p=>p.id===q.problemId);
@@ -1372,14 +1422,18 @@ function deleteStandalone(type,id){ if(!confirm('Xoá mục này?'))return; dele
 
 /* ---------------- ACTIONS TAB ---------------- */
 function renderActionsTab(){
-  let list = filteredByPerson('actions').filter(a=>matchesSearch(a.text));
+  let list = filteredByPerson('actions').filter(a=>matchesSearch(a.text)).filter(a=>matchesDateRange(a.createdAt));
   list = list.slice().sort((a,b)=> new Date(b.createdAt||0)-new Date(a.createdAt||0));
   return renderListTab('Tất cả hành động', list, a=>{
     const problem = STATE.data.problems.find(p=>p.id===a.problemId);
+    const overdue = a.deadline && a.status!=='done' && a.deadline < todayISO();
     return `<div class="list-row">
-      <div class="txt">${esc(a.text)}<span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'} · ${ACTION_STATUS[a.status]||a.status}${a.breakthrough?' · ⚡ Đột phá':''}${a.member?(' · 👤 '+esc(a.member)):''}</span></div>
+      <div class="txt">${esc(a.text)}
+        ${a.outcome?`<span class="src">🎯 ${esc(a.outcome)}</span>`:''}
+        <span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'}${a.deadline?` · <span class="${overdue?'overdue':''}">📅 ${fmtDate(a.deadline)}${overdue?' (quá hạn)':''}</span>`:''}${a.breakthrough?' · ⚡ Đột phá':''}${a.member?(' · 👤 '+esc(a.member)):''}</span>
+      </div>
       <div class="acts">
-        <button onclick="cycleStandaloneAStatus('${a.id}')">⟳</button>
+        <button class="status-pill ${a.status}" onclick="cycleStandaloneAStatus('${a.id}')">${ACTION_STATUS[a.status]||a.status}</button>
         <button onclick="deleteStandalone('actions','${a.id}')">🗑️</button>
       </div>
     </div>`;
@@ -1396,7 +1450,7 @@ function cycleStandaloneAStatus(id){
 
 /* ---------------- LEARNINGS TAB ---------------- */
 function renderLearningsTab(){
-  let list = filteredByPerson('learnings').filter(l=>matchesSearch(l.text));
+  let list = filteredByPerson('learnings').filter(l=>matchesSearch(l.text)).filter(l=>matchesDateRange(l.createdAt));
   list = list.slice().sort((a,b)=> (a.order||0)-(b.order||0));
   return renderListTab('Tất cả bài học', list, l=>{
     const problem = STATE.data.problems.find(p=>p.id===l.problemId);

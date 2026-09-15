@@ -163,13 +163,17 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .qa-answer-text{font-size:14px;color:var(--teal);background:var(--teal-bg);border-radius:8px;padding:8px 11px;margin-bottom:8px;line-height:1.5;}
 .qa-answer .mini-add input{font-size:14px;padding:8px 10px;}
 .status-pill{font-family:'Space Mono',monospace;font-size:11px;padding:5px 10px;border-radius:999px;background:var(--panel-hover);border:1px solid var(--border);color:var(--ink-dim);white-space:nowrap;}
-.status-pill.new{color:var(--ink-dim);}
-.status-pill.inprogress{color:var(--amber);background:var(--amber-bg);border-color:transparent;}
-.status-pill.done{color:var(--teal);background:var(--teal-bg);border-color:transparent;}
+.status-pill.new{color:#cdd3ea;background:rgba(205,211,234,.14);border-color:rgba(205,211,234,.35);font-weight:700;}
+.status-pill.inprogress{color:#241D00;background:var(--amber);border-color:transparent;font-weight:700;}
+.status-pill.done{color:#052e2b;background:var(--teal);border-color:transparent;font-weight:700;}
 .action-add-form{display:flex;flex-direction:column;gap:8px;background:var(--panel);border:1px solid var(--border-soft);border-radius:var(--radius-sm);padding:12px;}
 .action-add-row{display:flex;gap:8px;}
 .action-add-row input[type=date]{flex:1;}
 .overdue{color:var(--red);font-weight:600;}
+.member-badge{display:inline-block;font-family:'Space Mono',monospace;font-size:10.5px;padding:2px 8px;border-radius:999px;border:1px solid;font-weight:700;white-space:nowrap;}
+.status-pill{cursor:pointer;position:relative;}
+.status-pill::after{content:'✎';margin-left:6px;font-size:11px;opacity:.75;}
+.status-pill:hover::after{opacity:1;}
 
 /* ---- fab / modal ---- */
 .fab{position:fixed;right:20px;bottom:calc(24px + var(--sib));width:56px;height:56px;border-radius:50%;background:var(--gold);color:var(--gold-ink);font-size:26px;font-weight:700;box-shadow:0 8px 22px rgba(0,0,0,.4);z-index:40;}
@@ -358,6 +362,19 @@ function todayISO(){ const d=new Date(); return d.getFullYear()+'-'+String(d.get
 function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'), 2400); }
 function norm(s){ return (s||'').toString().toLowerCase(); }
 function emptyMsg(text){ return STATE.dataLoaded ? text : 'Đang tải dữ liệu...'; }
+// Stable, distinct color per member name — same name always yields the same hue
+const MEMBER_COLORS = ['#00A79D','#FDB913','#f85149','#a78bfa','#38bdf8','#fb923c','#34d399','#f472b6','#facc15','#60a5fa'];
+function memberColor(name){
+  if(!name) return 'rgba(237,239,251,.4)';
+  let h = 0;
+  for(let i=0;i<name.length;i++){ h = (h*31 + name.charCodeAt(i)) >>> 0; }
+  return MEMBER_COLORS[h % MEMBER_COLORS.length];
+}
+function memberBadge(name){
+  if(!name) return '';
+  const c = memberColor(name);
+  return `<span class="member-badge" style="color:${c};border-color:${c}55;background:${c}1a">👤 ${esc(name)}</span>`;
+}
 
 /* ---------------- API layer ---------------- */
 async function apiGetAll(pwd){
@@ -647,7 +664,7 @@ function removePresetName(name){
 /* ---------------- app shell ---------------- */
 function enterApp(){
   document.getElementById('app').classList.remove('hidden');
-  document.getElementById('whoLabel').textContent = '👤 ' + STATE.member;
+  document.getElementById('whoLabel').innerHTML = memberBadge(STATE.member);
   renderPersonFilterOptions();
   renderTabs();
   renderAll();
@@ -877,7 +894,7 @@ function problemCard(p){
         <div class="card-meta">
           <span class="badge ${stClass}">${st}</span>
           <span class="badge">${esc(LEVELS[p.level]||p.level||'')}</span>
-          ${p.member?`<span class="badge">👤 ${esc(p.member)}</span>`:''}
+          ${p.member?memberBadge(p.member):''}
           ${(p.tags||[]).map(t=>`<span class="badge">#${esc(t)}</span>`).join('')}
         </div>
       </div>
@@ -1401,7 +1418,7 @@ function renderQuestionsTab(){
     return `<div class="qa-block">
       <div class="list-row" style="margin-bottom:6px">
         <button class="star-btn ${q.star?'on':''}" onclick="toggleStandaloneStar('${q.id}')">★</button>
-        <div class="txt">${esc(q.text)}<span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'} · ${QUESTION_STATUS[q.status]||q.status}${q.member?(' · 👤 '+esc(q.member)):''}</span></div>
+        <div class="txt">${esc(q.text)}<span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'} · ${QUESTION_STATUS[q.status]||q.status}</span>${q.member?' '+memberBadge(q.member):''}</div>
         <div class="acts">
           <button onclick="deleteStandalone('questions','${q.id}')">🗑️</button>
         </div>
@@ -1430,7 +1447,7 @@ function renderActionsTab(){
     return `<div class="list-row">
       <div class="txt">${esc(a.text)}
         ${a.outcome?`<span class="src">🎯 ${esc(a.outcome)}</span>`:''}
-        <span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'}${a.deadline?` · <span class="${overdue?'overdue':''}">📅 ${fmtDate(a.deadline)}${overdue?' (quá hạn)':''}</span>`:''}${a.breakthrough?' · ⚡ Đột phá':''}${a.member?(' · 👤 '+esc(a.member)):''}</span>
+        <span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'}${a.deadline?` · <span class="${overdue?'overdue':''}">📅 ${fmtDate(a.deadline)}${overdue?' (quá hạn)':''}</span>`:''}${a.breakthrough?' · ⚡ Đột phá':''}</span>${a.member?' '+memberBadge(a.member):''}
       </div>
       <div class="acts">
         <button class="status-pill ${a.status}" onclick="cycleStandaloneAStatus('${a.id}')">${ACTION_STATUS[a.status]||a.status}</button>
@@ -1455,7 +1472,7 @@ function renderLearningsTab(){
   return renderListTab('Tất cả bài học', list, l=>{
     const problem = STATE.data.problems.find(p=>p.id===l.problemId);
     return `<div class="list-row">
-      <div class="txt">${esc(l.text)}<span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'} · ${LEARNING_STATUS[l.status]||l.status}${l.member?(' · 👤 '+esc(l.member)):''}</span></div>
+      <div class="txt">${esc(l.text)}<span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'} · ${LEARNING_STATUS[l.status]||l.status}</span>${l.member?' '+memberBadge(l.member):''}</div>
       <div class="acts">
         ${l.status!=='applied'?`<button onclick="markStandaloneApplied('${l.id}')">✓ Đã áp dụng</button>`:''}
         <button onclick="deleteStandalone('learnings','${l.id}')">🗑️</button>
@@ -1505,7 +1522,7 @@ function renderBestPracticesTab(){
   let html = '<div class="section-title">Gợi ý chờ duyệt</div>';
   html += pending.length ? pending.map(s=>`
     <div class="pending-row">
-      <span class="src">${BP_SOURCE[s.source]||s.source}${s.member?(' · 👤 '+esc(s.member)):''}</span>
+      <span class="src">${BP_SOURCE[s.source]||s.source}</span>${s.member?' '+memberBadge(s.member):''}
       <div class="txt">${esc(s.text)}</div>
       <div class="pending-actions">
         <button class="btn btn-teal btn-sm" onclick="confirmSuggestion('${s.id}')">✓ Thêm vào</button>
@@ -1516,7 +1533,7 @@ function renderBestPracticesTab(){
   html += '<div class="section-title">Đã xác nhận</div>';
   html += confirmed.length ? confirmed.slice().sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)).map(b=>`
     <div class="list-row">
-      <div class="txt">${esc(b.text)}<span class="src">${BP_SOURCE[b.source]||b.source}${b.member?(' · 👤 '+esc(b.member)):''}</span></div>
+      <div class="txt">${esc(b.text)}<span class="src">${BP_SOURCE[b.source]||b.source}</span>${b.member?' '+memberBadge(b.member):''}</div>
       <div class="acts"><button onclick="deleteStandalone('bestPractices','${b.id}')">🗑️</button></div>
     </div>`).join('') : '<div class="empty-note">'+emptyMsg('Chưa có thực hành hiệu quả nào được xác nhận.')+'</div>';
 

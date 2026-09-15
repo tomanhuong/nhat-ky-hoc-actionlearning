@@ -91,6 +91,10 @@ header.app-header h1{font-size:26px;font-weight:600;letter-spacing:.01em;}
 header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin-top:4px;}
 .who-row{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:10px;font-size:12px;color:var(--ink-dim);font-family:'Space Mono',monospace;}
 .who-row button{color:var(--teal);text-decoration:underline;}
+.sync-indicator{font-size:11px;transition:color .3s;}
+.sync-indicator.syncing{color:var(--gold);}
+.sync-indicator.synced{color:var(--teal);}
+.sync-indicator.offline{color:var(--amber);}
 
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px;}
 .stat-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:left;transition:border-color .15s, background .15s;}
@@ -255,6 +259,7 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
       <p>Không gian để bạn tự quản lý việc ứng dụng học tập, giải quyết vấn đề thực tế, tạo ra kết quả đột phá.</p>
       <div class="who-row">
         <span id="whoLabel"></span>
+        <span id="syncStatus" class="sync-indicator">⏳</span>
         <button onclick="changeMember()">Đổi người dùng</button>
         <span>·</span>
         <button onclick="exportBackup()">Xuất dữ liệu</button>
@@ -278,7 +283,7 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
   <button class="fab" onclick="onAddClick()">+</button>
 </div>
 
-<div id="modalOverlay" class="modal-overlay hidden">
+<div id="modalOverlay" class="modal-overlay hidden" onclick="if(event.target===this)closeModal()">
   <div class="modal-box" id="modalBox"></div>
 </div>
 
@@ -303,14 +308,17 @@ const PRIORITY_THRESHOLD = 800;
 let STATE = {
   pwd: null,
   member: null,
-  tab: 'problems',
+  tab: localStorage.getItem('lcsh_tab') || 'problems',
   problemSubTab: 'all',
   search: '',
   personFilter: 'all',
   dateFrom: '',
   dateTo: '',
   modalOpen: false,
+  modalDirty: false,
   dataLoaded: false,
+  pageSize: 30,
+  shownCount: 30,
   data: { problems:[], questions:[], actions:[], learnings:[], bestPractices:[], bpSuggestions:[], presetNames:[] }
 };
 
@@ -345,14 +353,17 @@ async function apiPost(payload){
 // background; on failure the insert is rolled back and the user is told.
 function createRecord(type, record){
   STATE.data[type].push(record);
+  saveCache();
   apiPost({type, op:'create', record}).then(r=>{
     if(!r.ok){
       STATE.data[type] = STATE.data[type].filter(x=>x.id!==record.id);
+      saveCache();
       toast('Lưu thất bại — đã hoàn tác, thử lại nhé.');
       renderAll();
     }
   }).catch(()=>{
     STATE.data[type] = STATE.data[type].filter(x=>x.id!==record.id);
+    saveCache();
     toast('Mất kết nối — đã hoàn tác, thử lại nhé.');
     renderAll();
   });
@@ -365,14 +376,17 @@ function updateRecord(type, id, patch){
   if(idx===-1) return;
   const prev = Object.assign({}, arr[idx]);
   arr[idx] = Object.assign({}, arr[idx], patch);
+  saveCache();
   apiPost({type, op:'update', id, patch}).then(r=>{
     if(!r.ok){
       arr[idx] = prev;
+      saveCache();
       toast('Cập nhật thất bại — đã hoàn tác, thử lại nhé.');
       renderAll();
     }
   }).catch(()=>{
     arr[idx] = prev;
+    saveCache();
     toast('Mất kết nối — đã hoàn tác, thử lại nhé.');
     renderAll();
   });
@@ -385,17 +399,48 @@ function deleteRecord(type, id){
   if(idx===-1) return;
   const removed = arr[idx];
   STATE.data[type] = arr.filter(x=>x.id!==id);
+  saveCache();
   apiPost({type, op:'delete', id}).then(r=>{
     if(!r.ok){
       STATE.data[type].push(removed);
+      saveCache();
       toast('Xoá thất bại — đã khôi phục, thử lại nhé.');
       renderAll();
     }
   }).catch(()=>{
     STATE.data[type].push(removed);
+    saveCache();
     toast('Mất kết nối — đã khôi phục, thử lại nhé.');
     renderAll();
   });
+}
+
+/* ---------------- local cache (offline-first) ---------------- */
+const CACHE_KEY = 'lcsh_data_cache';
+
+function saveCache(){
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify(STATE.data)); } catch(e){}
+}
+function loadCache(){
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if(raw){
+      const cached = JSON.parse(raw);
+      STATE.data = Object.assign(STATE.data, cached);
+      STATE.dataLoaded = true;
+      return true;
+    }
+  } catch(e){}
+  return false;
+}
+function setSyncStatus(status){
+  const el = document.getElementById('syncStatus');
+  if(!el) return;
+  el.className = 'sync-indicator';
+  if(status==='syncing'){ el.textContent = '☁️ Đang đồng bộ...'; el.classList.add('syncing'); }
+  else if(status==='synced'){ el.textContent = '✓ Đã đồng bộ'; el.classList.add('synced'); }
+  else if(status==='offline'){ el.textContent = '⚡ Đang dùng bản lưu'; el.classList.add('offline'); }
+  else if(status==='error'){ el.textContent = '❌ Lỗi mạng'; el.classList.add('offline'); }
 }
 
 /* ---------------- boot / auth ---------------- */
@@ -404,7 +449,25 @@ window.addEventListener('DOMContentLoaded', init);
 async function init(){
   const savedPwd = localStorage.getItem('lcsh_pwd');
   if(savedPwd){
-    const ping = await apiPing(savedPwd);
+    // Step 1: load cache instantly — app is usable in <0.1s
+    const hasCache = loadCache();
+    if(hasCache){
+      STATE.pwd = savedPwd;
+      document.getElementById('bootLoading').classList.add('hidden');
+      proceedAfterAuth();
+      // Step 2: verify password + refresh data from Sheet in background
+      apiPing(savedPwd).then(ping=>{
+        if(!ping.ok){
+          localStorage.removeItem('lcsh_pwd');
+          localStorage.removeItem(CACHE_KEY);
+          toast('Mật khẩu đã thay đổi — cần đăng nhập lại.');
+          setTimeout(()=>location.reload(), 1500);
+        }
+      }).catch(()=>{}); // offline — fine, we have cache
+      return;
+    }
+    // No cache — must verify and fetch
+    const ping = await apiPing(savedPwd).catch(()=>({ok:false}));
     if(ping.ok){
       STATE.pwd = savedPwd;
       document.getElementById('bootLoading').classList.add('hidden');
@@ -451,14 +514,24 @@ function proceedAfterAuth(){
   } else {
     showNameScreen();
   }
-  if(pollTimer) clearInterval(pollTimer);
-  pollTimer = setInterval(()=>{ if(!STATE.modalOpen) loadAll(true); }, 20000);
-  loadAll(true); // fire-and-forget background sync
+  // Sync when the user returns to the tab, not on a fixed timer — lighter
+  // on battery and network, and fresher exactly when it matters.
+  if(!STATE._syncBound){
+    STATE._syncBound = true;
+    document.addEventListener('visibilitychange', ()=>{
+      if(document.visibilityState==='visible' && !STATE.modalOpen && Date.now()-(STATE._lastSync||0) > 8000){
+        loadAll(true);
+      }
+    });
+    window.addEventListener('online', ()=>{ if(!STATE.modalOpen) loadAll(true); });
+  }
+  loadAll(true); // initial background sync
 }
 
 function doLogout(){
   if(!confirm('Đăng xuất khỏi thiết bị này?')) return;
   localStorage.removeItem('lcsh_pwd');
+  localStorage.removeItem(CACHE_KEY);
   location.reload();
 }
 
@@ -508,17 +581,18 @@ function addPresetName(){
   if(prev.includes(v)){ toast('Tên đã có trong danh sách.'); return; }
   const names = prev.concat([v]);
   STATE.data.presetNames = names; // instant
+  saveCache();
   input.value = '';
   renderNameManageList(); renderNameGrid();
   toast('Đã thêm tên.');
   apiPost({type:'config', op:'setPresetNames', names}).then(r=>{
     if(!r.ok){
-      STATE.data.presetNames = prev;
+      STATE.data.presetNames = prev; saveCache();
       toast('Lỗi lưu tên — đã hoàn tác: '+(r.error||''));
       renderNameManageList(); renderNameGrid();
     }
   }).catch(()=>{
-    STATE.data.presetNames = prev;
+    STATE.data.presetNames = prev; saveCache();
     toast('Mất kết nối — đã hoàn tác.');
     renderNameManageList(); renderNameGrid();
   });
@@ -528,16 +602,17 @@ function removePresetName(name){
   const prev = (STATE.data.presetNames||[]).slice();
   const names = prev.filter(n=>n!==name);
   STATE.data.presetNames = names; // instant
+  saveCache();
   renderNameManageList(); renderNameGrid();
   toast('Đã xoá.');
   apiPost({type:'config', op:'setPresetNames', names}).then(r=>{
     if(!r.ok){
-      STATE.data.presetNames = prev;
+      STATE.data.presetNames = prev; saveCache();
       toast('Lỗi xoá — đã hoàn tác: '+(r.error||''));
       renderNameManageList(); renderNameGrid();
     }
   }).catch(()=>{
-    STATE.data.presetNames = prev;
+    STATE.data.presetNames = prev; saveCache();
     toast('Mất kết nối — đã hoàn tác.');
     renderNameManageList(); renderNameGrid();
   });
@@ -553,16 +628,26 @@ function enterApp(){
 }
 async function loadAll(silent){
   if(!silent) toast('Đang làm mới...');
-  const r = await apiGetAll(STATE.pwd);
-  if(r.ok){
-    STATE.data = Object.assign(STATE.data, r.data);
-    STATE.dataLoaded = true;
-    renderPersonFilterOptions();
-    renderAll();
-    if(!document.getElementById('nameScreen').classList.contains('hidden')){
-      renderNameGrid();
+  setSyncStatus('syncing');
+  try {
+    const r = await apiGetAll(STATE.pwd);
+    if(r.ok){
+      STATE.data = Object.assign(STATE.data, r.data);
+      STATE.dataLoaded = true;
+      STATE._lastSync = Date.now();
+      saveCache(); // persist to localStorage for instant load next time
+      renderPersonFilterOptions();
+      renderAll();
+      if(!document.getElementById('nameScreen').classList.contains('hidden')){
+        renderNameGrid();
+      }
+      setSyncStatus('synced');
+      if(!silent) toast('Đã cập nhật dữ liệu mới nhất.');
+    } else {
+      setSyncStatus('error');
     }
-    if(!silent) toast('Đã cập nhật dữ liệu mới nhất.');
+  } catch(e){
+    setSyncStatus('offline');
   }
 }
 function renderPersonFilterOptions(){
@@ -623,9 +708,17 @@ function renderTabs(){
     `<button class="tab-btn ${STATE.tab===t.id?'active':''}" onclick="setTab('${t.id}')">${t.label}</button>`
   ).join('');
 }
-function setTab(tab){ STATE.tab = tab; renderTabs(); renderContent(); }
+function setTab(tab){ STATE.tab = tab; STATE.shownCount = STATE.pageSize; localStorage.setItem('lcsh_tab', tab); renderTabs(); renderContent(); }
 
 function renderAll(){ renderStats(); renderContent(); }
+// Re-render stats + current tab but keep the user's scroll position, so
+// toggling a single item's status doesn't jump the page to the top.
+function refreshKeepScroll(){
+  const y = window.scrollY;
+  renderStats();
+  renderContent();
+  window.scrollTo(0, y);
+}
 
 /* ---------------- dashboard stats ---------------- */
 function filteredByPerson(type){ return (STATE.data[type]||[]).filter(matchesPerson); }
@@ -727,12 +820,28 @@ function renderProblemsTab(){
     (priority.length ? priority.map(problemCard).join('') :
       `<div class="empty-note">${emptyMsg('Chưa có vấn đề nào đạt ≥ ' + PRIORITY_THRESHOLD + ' điểm khớp bộ lọc hiện tại.')}</div>`);
 
-  const listBlock = `<div class="section-title">Vấn đề đang giải quyết</div>` +
-    (shown.length ? shown.map(problemCard).join('') : `<div class="empty-note">${emptyMsg('Không có vấn đề nào khớp bộ lọc hiện tại.')}</div>`);
+  // Pagination: only build DOM for the first N cards, "load more" for the rest
+  const pageItems = shown.slice(0, STATE.shownCount);
+  const moreCount = shown.length - pageItems.length;
+  let listBody;
+  if(shown.length){
+    listBody = pageItems.map(problemCard).join('') +
+      (moreCount>0 ? `<button class="btn btn-ghost btn-block" style="margin-top:6px" onclick="loadMore()">Tải thêm ${Math.min(moreCount, STATE.pageSize)} / còn ${moreCount} vấn đề</button>` : '');
+  } else if(!STATE.dataLoaded){
+    listBody = `<div class="empty-note">Đang tải dữ liệu...</div>`;
+  } else {
+    // actionable empty state
+    const filtering = STATE.search || STATE.dateFrom || STATE.dateTo || sub!=='all' || STATE.personFilter!=='all';
+    listBody = filtering
+      ? `<div class="empty-note">Không có vấn đề nào khớp bộ lọc hiện tại.</div>`
+      : `<div class="empty-note">Chưa có vấn đề nào.<br><button class="btn btn-gold btn-sm" style="margin-top:12px" onclick="openProblemModal(null)">+ Tạo vấn đề đầu tiên</button></div>`;
+  }
+  const listBlock = `<div class="section-title">Vấn đề đang giải quyết</div>` + listBody;
 
   return dateFilterRow + chipRow + priBlock + listBlock;
 }
-function setProblemSub(s){ STATE.problemSubTab = s; renderContent(); }
+function loadMore(){ STATE.shownCount += STATE.pageSize; refreshKeepScroll(); }
+function setProblemSub(s){ STATE.problemSubTab = s; STATE.shownCount = STATE.pageSize; renderContent(); }
 
 function problemCard(p){
   const st = PROBLEM_STATUS[p.status]||p.status;
@@ -771,10 +880,20 @@ function cycleProblemStatus(id){
   const next = order[(order.indexOf(p.status)+1)%order.length];
   updateRecord('problems', id, {status: next});
   maybeSuggestFromProblem(STATE.data.problems.find(x=>x.id===id));
-  renderAll();
+  refreshKeepScroll();
 }
 function deleteProblem(id){
-  if(!confirm('Xoá vấn đề này? (câu hỏi/hành động/bài học liên quan sẽ vẫn còn nhưng mất liên kết)')) return;
+  const childQ = STATE.data.questions.filter(q=>q.problemId===id).length;
+  const childA = STATE.data.actions.filter(a=>a.problemId===id).length;
+  const childL = STATE.data.learnings.filter(l=>l.problemId===id).length;
+  const total = childQ + childA + childL;
+  let msg = 'Xoá vấn đề này?';
+  if(total>0) msg += `\n\nKèm theo ${childQ} câu hỏi, ${childA} hành động, ${childL} bài học liên quan cũng sẽ bị xoá.`;
+  if(!confirm(msg)) return;
+  // remove children first so nothing is orphaned
+  STATE.data.questions.filter(q=>q.problemId===id).forEach(q=>deleteRecord('questions', q.id));
+  STATE.data.actions.filter(a=>a.problemId===id).forEach(a=>deleteRecord('actions', a.id));
+  STATE.data.learnings.filter(l=>l.problemId===id).forEach(l=>deleteRecord('learnings', l.id));
   deleteRecord('problems', id);
   renderAll();
 }
@@ -807,11 +926,25 @@ function openProblemModal(id){
 }
 function openQuickAddModal(type){
   MODAL = { mode:'quick', type, problem:null, tags:[] };
+  STATE.modalDirty = false;
   renderModal();
   showModal();
 }
-function showModal(){ STATE.modalOpen=true; document.getElementById('modalOverlay').classList.remove('hidden'); }
-function closeModal(){ STATE.modalOpen=false; document.getElementById('modalOverlay').classList.add('hidden'); renderAll(); }
+function showModal(){
+  STATE.modalOpen=true; STATE.modalDirty=false;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  const box = document.getElementById('modalBox');
+  box.oninput = markDirty; // any typing/sliding marks unsaved changes
+}
+function closeModal(force){
+  if(!force && STATE.modalDirty){
+    if(!confirm('Bạn có thay đổi chưa lưu. Đóng và bỏ các thay đổi đó?')) return;
+  }
+  STATE.modalOpen=false; STATE.modalDirty=false;
+  document.getElementById('modalOverlay').classList.add('hidden');
+  renderAll();
+}
+function markDirty(){ STATE.modalDirty = true; }
 
 function currentScore(){
   const p = MODAL.problem;
@@ -1033,6 +1166,7 @@ function saveProblemTop(){
   if(MODAL.mode==='create'){
     createRecord('problems', record); // instant — appears right away, syncs in the background
     toast('Đã lưu vấn đề.');
+    STATE.modalDirty = false;
     MODAL.mode='edit';
     MODAL.problem = Object.assign({}, record);
     renderModal();
@@ -1041,6 +1175,7 @@ function saveProblemTop(){
     const patch = Object.assign({}, record); delete patch.id;
     updateRecord('problems', p.id, patch); // instant
     toast('Đã cập nhật.');
+    STATE.modalDirty = false;
     MODAL.problem = Object.assign({}, MODAL.problem, patch);
     maybeSuggestFromProblem(Object.assign({id:p.id}, MODAL.problem));
     renderModal();
@@ -1163,15 +1298,29 @@ function saveQuickAdd(){
   }
   createRecord(type, record);
   toast('Đã thêm.');
-  closeModal();
+  STATE.modalDirty = false;
+  closeModal(true);
+}
+
+/* ---------------- shared list rendering (pagination + empty state) ---------------- */
+function renderListTab(title, list, rowFn, emptyText){
+  if(!list.length){
+    const body = !STATE.dataLoaded ? 'Đang tải dữ liệu...' : emptyText;
+    return `<div class="section-title">${title}</div><div class="empty-note">${body}</div>`;
+  }
+  const page = list.slice(0, STATE.shownCount);
+  const moreCount = list.length - page.length;
+  const moreBtn = moreCount>0
+    ? `<button class="btn btn-ghost btn-block" style="margin-top:6px" onclick="loadMore()">Tải thêm ${Math.min(moreCount, STATE.pageSize)} / còn ${moreCount}</button>`
+    : '';
+  return `<div class="section-title">${title}</div>` + page.map(rowFn).join('') + moreBtn;
 }
 
 /* ---------------- QUESTIONS TAB ---------------- */
 function renderQuestionsTab(){
   let list = filteredByPerson('questions').filter(q=>matchesSearch(q.text));
   list = list.slice().sort((a,b)=> (b.star?1:0)-(a.star?1:0) || new Date(b.createdAt||0)-new Date(a.createdAt||0));
-  if(!list.length) return '<div class="section-title">Tất cả câu hỏi</div><div class="empty-note">'+emptyMsg('Chưa có câu hỏi nào.')+'</div>';
-  return '<div class="section-title">Tất cả câu hỏi</div>' + list.map(q=>{
+  return renderListTab('Tất cả câu hỏi', list, q=>{
     const problem = STATE.data.problems.find(p=>p.id===q.problemId);
     return `<div class="list-row">
       <button class="star-btn ${q.star?'on':''}" onclick="toggleStandaloneStar('${q.id}')">★</button>
@@ -1181,18 +1330,17 @@ function renderQuestionsTab(){
         <button onclick="deleteStandalone('questions','${q.id}')">🗑️</button>
       </div>
     </div>`;
-  }).join('');
+  }, 'Chưa có câu hỏi nào.');
 }
-async function toggleStandaloneStar(id){ const q=STATE.data.questions.find(x=>x.id===id); await updateRecord('questions',id,{star:!q.star}); renderContent(); }
-async function cycleStandaloneQStatus(id){ const q=STATE.data.questions.find(x=>x.id===id); await updateRecord('questions',id,{status:q.status==='clarifying'?'answered':'clarifying'}); renderContent(); }
-async function deleteStandalone(type,id){ if(!confirm('Xoá mục này?'))return; await deleteRecord(type,id); renderAll(); }
+function toggleStandaloneStar(id){ const q=STATE.data.questions.find(x=>x.id===id); updateRecord('questions',id,{star:!q.star}); refreshKeepScroll(); }
+function cycleStandaloneQStatus(id){ const q=STATE.data.questions.find(x=>x.id===id); updateRecord('questions',id,{status:q.status==='clarifying'?'answered':'clarifying'}); refreshKeepScroll(); }
+function deleteStandalone(type,id){ if(!confirm('Xoá mục này?'))return; deleteRecord(type,id); refreshKeepScroll(); }
 
 /* ---------------- ACTIONS TAB ---------------- */
 function renderActionsTab(){
   let list = filteredByPerson('actions').filter(a=>matchesSearch(a.text));
   list = list.slice().sort((a,b)=> new Date(b.createdAt||0)-new Date(a.createdAt||0));
-  if(!list.length) return '<div class="section-title">Tất cả hành động</div><div class="empty-note">'+emptyMsg('Chưa có hành động nào.')+'</div>';
-  return '<div class="section-title">Tất cả hành động</div>' + list.map(a=>{
+  return renderListTab('Tất cả hành động', list, a=>{
     const problem = STATE.data.problems.find(p=>p.id===a.problemId);
     return `<div class="list-row">
       <div class="txt">${esc(a.text)}<span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'} · ${ACTION_STATUS[a.status]||a.status}${a.breakthrough?' · ⚡ Đột phá':''}${a.member?(' · 👤 '+esc(a.member)):''}</span></div>
@@ -1201,15 +1349,15 @@ function renderActionsTab(){
         <button onclick="deleteStandalone('actions','${a.id}')">🗑️</button>
       </div>
     </div>`;
-  }).join('');
+  }, 'Chưa có hành động nào.');
 }
-async function cycleStandaloneAStatus(id){
+function cycleStandaloneAStatus(id){
   const a = STATE.data.actions.find(x=>x.id===id);
   const order=['new','inprogress','done'];
   const next = order[(order.indexOf(a.status)+1)%order.length];
-  await updateRecord('actions', id, {status:next});
+  updateRecord('actions', id, {status:next});
   maybeSuggestFromAction(STATE.data.actions.find(x=>x.id===id));
-  renderContent();
+  refreshKeepScroll();
 }
 
 /* ---------------- LEARNINGS TAB ---------------- */
@@ -1228,19 +1376,23 @@ function renderLearningsTab(){
     </div>`;
   }).join('');
 }
-async function markStandaloneApplied(id){
-  await updateRecord('learnings', id, {status:'applied'});
+function markStandaloneApplied(id){
+  updateRecord('learnings', id, {status:'applied'});
   maybeSuggestFromLearning(STATE.data.learnings.find(l=>l.id===id));
-  renderContent();
+  refreshKeepScroll();
 }
 
 /* ---------------- BEST PRACTICES TAB + suggestion engine ---------------- */
 function bpKey(source, refId){ return source+':'+refId; }
+const _bpPending = new Set(); // guards against double-create within one session
 
-async function ensureSuggestion(source, refId, text, member){
+function ensureSuggestion(source, refId, text, member){
+  const key = bpKey(source, refId);
+  if(_bpPending.has(key)) return;
   const already = STATE.data.bpSuggestions.some(s=>s.source===source && s.refId===refId)
                 || STATE.data.bestPractices.some(b=>b.source===source && b.refId===refId);
   if(already) return;
+  _bpPending.add(key);
   createRecord('bpSuggestions', {id:uid(), source, refId, text, member: member||STATE.member, createdAt:new Date().toISOString()});
   if(STATE.tab==='bestPractices') renderContent();
 }
@@ -1289,11 +1441,11 @@ function confirmSuggestion(id){
   createRecord('bestPractices', {id:uid(), source:s.source, refId:s.refId, text:s.text, member:s.member, createdAt:new Date().toISOString()});
   deleteRecord('bpSuggestions', id);
   toast('Đã thêm vào Best Practices.');
-  renderAll();
+  refreshKeepScroll();
 }
 function dismissSuggestion(id){
   deleteRecord('bpSuggestions', id);
-  renderContent();
+  refreshKeepScroll();
 }
 
 /* ---------------- export backup ---------------- */

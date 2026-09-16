@@ -781,7 +781,7 @@ function renderTabs(){
     `<button class="tab-btn ${STATE.tab===t.id?'active':''}" onclick="setTab('${t.id}')">${t.label}</button>`
   ).join('');
 }
-function setTab(tab){ STATE.tab = tab; STATE.shownCount = STATE.pageSize; localStorage.setItem('lcsh_tab', tab); renderTabs(); renderContent(); }
+function setTab(tab){ STATE.tab = tab; STATE.shownCount = STATE.pageSize; localStorage.setItem('lcsh_tab', tab); renderTabs(); renderContent(); const c=document.getElementById('content'); if(c) c.scrollIntoView({behavior:'smooth', block:'start'}); }
 
 function renderAll(){ renderStats(); renderContent(); }
 // Re-render stats + current tab but keep the user's scroll position, so

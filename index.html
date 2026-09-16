@@ -171,6 +171,8 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .action-add-row input[type=date]{flex:1;}
 .overdue{color:var(--red);font-weight:600;}
 .row-done{opacity:.62;}
+.brain-dump-guide{font-size:13px;line-height:1.55;color:var(--ink-dim);background:var(--teal-bg);border:1px solid rgba(0,167,157,.3);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;}
+.brain-dump-guide strong{color:var(--teal);}
 .row-done .txt{text-decoration:line-through;text-decoration-color:rgba(237,239,251,.3);}
 .bp-intro{background:rgba(255,212,0,.06);border:1px solid rgba(255,212,0,.28);border-radius:var(--radius);padding:16px 18px;margin-bottom:18px;font-size:14px;line-height:1.6;}
 .bp-intro-title{font-family:'Space Mono',monospace;font-size:13px;color:var(--gold);font-weight:700;margin-bottom:6px;}
@@ -370,6 +372,24 @@ let pollTimer = null;
 function esc(s){ if(s===undefined||s===null) return ''; return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function uid(){ return (crypto.randomUUID ? crypto.randomUUID() : 'id-'+Date.now()+'-'+Math.random().toString(16).slice(2)); }
 function fmtDate(d){ if(!d) return ''; const dt = new Date(d); if(isNaN(dt)) return d; return String(dt.getDate()).padStart(2,'0')+'/'+String(dt.getMonth()+1).padStart(2,'0')+'/'+dt.getFullYear(); }
+// Format a deadline that may be a plain date (YYYY-MM-DD) or a datetime (YYYY-MM-DDTHH:MM)
+function fmtDeadline(d){
+  if(!d) return '';
+  const s = String(d);
+  const hasTime = s.includes('T');
+  const dt = new Date(s);
+  if(isNaN(dt)) return s;
+  const dateStr = String(dt.getDate()).padStart(2,'0')+'/'+String(dt.getMonth()+1).padStart(2,'0')+'/'+dt.getFullYear();
+  if(!hasTime) return dateStr;
+  return dateStr+' '+String(dt.getHours()).padStart(2,'0')+':'+String(dt.getMinutes()).padStart(2,'0');
+}
+// True if the deadline (date or datetime) is already in the past
+function isOverdue(d){
+  if(!d) return false;
+  const dt = new Date(String(d).includes('T') ? d : d+'T23:59:59');
+  if(isNaN(dt)) return false;
+  return dt.getTime() < Date.now();
+}
 function todayISO(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'), 2400); }
 function norm(s){ return (s||'').toString().toLowerCase(); }
@@ -984,7 +1004,7 @@ function openProblemModal(id){
   MODAL = {
     mode: existing ? 'edit' : 'create',
     problem: existing ? Object.assign({}, existing) : {
-      id:null, title:'', desc:'', tags:[], level:'personal',
+      id:null, title:'', desc:'- \n- \n- \n- \n- \n- \n- \n- \n- \n- ', tags:[], level:'personal',
       important:5, urgent:5, complex:5, score:125,
       plannedDate:'', actualDate:'', status:'new',
       result:'', effectiveness:1, member: STATE.member
@@ -1058,8 +1078,10 @@ function renderModal(){
       <input id="f_title" type="text" placeholder="Mô tả vấn đề bạn đang đối mặt..." value="${esc(p.title)}" oninput="markDirty()"/>
     </div>
     <div class="field">
-      <label class="field-label">Nội dung chi tiết hơn về Vấn đề <span class="req">*</span></label>
-      <textarea id="f_desc" placeholder="Mô tả chi tiết vấn đề, bối cảnh, ảnh hưởng..." oninput="markDirty()">${esc(p.desc)}</textarea>
+      <label class="field-label">Đổ não ra về vấn đề <span class="req">*</span></label>
+      <div class="brain-dump-guide">⏱️ Dành 5 phút — viết ra 10 gạch đầu dòng, đổ hết mọi suy nghĩ liên quan đến vấn đề ra giấy (bối cảnh, cảm xúc, ảnh hưởng, người liên quan...). Sau đó nhìn lại và xác định các <strong>từ khoá</strong> quan trọng nhất.</div>
+      <textarea id="f_desc" rows="12" placeholder="- \n- \n- \n- \n- \n- \n- \n- \n- \n- " oninput="markDirty()">${esc(p.desc)}</textarea>
+      <div class="hint">💡 Cứ viết thoải mái, chưa cần gọn. 10 dòng để ép bản thân nghĩ sâu hơn thay vì dừng ở ý đầu tiên.</div>
     </div>
     <div class="field">
       <label class="field-label">Thuộc khía cạnh</label>
@@ -1165,7 +1187,7 @@ function renderProblemDetailSections(p, questions, actions, learnings){
       <input id="newActionText" type="text" placeholder="Hành động cần làm..." onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('newActionOutcome').focus();}"/>
       <input id="newActionOutcome" type="text" placeholder="Kết quả đầu ra mong đợi..."/>
       <div class="action-add-row">
-        <input id="newActionDeadline" type="date" title="Thời hạn hoàn thành"/>
+        <input id="newActionDeadline" type="datetime-local" title="Thời hạn hoàn thành (ngày và giờ)"/>
         <button class="btn btn-teal btn-sm" onclick="addProblemAction()">+ Thêm dòng</button>
       </div>
     </div>
@@ -1217,11 +1239,11 @@ function renderModalActions(list){
     || new Date(b.createdAt||0) - new Date(a.createdAt||0)
   );
   return sorted.map(a=>{
-    const overdue = a.deadline && a.status!=='done' && a.deadline < todayISO();
+    const overdue = a.status!=='done' && isOverdue(a.deadline);
     return `<div class="list-row ${a.status==='done'?'row-done':''}">
       <div class="txt">${esc(a.text)}
         ${a.outcome?`<span class="src">🎯 ${esc(a.outcome)}</span>`:''}
-        <span class="src">${a.deadline?`<span class="${overdue?'overdue':''}">📅 Hạn: ${fmtDate(a.deadline)}${overdue?' (quá hạn)':''}</span>`:''}${a.breakthrough?' · ⚡ Đột phá':''}</span>
+        <span class="src">${a.deadline?`<span class="${overdue?'overdue':''}">📅 Hạn: ${fmtDeadline(a.deadline)}${overdue?' (quá hạn)':''}</span>`:''}${a.breakthrough?' · ⚡ Đột phá':''}</span>
       </div>
       <div class="acts">
         <button class="status-pill ${a.status}" onclick="cycleActionStatus('${a.id}')">${ACTION_STATUS[a.status]||a.status}</button>
@@ -1248,7 +1270,10 @@ function saveProblemTop(){
   const title = document.getElementById('f_title').value.trim();
   const desc = document.getElementById('f_desc').value.trim();
   const planned = document.getElementById('f_planned').value;
-  if(!title || !desc){ toast('Vui lòng điền Phát biểu vấn đề và Nội dung chi tiết.'); return; }
+  // Strip bullet markers/whitespace to check there's actual content, not just empty "- " lines
+  const descContent = desc.replace(/[-•*\s]/g, '');
+  if(!title){ toast('Vui lòng điền Phát biểu vấn đề.'); return; }
+  if(!descContent){ toast('Vui lòng đổ não ra ít nhất vài ý về vấn đề.'); return; }
   if(!planned){ toast('Vui lòng chọn Dự kiến hoàn thành.'); return; }
 
   const record = {
@@ -1403,7 +1428,7 @@ function renderQuickAddModal(){
       </div>
       <div class="field">
         <label class="field-label">Thời hạn hoàn thành</label>
-        <input type="date" id="qa_deadline"/>
+        <input type="datetime-local" id="qa_deadline"/>
       </div>
       <div class="field"><label class="field-label"><input type="checkbox" id="qa_breakthrough" style="width:auto;display:inline-block;margin-right:8px;"/>Đây là hành động đột phá</label></div>
     ` : ''}
@@ -1504,11 +1529,11 @@ function renderActionsTab(){
 
   const rowFn = a=>{
     const problem = STATE.data.problems.find(p=>p.id===a.problemId);
-    const overdue = a.deadline && a.status!=='done' && a.deadline < todayISO();
+    const overdue = a.status!=='done' && isOverdue(a.deadline);
     return `<div class="list-row ${a.status==='done'?'row-done':''}">
       <div class="txt">${esc(a.text)}
         ${a.outcome?`<span class="src">🎯 ${esc(a.outcome)}</span>`:''}
-        <span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'}${a.deadline?` · <span class="${overdue?'overdue':''}">📅 ${fmtDate(a.deadline)}${overdue?' (quá hạn)':''}</span>`:''}${a.breakthrough?' · ⚡ Đột phá':''}</span>${a.member?' '+memberBadge(a.member):''}
+        <span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'}${a.deadline?` · <span class="${overdue?'overdue':''}">📅 ${fmtDeadline(a.deadline)}${overdue?' (quá hạn)':''}</span>`:''}${a.breakthrough?' · ⚡ Đột phá':''}</span>${a.member?' '+memberBadge(a.member):''}
       </div>
       <div class="acts">
         <button class="status-pill ${a.status}" onclick="cycleStandaloneAStatus('${a.id}')">${ACTION_STATUS[a.status]||a.status}</button>

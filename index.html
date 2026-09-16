@@ -840,11 +840,22 @@ function renderStats(){
 /* ---------------- content router ---------------- */
 function renderContent(){
   const el = document.getElementById('content');
-  if(STATE.tab==='problems') el.innerHTML = renderProblemsTab();
-  else if(STATE.tab==='questions') el.innerHTML = renderQuestionsTab();
-  else if(STATE.tab==='actions') el.innerHTML = renderActionsTab();
-  else if(STATE.tab==='learnings') el.innerHTML = renderLearningsTab();
-  else if(STATE.tab==='bestPractices') el.innerHTML = renderBestPracticesTab();
+  try {
+    if(STATE.tab==='problems') el.innerHTML = renderProblemsTab();
+    else if(STATE.tab==='questions') el.innerHTML = renderQuestionsTab();
+    else if(STATE.tab==='actions') el.innerHTML = renderActionsTab();
+    else if(STATE.tab==='learnings') el.innerHTML = renderLearningsTab();
+    else if(STATE.tab==='bestPractices') el.innerHTML = renderBestPracticesTab();
+  } catch(err){
+    console.error('render error:', err);
+    el.innerHTML = '<div class="empty-note">Có lỗi khi hiển thị. Thử bấm ⟳ làm mới hoặc tải lại trang.</div>';
+  }
+}
+// Normalize a tags value that may arrive as a comma-separated string from the Sheet
+function tagsArray(t){
+  if(Array.isArray(t)) return t;
+  if(t===undefined || t===null || t==='') return [];
+  return String(t).split(',').map(s=>s.trim()).filter(Boolean);
 }
 
 /* ---------------- PROBLEMS ---------------- */
@@ -853,7 +864,7 @@ function renderProblemsTab(){
 
   // Base set: person + search + date range combined
   let base = filteredByPerson('problems')
-    .filter(p=>matchesSearch(p.title+' '+p.desc+' '+(p.tags||[]).join(' ')))
+    .filter(p=>matchesSearch(p.title+' '+p.desc+' '+tagsArray(p.tags).join(' ')))
     .filter(p=>matchesDateRange(p.createdAt));
 
   const counts = {
@@ -915,7 +926,7 @@ function problemCard(p){
           <span class="badge ${stClass}">${st}</span>
           <span class="badge">${esc(LEVELS[p.level]||p.level||'')}</span>
           ${p.member?memberBadge(p.member):''}
-          ${(p.tags||[]).map(t=>`<span class="badge">#${esc(t)}</span>`).join('')}
+          ${tagsArray(p.tags).map(t=>`<span class="badge">#${esc(t)}</span>`).join('')}
         </div>
       </div>
       <div class="card-score">
@@ -978,7 +989,7 @@ function openProblemModal(id){
       plannedDate:'', actualDate:'', status:'new',
       result:'', effectiveness:1, member: STATE.member
     },
-    tags: existing ? (existing.tags||[]).slice() : []
+    tags: existing ? tagsArray(existing.tags) : []
   };
   renderModal();
   showModal();

@@ -170,6 +170,8 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .action-add-row{display:flex;gap:8px;}
 .action-add-row input[type=date]{flex:1;}
 .overdue{color:var(--red);font-weight:600;}
+.row-done{opacity:.62;}
+.row-done .txt{text-decoration:line-through;text-decoration-color:rgba(237,239,251,.3);}
 .bp-intro{background:rgba(255,212,0,.06);border:1px solid rgba(255,212,0,.28);border-radius:var(--radius);padding:16px 18px;margin-bottom:18px;font-size:14px;line-height:1.6;}
 .bp-intro-title{font-family:'Space Mono',monospace;font-size:13px;color:var(--gold);font-weight:700;margin-bottom:6px;}
 .bp-intro p{color:var(--ink-dim);margin-bottom:2px;}
@@ -347,6 +349,7 @@ let STATE = {
   member: null,
   tab: localStorage.getItem('lcsh_tab') || 'problems',
   problemSubTab: 'all',
+  actionSubTab: 'all',
   search: '',
   personFilter: 'all',
   dateFrom: '',
@@ -1195,9 +1198,14 @@ function renderModalQuestions(list){
 }
 function renderModalActions(list){
   if(!list.length) return '<div class="hint">Chưa có hành động nào. Nhấn "Thêm dòng" để bắt đầu.</div>';
-  return list.map(a=>{
+  const rank = {new:0, inprogress:1, done:2};
+  const sorted = list.slice().sort((a,b)=>
+    (rank[a.status]??9) - (rank[b.status]??9)
+    || new Date(b.createdAt||0) - new Date(a.createdAt||0)
+  );
+  return sorted.map(a=>{
     const overdue = a.deadline && a.status!=='done' && a.deadline < todayISO();
-    return `<div class="list-row">
+    return `<div class="list-row ${a.status==='done'?'row-done':''}">
       <div class="txt">${esc(a.text)}
         ${a.outcome?`<span class="src">🎯 ${esc(a.outcome)}</span>`:''}
         <span class="src">${a.deadline?`<span class="${overdue?'overdue':''}">📅 Hạn: ${fmtDate(a.deadline)}${overdue?' (quá hạn)':''}</span>`:''}${a.breakthrough?' · ⚡ Đột phá':''}</span>
@@ -1456,12 +1464,35 @@ function deleteStandalone(type,id){ if(!confirm('Xoá mục này?'))return; dele
 
 /* ---------------- ACTIONS TAB ---------------- */
 function renderActionsTab(){
-  let list = filteredByPerson('actions').filter(a=>matchesSearch(a.text)).filter(a=>matchesDateRange(a.createdAt));
-  list = list.slice().sort((a,b)=> new Date(b.createdAt||0)-new Date(a.createdAt||0));
-  return renderListTab('Tất cả hành động', list, a=>{
+  const sub = STATE.actionSubTab;
+  let base = filteredByPerson('actions').filter(a=>matchesSearch(a.text)).filter(a=>matchesDateRange(a.createdAt));
+
+  const counts = {
+    all: base.length,
+    new: base.filter(a=>a.status==='new').length,
+    inprogress: base.filter(a=>a.status==='inprogress').length,
+    done: base.filter(a=>a.status==='done').length
+  };
+
+  let list = sub==='all' ? base : base.filter(a=>a.status===sub);
+  // Priority order: Mới tạo → Đang tiến hành → Hoàn thành; within each, newest first
+  const rank = {new:0, inprogress:1, done:2};
+  list = list.slice().sort((a,b)=>
+    (rank[a.status]??9) - (rank[b.status]??9)
+    || new Date(b.createdAt||0) - new Date(a.createdAt||0)
+  );
+
+  const chipRow = `<div class="chip-row">
+    <button class="chip ${sub==='all'?'active':''}" onclick="setActionSub('all')">Tất cả ${counts.all}</button>
+    <button class="chip ${sub==='new'?'active':''}" onclick="setActionSub('new')">Mới tạo ${counts.new}</button>
+    <button class="chip ${sub==='inprogress'?'active':''}" onclick="setActionSub('inprogress')">Đang tiến hành ${counts.inprogress}</button>
+    <button class="chip ${sub==='done'?'active':''}" onclick="setActionSub('done')">Hoàn thành ${counts.done}</button>
+  </div>`;
+
+  const rowFn = a=>{
     const problem = STATE.data.problems.find(p=>p.id===a.problemId);
     const overdue = a.deadline && a.status!=='done' && a.deadline < todayISO();
-    return `<div class="list-row">
+    return `<div class="list-row ${a.status==='done'?'row-done':''}">
       <div class="txt">${esc(a.text)}
         ${a.outcome?`<span class="src">🎯 ${esc(a.outcome)}</span>`:''}
         <span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'}${a.deadline?` · <span class="${overdue?'overdue':''}">📅 ${fmtDate(a.deadline)}${overdue?' (quá hạn)':''}</span>`:''}${a.breakthrough?' · ⚡ Đột phá':''}</span>${a.member?' '+memberBadge(a.member):''}
@@ -1471,8 +1502,15 @@ function renderActionsTab(){
         <button onclick="deleteStandalone('actions','${a.id}')">🗑️</button>
       </div>
     </div>`;
-  }, 'Chưa có hành động nào.');
+  };
+
+  const body = list.length
+    ? renderListTab('Danh sách hành động', list, rowFn, '').replace('<div class="section-title">Danh sách hành động</div>','')
+    : `<div class="empty-note">${emptyMsg('Không có hành động nào khớp bộ lọc hiện tại.')}</div>`;
+
+  return '<div class="section-title">Tất cả hành động</div>' + chipRow + body;
 }
+function setActionSub(s){ STATE.actionSubTab = s; STATE.shownCount = STATE.pageSize; renderContent(); }
 function cycleStandaloneAStatus(id){
   const a = STATE.data.actions.find(x=>x.id===id);
   const order=['new','inprogress','done'];

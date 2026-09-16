@@ -289,6 +289,8 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
         <span id="syncStatus" class="sync-indicator">⏳</span>
         <button onclick="changeMember()">Đổi người dùng</button>
         <span>·</span>
+        <button onclick="repairData()">Sửa dữ liệu tên</button>
+        <span>·</span>
         <button onclick="exportBackup()">Xuất dữ liệu</button>
         <span>·</span>
         <button onclick="doLogout()">Đăng xuất</button>
@@ -1628,6 +1630,24 @@ function exportBackup(){
   document.body.appendChild(a); a.click(); a.remove();
   URL.revokeObjectURL(url);
   toast('Đã tải file sao lưu.');
+}
+async function repairData(){
+  if(!confirm('Quét và sửa các mục có tên người bị lỗi (do lệch cột cũ)? Mục thuộc vấn đề sẽ nhận lại tên chủ vấn đề; mục lẻ không xác định được sẽ gán cho bạn ('+STATE.member+').')) return;
+  toast('Đang sửa dữ liệu...');
+  try {
+    const url = API_URL + '?action=repair&pwd=' + encodeURIComponent(STATE.pwd) + '&member=' + encodeURIComponent(STATE.member);
+    const res = await fetch(url);
+    const r = await res.json();
+    if(r.ok){
+      toast('Đã sửa '+(r.fixed||0)+' mục. Đang tải lại...');
+      await loadAll(true);
+      toast('Xong! Đã cập nhật '+(r.fixed||0)+' mục.');
+    } else {
+      toast('Lỗi: '+(r.error||'không rõ'));
+    }
+  } catch(e){
+    toast('Mất kết nối, thử lại sau.');
+  }
 }
 </script>
 </body>

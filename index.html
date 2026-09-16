@@ -173,6 +173,7 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .row-done{opacity:.62;}
 .brain-dump-guide{font-size:13px;line-height:1.55;color:var(--ink-dim);background:var(--teal-bg);border:1px solid rgba(0,167,157,.3);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;}
 .brain-dump-guide strong{color:var(--teal);}
+.card-keywords{font-size:12.5px;color:var(--gold);margin-top:6px;font-style:italic;}
 .row-done .txt{text-decoration:line-through;text-decoration-color:rgba(237,239,251,.3);}
 .bp-intro{background:rgba(255,212,0,.06);border:1px solid rgba(255,212,0,.28);border-radius:var(--radius);padding:16px 18px;margin-bottom:18px;font-size:14px;line-height:1.6;}
 .bp-intro-title{font-family:'Space Mono',monospace;font-size:13px;color:var(--gold);font-weight:700;margin-bottom:6px;}
@@ -875,7 +876,10 @@ function renderContent(){
 function tagsArray(t){
   if(Array.isArray(t)) return t;
   if(t===undefined || t===null || t==='') return [];
-  return String(t).split(',').map(s=>s.trim()).filter(Boolean);
+  const s = String(t);
+  // Discard corrupted values previously written as a Java object reference
+  if(s.indexOf('[Ljava')!==-1 || s.indexOf('@')===0) return [];
+  return s.split(',').map(x=>x.trim()).filter(Boolean).filter(x=>x.indexOf('[Ljava')===-1);
 }
 
 /* ---------------- PROBLEMS ---------------- */
@@ -948,6 +952,7 @@ function problemCard(p){
           ${p.member?memberBadge(p.member):''}
           ${tagsArray(p.tags).map(t=>`<span class="badge">#${esc(t)}</span>`).join('')}
         </div>
+        ${p.keywords?`<div class="card-keywords">🔑 ${esc(p.keywords)}</div>`:''}
       </div>
       <div class="card-score">
         <div class="n">${p.score||0}</div>
@@ -1004,7 +1009,7 @@ function openProblemModal(id){
   MODAL = {
     mode: existing ? 'edit' : 'create',
     problem: existing ? Object.assign({}, existing) : {
-      id:null, title:'', desc:'- \n- \n- \n- \n- \n- \n- \n- \n- \n- ', tags:[], level:'personal',
+      id:null, title:'', desc:'1. ', keywords:'', tags:[], level:'personal',
       important:5, urgent:5, complex:5, score:125,
       plannedDate:'', actualDate:'', status:'new',
       result:'', effectiveness:1, member: STATE.member
@@ -1079,9 +1084,13 @@ function renderModal(){
     </div>
     <div class="field">
       <label class="field-label">Đổ não ra về vấn đề <span class="req">*</span></label>
-      <div class="brain-dump-guide">⏱️ Dành 5 phút — viết ra 10 gạch đầu dòng, đổ hết mọi suy nghĩ liên quan đến vấn đề ra giấy (bối cảnh, cảm xúc, ảnh hưởng, người liên quan...). Sau đó nhìn lại và xác định các <strong>từ khoá</strong> quan trọng nhất.</div>
-      <textarea id="f_desc" rows="12" placeholder="- \n- \n- \n- \n- \n- \n- \n- \n- \n- " oninput="markDirty()">${esc(p.desc)}</textarea>
-      <div class="hint">💡 Cứ viết thoải mái, chưa cần gọn. 10 dòng để ép bản thân nghĩ sâu hơn thay vì dừng ở ý đầu tiên.</div>
+      <div class="brain-dump-guide">⏱️ Dành 5 phút — mỗi lần nhấn Enter sẽ tự thêm số dòng (mục tiêu đủ <strong>10 dòng</strong>). Đổ hết mọi suy nghĩ liên quan: bối cảnh, cảm xúc, ảnh hưởng, người liên quan...</div>
+      <textarea id="f_desc" rows="12" placeholder="1. " oninput="markDirty();updateBrainDumpCount(this.value)" onkeydown="brainDumpEnter(event)">${esc(p.desc)}</textarea>
+      <div class="hint" id="brainDumpCount">💡 Cứ viết thoải mái, chưa cần gọn. Mỗi Enter thêm 1 dòng có số.</div>
+    </div>
+    <div class="field">
+      <label class="field-label">Từ khoá quan trọng cần đào sâu</label>
+      <textarea id="f_keywords" rows="2" placeholder="Sau khi đổ não, ghi ra vài từ khoá cốt lõi cần đào sâu (cách nhau bằng dấu phẩy)..." oninput="markDirty()">${esc(p.keywords||'')}</textarea>
     </div>
     <div class="field">
       <label class="field-label">Thuộc khía cạnh</label>
@@ -1149,6 +1158,31 @@ function addModalTag(){
   document.getElementById('tagList').innerHTML = renderTagChips();
 }
 function removeModalTag(i){ MODAL.tags.splice(i,1); document.getElementById('tagList').innerHTML = renderTagChips(); }
+function brainDumpEnter(e){
+  if(e.key!=='Enter') return;
+  e.preventDefault();
+  const ta = e.target;
+  const val = ta.value;
+  const pos = ta.selectionStart;
+  const before = val.slice(0, pos);
+  const after = val.slice(pos);
+  // Count how many numbered lines already exist to pick the next number
+  const existingNums = (val.match(/^\s*\d+\./gm)||[]).length;
+  const nextNum = existingNums + 1;
+  const insert = '\n' + nextNum + '. ';
+  ta.value = before + insert + after;
+  const newPos = pos + insert.length;
+  ta.selectionStart = ta.selectionEnd = newPos;
+  markDirty();
+  updateBrainDumpCount(ta.value);
+}
+function updateBrainDumpCount(text){
+  const el = document.getElementById('brainDumpCount');
+  if(!el) return;
+  const lines = (text.match(/^\s*\d+\.\s*\S/gm)||[]).length; // numbered lines with real content
+  if(lines>=10) el.innerHTML = '✅ Đã đủ '+lines+' dòng — quá tốt!';
+  else el.innerHTML = '💡 Đã có '+lines+'/10 dòng có nội dung. Nhấn Enter để thêm dòng mới.';
+}
 function setModalLevel(k){
   MODAL.problem.level = k;
   markDirty();
@@ -1269,15 +1303,16 @@ function saveProblemTop(){
   const p = MODAL.problem;
   const title = document.getElementById('f_title').value.trim();
   const desc = document.getElementById('f_desc').value.trim();
+  const keywords = document.getElementById('f_keywords') ? document.getElementById('f_keywords').value.trim() : '';
   const planned = document.getElementById('f_planned').value;
-  // Strip bullet markers/whitespace to check there's actual content, not just empty "- " lines
-  const descContent = desc.replace(/[-•*\s]/g, '');
+  // Strip bullet/number markers and whitespace to check there's actual content
+  const descContent = desc.replace(/^\s*\d+\.\s*/gm,'').replace(/[-•*\s]/g, '');
   if(!title){ toast('Vui lòng điền Phát biểu vấn đề.'); return; }
   if(!descContent){ toast('Vui lòng đổ não ra ít nhất vài ý về vấn đề.'); return; }
   if(!planned){ toast('Vui lòng chọn Dự kiến hoàn thành.'); return; }
 
   const record = {
-    id: p.id || uid(), title, desc,
+    id: p.id || uid(), title, desc, keywords,
     tags: MODAL.tags.slice(),
     level: p.level,
     important: p.important, urgent: p.urgent, complex: p.complex,

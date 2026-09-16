@@ -171,10 +171,10 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .action-add-row input[type=date]{flex:1;}
 .overdue{color:var(--red);font-weight:600;}
 .row-done{opacity:.62;}
+.list-row.row-done .txt{text-decoration:line-through;text-decoration-color:rgba(237,239,251,.3);}
 .brain-dump-guide{font-size:13px;line-height:1.55;color:var(--ink-dim);background:var(--teal-bg);border:1px solid rgba(0,167,157,.3);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;}
 .brain-dump-guide strong{color:var(--teal);}
 .card-keywords{font-size:12.5px;color:var(--gold);margin-top:6px;font-style:italic;}
-.row-done .txt{text-decoration:line-through;text-decoration-color:rgba(237,239,251,.3);}
 .bp-intro{background:rgba(255,212,0,.06);border:1px solid rgba(255,212,0,.28);border-radius:var(--radius);padding:16px 18px;margin-bottom:18px;font-size:14px;line-height:1.6;}
 .bp-intro-title{font-family:'Space Mono',monospace;font-size:13px;color:var(--gold);font-weight:700;margin-bottom:6px;}
 .bp-intro p{color:var(--ink-dim);margin-bottom:2px;}
@@ -881,6 +881,18 @@ function tagsArray(t){
   if(s.indexOf('[Ljava')!==-1 || s.indexOf('@')===0) return [];
   return s.split(',').map(x=>x.trim()).filter(Boolean).filter(x=>x.indexOf('[Ljava')===-1);
 }
+// Return a valid 0-1000 score. If the stored score is garbage (e.g. a date
+// string leaked in from column drift), recompute from the 3 criteria.
+function safeScore(p){
+  const n = Number(p.score);
+  if(Number.isFinite(n) && n>=0 && n<=1000) return n;
+  const imp = Number(p.important), urg = Number(p.urgent), cpx = Number(p.complex);
+  if(Number.isFinite(imp) && Number.isFinite(urg) && Number.isFinite(cpx)){
+    const calc = imp*urg*cpx;
+    if(calc>=0 && calc<=1000) return calc;
+  }
+  return 0;
+}
 
 /* ---------------- PROBLEMS ---------------- */
 function renderProblemsTab(){
@@ -900,8 +912,12 @@ function renderProblemsTab(){
 
   // Now also apply the status filter — priority + list both reflect all 3 combined
   let filtered = sub==='all' ? base : base.filter(p=>p.status===sub);
-  const shown = filtered.slice().sort((a,b)=> new Date(b.createdAt||0) - new Date(a.createdAt||0));
-  const priority = filtered.filter(p=>Number(p.score)>=PRIORITY_THRESHOLD).sort((a,b)=>b.score-a.score);
+  const pRank = {new:0, inprogress:1, done:2};
+  const shown = filtered.slice().sort((a,b)=>
+    (pRank[a.status]??9) - (pRank[b.status]??9)
+    || new Date(b.createdAt||0) - new Date(a.createdAt||0)
+  );
+  const priority = filtered.filter(p=>safeScore(p)>=PRIORITY_THRESHOLD).sort((a,b)=>safeScore(b)-safeScore(a));
 
   const chipRow = `<div class="chip-row">
     <button class="chip ${sub==='all'?'active':''}" onclick="setProblemSub('all')">Tất cả ${counts.all}</button>
@@ -940,8 +956,8 @@ function setProblemSub(s){ STATE.problemSubTab = s; STATE.shownCount = STATE.pag
 function problemCard(p){
   const st = PROBLEM_STATUS[p.status]||p.status;
   const stClass = 'st-'+p.status;
-  const cardClass = p.status==='done' ? 'ok' : (Number(p.score)>=PRIORITY_THRESHOLD ? 'pri' : '');
-  return `<div class="card ${cardClass}">
+  const cardClass = p.status==='done' ? 'ok' : (safeScore(p)>=PRIORITY_THRESHOLD ? 'pri' : '');
+  return `<div class="card ${cardClass} ${p.status==='done'?'row-done':''}">
     <div class="card-top">
       <div style="flex:1">
         <div class="card-title">${esc(p.title)}</div>
@@ -955,7 +971,7 @@ function problemCard(p){
         ${p.keywords?`<div class="card-keywords">🔑 ${esc(p.keywords)}</div>`:''}
       </div>
       <div class="card-score">
-        <div class="n">${p.score||0}</div>
+        <div class="n">${safeScore(p)}</div>
         <div class="l">/1000</div>
       </div>
     </div>
@@ -1510,7 +1526,12 @@ function renderListTab(title, list, rowFn, emptyText){
 /* ---------------- QUESTIONS TAB ---------------- */
 function renderQuestionsTab(){
   let list = filteredByPerson('questions').filter(q=>matchesSearch(q.text)).filter(q=>matchesDateRange(q.createdAt));
-  list = list.slice().sort((a,b)=> (b.star?1:0)-(a.star?1:0) || new Date(b.createdAt||0)-new Date(a.createdAt||0));
+  const qRank = {clarifying:0, answered:1};
+  list = list.slice().sort((a,b)=>
+    (b.star?1:0)-(a.star?1:0)
+    || (qRank[a.status]??9) - (qRank[b.status]??9)
+    || new Date(b.createdAt||0)-new Date(a.createdAt||0)
+  );
   return renderListTab('Tất cả câu hỏi', list, q=>{
     const problem = STATE.data.problems.find(p=>p.id===q.problemId);
     return `<div class="qa-block">
@@ -1596,10 +1617,14 @@ function cycleStandaloneAStatus(id){
 /* ---------------- LEARNINGS TAB ---------------- */
 function renderLearningsTab(){
   let list = filteredByPerson('learnings').filter(l=>matchesSearch(l.text)).filter(l=>matchesDateRange(l.createdAt));
-  list = list.slice().sort((a,b)=> (a.order||0)-(b.order||0));
+  const lRank = {available:0, applied:1};
+  list = list.slice().sort((a,b)=>
+    (lRank[a.status]??9) - (lRank[b.status]??9)
+    || (a.order||0)-(b.order||0)
+  );
   return renderListTab('Tất cả bài học', list, l=>{
     const problem = STATE.data.problems.find(p=>p.id===l.problemId);
-    return `<div class="list-row">
+    return `<div class="list-row ${l.status==='applied'?'row-done':''}">
       <div class="txt">${esc(l.text)}<span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'} · ${LEARNING_STATUS[l.status]||l.status}</span>${l.member?' '+memberBadge(l.member):''}</div>
       <div class="acts">
         ${l.status!=='applied'?`<button onclick="markStandaloneApplied('${l.id}')">✓ Đã áp dụng</button>`:''}

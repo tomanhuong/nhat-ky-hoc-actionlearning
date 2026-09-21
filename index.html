@@ -182,6 +182,12 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .bd-items{display:flex;flex-wrap:wrap;gap:4px 10px;}
 .bd-item{font-size:11.5px;color:var(--ink);white-space:nowrap;}
 .bd-item i{font-style:normal;font-size:10.5px;color:var(--ink-faint);}
+.qa-cross{border:1px solid #a78bfa !important;background:rgba(167,139,250,.10) !important;}
+.cross-badge{display:inline-block;font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;color:#c4b5fd;background:rgba(167,139,250,.18);border:1px solid rgba(167,139,250,.5);border-radius:999px;padding:2px 9px;margin-top:4px;}
+.tab-notif{display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:17px;padding:0 4px;margin-left:6px;font-size:10px;font-weight:700;color:#fff;background:var(--red);border-radius:999px;vertical-align:middle;}
+.cross-notice{background:rgba(248,81,73,.14);border:1px solid rgba(248,81,73,.4);color:#ffb4b0;border-radius:var(--radius-sm);padding:10px 13px;margin-bottom:10px;font-size:14px;}
+.cross-notice strong{color:#fff;}
+.cross-intro{font-size:12.5px;color:var(--ink-dim);background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.25);border-radius:var(--radius-sm);padding:9px 12px;margin-bottom:14px;line-height:1.5;}
 .card-keywords{font-size:12.5px;color:var(--gold);margin-top:6px;font-style:italic;}
 .bp-intro{background:rgba(255,212,0,.06);border:1px solid rgba(255,212,0,.28);border-radius:var(--radius);padding:16px 18px;margin-bottom:18px;font-size:14px;line-height:1.6;}
 .bp-intro-title{font-family:'Space Mono',monospace;font-size:13px;color:var(--gold);font-weight:700;margin-bottom:6px;}
@@ -798,6 +804,21 @@ function clearDateFilter(){
   renderAll();
 }
 
+// Count cross-questions addressed to the current user that they haven't seen yet
+function seenCrossKey(){ return 'lcsh_seen_cross_'+(STATE.member||''); }
+function getSeenCross(){
+  try { return new Set(JSON.parse(localStorage.getItem(seenCrossKey())||'[]')); } catch(e){ return new Set(); }
+}
+function unseenCrossQuestions(){
+  const seen = getSeenCross();
+  return (STATE.data.questions||[]).filter(q=>
+    (q.isCross==='1'||q.isCross===true) && q.member===STATE.member && !seen.has(q.id)
+  );
+}
+function markCrossSeen(){
+  const all = (STATE.data.questions||[]).filter(q=>(q.isCross==='1'||q.isCross===true) && q.member===STATE.member).map(q=>q.id);
+  try { localStorage.setItem(seenCrossKey(), JSON.stringify(all)); } catch(e){}
+}
 function renderTabs(){
   const tabs = [
     {id:'problems', label:'VẤN ĐỀ'},
@@ -806,11 +827,18 @@ function renderTabs(){
     {id:'learnings', label:'BÀI HỌC'},
     {id:'bestPractices', label:'THỰC HÀNH HIỆU QUẢ'}
   ];
-  document.getElementById('tabsBar').innerHTML = tabs.map(t=>
-    `<button class="tab-btn ${STATE.tab===t.id?'active':''}" onclick="setTab('${t.id}')">${t.label}</button>`
-  ).join('');
+  const unseen = unseenCrossQuestions().length;
+  document.getElementById('tabsBar').innerHTML = tabs.map(t=>{
+    const badge = (t.id==='questions' && unseen>0) ? `<span class="tab-notif">${unseen}</span>` : '';
+    return `<button class="tab-btn ${STATE.tab===t.id?'active':''}" onclick="setTab('${t.id}')">${t.label}${badge}</button>`;
+  }).join('');
 }
-function setTab(tab){ STATE.tab = tab; STATE.shownCount = STATE.pageSize; localStorage.setItem('lcsh_tab', tab); renderTabs(); renderContent(); const c=document.getElementById('content'); if(c) c.scrollIntoView({behavior:'smooth', block:'start'}); }
+function setTab(tab){
+  STATE.tab = tab; STATE.shownCount = STATE.pageSize; localStorage.setItem('lcsh_tab', tab);
+  if(tab==='questions') markCrossSeen();
+  renderTabs(); renderContent();
+  const c=document.getElementById('content'); if(c) c.scrollIntoView({behavior:'smooth', block:'start'});
+}
 
 function renderAll(){ renderStats(); renderContent(); }
 // Re-render stats + current tab but keep the user's scroll position, so
@@ -1319,10 +1347,13 @@ function renderProblemDetailSections(p, questions, actions, learnings){
 }
 function renderModalQuestions(list){
   if(!list.length) return '<div class="hint">Chưa có câu hỏi nào.</div>';
-  return list.map(q=>`<div class="qa-block">
+  return list.map(q=>{
+    const cross = q.isCross==='1' || q.isCross===true;
+    const crossBadge = cross ? `<br><span class="cross-badge">❓ ${esc(q.askedBy||'?')} hỏi</span>` : '';
+    return `<div class="qa-block ${cross?'qa-cross':''}">
     <div class="list-row" style="margin-bottom:6px">
       <button class="star-btn ${q.star?'on':''}" onclick="toggleQuestionStar('${q.id}')">★</button>
-      <div class="txt">${esc(q.text)}<span class="src">${QUESTION_STATUS[q.status]||q.status}</span></div>
+      <div class="txt">${esc(q.text)}${crossBadge}<span class="src">${QUESTION_STATUS[q.status]||q.status}</span></div>
       <div class="acts">
         <button onclick="removeInModal('questions','${q.id}')">✕</button>
       </div>
@@ -1334,7 +1365,8 @@ function renderModalQuestions(list){
         <button class="btn btn-teal btn-sm" onclick="saveQuestionAnswer('${q.id}')">${q.answer?'Cập nhật':'Lưu'}</button>
       </div>
     </div>
-  </div>`).join('');
+  </div>`;
+  }).join('');
 }
 function renderModalActions(list){
   if(!list.length) return '<div class="hint">Chưa có hành động nào. Nhấn "Thêm dòng" để bắt đầu.</div>';
@@ -1422,8 +1454,12 @@ async function addProblemQuestion(){
   const input = document.getElementById('newQuestionText');
   const text = input.value.trim();
   if(!text) return;
-  createRecord('questions', {id:uid(), problemId:MODAL.problem.id, text, answer:'', star:false, status:'clarifying', member:(MODAL.problem.member||STATE.member), createdAt:new Date().toISOString()});
+  const owner = MODAL.problem.member || STATE.member;      // question still belongs to the problem owner
+  const asker = STATE.member;                               // who is typing right now
+  const isCross = asker && owner && asker !== owner;        // cross-question if asker isn't the owner
+  createRecord('questions', {id:uid(), problemId:MODAL.problem.id, text, answer:'', askedBy:asker, isCross:isCross?'1':'', star:false, status:'clarifying', member:owner, createdAt:new Date().toISOString()});
   input.value='';
+  if(isCross) toast('Đã gửi câu hỏi chéo cho '+owner+'.');
   document.getElementById('modalQuestions').innerHTML = renderModalQuestions(STATE.data.questions.filter(q=>q.problemId===MODAL.problem.id));
 }
 async function addProblemAction(){
@@ -1552,7 +1588,11 @@ function saveQuickAdd(){
   const linkedProblem = problemId ? STATE.data.problems.find(p=>p.id===problemId) : null;
   const owner = linkedProblem ? (linkedProblem.member||STATE.member) : STATE.member;
   let record = {id:uid(), problemId, text, member:owner, createdAt: new Date().toISOString()};
-  if(type==='questions') record = Object.assign(record, {answer:'', star:false, status:'clarifying'});
+  if(type==='questions'){
+    const asker = STATE.member;
+    const isCross = linkedProblem && asker && owner && asker !== owner;
+    record = Object.assign(record, {answer:'', askedBy:asker, isCross:isCross?'1':'', star:false, status:'clarifying'});
+  }
   if(type==='actions') record = Object.assign(record, {status:'new', breakthrough: document.getElementById('qa_breakthrough').checked, outcome: document.getElementById('qa_outcome').value.trim(), deadline: document.getElementById('qa_deadline').value});
   if(type==='learnings'){
     const order = STATE.data.learnings.filter(l=>l.problemId===problemId).length;
@@ -1587,12 +1627,14 @@ function renderQuestionsTab(){
     || (qRank[a.status]??9) - (qRank[b.status]??9)
     || new Date(b.createdAt||0)-new Date(a.createdAt||0)
   );
-  return renderListTab('Tất cả câu hỏi', list, q=>{
+  const body = renderListTab('Tất cả câu hỏi', list, q=>{
     const problem = STATE.data.problems.find(p=>p.id===q.problemId);
-    return `<div class="qa-block">
+    const cross = q.isCross==='1' || q.isCross===true;
+    const crossBadge = cross ? `<span class="cross-badge">❓ ${esc(q.askedBy||'?')} hỏi → ${esc(q.member||'?')}</span>` : '';
+    return `<div class="qa-block ${cross?'qa-cross':''}">
       <div class="list-row" style="margin-bottom:6px">
         <button class="star-btn ${q.star?'on':''}" onclick="toggleStandaloneStar('${q.id}')">★</button>
-        <div class="txt">${esc(q.text)}<span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'} · ${QUESTION_STATUS[q.status]||q.status}</span>${q.member?' '+memberBadge(q.member):''}</div>
+        <div class="txt">${esc(q.text)}${crossBadge?'<br>'+crossBadge:''}<span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'} · ${QUESTION_STATUS[q.status]||q.status}</span>${!cross&&q.member?' '+memberBadge(q.member):''}</div>
         <div class="acts">
           <button onclick="deleteStandalone('questions','${q.id}')">🗑️</button>
         </div>
@@ -1606,6 +1648,11 @@ function renderQuestionsTab(){
       </div>
     </div>`;
   }, 'Chưa có câu hỏi nào.');
+  // Cross-question intro + unseen notice
+  const unseen = unseenCrossQuestions().length;
+  const notice = unseen>0 ? `<div class="cross-notice">🔔 Bạn có <strong>${unseen}</strong> câu hỏi mới từ người khác dành cho bạn.</div>` : '';
+  const intro = `<div class="cross-intro">💡 Ai cũng có thể đặt câu hỏi khai vấn cho vấn đề của người khác — mở vấn đề của họ và thêm câu hỏi. Câu hỏi chéo được tô nổi bật bên dưới.</div>`;
+  return notice + intro + body;
 }
 function toggleStandaloneStar(id){ const q=STATE.data.questions.find(x=>x.id===id); updateRecord('questions',id,{star:!q.star}); refreshKeepScroll(); }
 function cycleStandaloneQStatus(id){ const q=STATE.data.questions.find(x=>x.id===id); updateRecord('questions',id,{status:q.status==='clarifying'?'answered':'clarifying'}); refreshKeepScroll(); }

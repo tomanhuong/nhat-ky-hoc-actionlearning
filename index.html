@@ -174,8 +174,14 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .overdue{color:var(--red);font-weight:600;}
 .row-done{opacity:.62;}
 .list-row.row-done .txt{text-decoration:line-through;text-decoration-color:rgba(237,239,251,.3);}
-.brain-dump-guide{font-size:13px;line-height:1.55;color:var(--ink-dim);background:var(--teal-bg);border:1px solid rgba(0,167,157,.3);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;}
+.brain-dump-guide{color:var(--ink-dim);background:var(--teal-bg);border:1px solid rgba(0,167,157,.3);border-radius:var(--radius-sm);padding:9px 11px;margin-bottom:8px;}
 .brain-dump-guide strong{color:var(--teal);}
+.bd-head{font-size:12px;line-height:1.4;margin-bottom:8px;}
+.bd-group{margin-top:7px;}
+.bd-group-title{font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.03em;color:var(--teal);font-weight:700;margin-bottom:4px;}
+.bd-items{display:flex;flex-wrap:wrap;gap:4px 10px;}
+.bd-item{font-size:11.5px;color:var(--ink);white-space:nowrap;}
+.bd-item i{font-style:normal;font-size:10.5px;color:var(--ink-faint);}
 .card-keywords{font-size:12.5px;color:var(--gold);margin-top:6px;font-style:italic;}
 .bp-intro{background:rgba(255,212,0,.06);border:1px solid rgba(255,212,0,.28);border-radius:var(--radius);padding:16px 18px;margin-bottom:18px;font-size:14px;line-height:1.6;}
 .bp-intro-title{font-family:'Space Mono',monospace;font-size:13px;color:var(--gold);font-weight:700;margin-bottom:6px;}
@@ -1102,7 +1108,33 @@ function renderModal(){
     </div>
     <div class="field">
       <label class="field-label">Đổ não ra về vấn đề <span class="req">*</span></label>
-      <div class="brain-dump-guide">⏱️ Dành 5 phút — mỗi lần nhấn Enter sẽ tự thêm số dòng (mục tiêu đủ <strong>10 dòng</strong>). Đổ hết mọi suy nghĩ liên quan: bối cảnh, cảm xúc, ảnh hưởng, người liên quan...</div>
+      <div class="brain-dump-guide">
+        <div class="bd-head">⏱️ <strong>5 phút — 10 gạch đầu dòng.</strong> Soi vấn đề qua 8 yếu tố × 6 góc nhìn:</div>
+        <div class="bd-group">
+          <div class="bd-group-title">8 YẾU TỐ — mảnh ghép để việc chạy được</div>
+          <div class="bd-items">
+            <span class="bd-item">① Mục đích <i>làm để làm gì</i></span>
+            <span class="bd-item">② Đầu vào <i>đưa gì vào</i></span>
+            <span class="bd-item">③ Đầu ra <i>thu được gì</i></span>
+            <span class="bd-item">④ Trình tự <i>các bước</i></span>
+            <span class="bd-item">⑤ Môi trường <i>không gian</i></span>
+            <span class="bd-item">⑥ Con người <i>ai làm</i></span>
+            <span class="bd-item">⑦ Vật chất <i>dụng cụ</i></span>
+            <span class="bd-item">⑧ Thông tin <i>công thức, quy định</i></span>
+          </div>
+        </div>
+        <div class="bd-group">
+          <div class="bd-group-title">6 GÓC NHÌN — soi mỗi yếu tố để không sót</div>
+          <div class="bd-items">
+            <span class="bd-item">① Nền tảng <i>là gì?</i></span>
+            <span class="bd-item">② Giá trị <i>sao cho tử tế?</i></span>
+            <span class="bd-item">③ Thước đo <i>con số nào?</i></span>
+            <span class="bd-item">④ Kiểm soát <i>sai thì sửa sao?</i></span>
+            <span class="bd-item">⑤ Giao diện <i>khớp khâu khác?</i></span>
+            <span class="bd-item">⑥ Tương lai <i>nâng cấp sao?</i></span>
+          </div>
+        </div>
+      </div>
       <textarea id="f_desc" rows="12" placeholder="1. " oninput="brainDumpInput(event)" oncompositionstart="brainDumpCompositionStart()" oncompositionend="brainDumpCompositionEnd(event)">${esc(p.desc)}</textarea>
       <div class="hint" id="brainDumpCount">💡 Cứ viết thoải mái, chưa cần gọn. Mỗi Enter thêm 1 dòng có số.</div>
     </div>

@@ -160,8 +160,10 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .qa-block{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:10px;}
 .qa-block .list-row{background:none;border:none;padding:0;margin:0;}
 .qa-answer{padding-left:26px;}
-.qa-answer-text{font-size:14px;color:var(--teal);background:var(--teal-bg);border-radius:8px;padding:8px 11px;margin-bottom:8px;line-height:1.5;}
-.qa-answer .mini-add input{font-size:14px;padding:8px 10px;}
+.qa-answer-text{font-size:14px;color:var(--teal);background:var(--teal-bg);border-radius:8px;padding:8px 11px;margin-bottom:8px;line-height:1.5;white-space:pre-wrap;}
+.qa-answer-edit{display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
+.qa-answer-edit textarea{font-size:14px;padding:8px 10px;width:100%;min-height:44px;line-height:1.5;}
+.qa-answer-edit .btn{align-self:flex-end;}
 .status-pill{font-family:'Space Mono',monospace;font-size:11px;padding:5px 10px;border-radius:999px;background:var(--panel-hover);border:1px solid var(--border);color:var(--ink-dim);white-space:nowrap;}
 .status-pill.new{color:#cdd3ea;background:rgba(205,211,234,.14);border-color:rgba(205,211,234,.35);font-weight:700;}
 .status-pill.inprogress{color:#241D00;background:var(--amber);border-color:transparent;font-weight:700;}
@@ -1295,8 +1297,8 @@ function renderModalQuestions(list){
     </div>
     <div class="qa-answer">
       ${q.answer ? `<div class="qa-answer-text">💬 ${esc(q.answer)}</div>` : ''}
-      <div class="mini-add">
-        <input id="ans_${q.id}" type="text" placeholder="${q.answer?'Sửa câu trả lời...':'Trả lời câu hỏi này...'}" value="${esc(q.answer||'')}" onkeydown="if(event.key==='Enter'){event.preventDefault();saveQuestionAnswer('${q.id}');}"/>
+      <div class="qa-answer-edit">
+        <textarea id="ans_${q.id}" rows="2" placeholder="${q.answer?'Sửa câu trả lời...':'Trả lời câu hỏi này... (Enter để xuống dòng)'}" oninput="markDirty()">${esc(q.answer||'')}</textarea>
         <button class="btn btn-teal btn-sm" onclick="saveQuestionAnswer('${q.id}')">${q.answer?'Cập nhật':'Lưu'}</button>
       </div>
     </div>
@@ -1565,8 +1567,8 @@ function renderQuestionsTab(){
       </div>
       <div class="qa-answer">
         ${q.answer ? `<div class="qa-answer-text">💬 ${esc(q.answer)}</div>` : ''}
-        <div class="mini-add">
-          <input id="ans_${q.id}" type="text" placeholder="${q.answer?'Sửa câu trả lời...':'Trả lời câu hỏi này...'}" value="${esc(q.answer||'')}" onkeydown="if(event.key==='Enter'){event.preventDefault();saveQuestionAnswer('${q.id}');}"/>
+        <div class="qa-answer-edit">
+          <textarea id="ans_${q.id}" rows="2" placeholder="${q.answer?'Sửa câu trả lời...':'Trả lời câu hỏi này... (Enter để xuống dòng)'}">${esc(q.answer||'')}</textarea>
           <button class="btn btn-teal btn-sm" onclick="saveQuestionAnswer('${q.id}')">${q.answer?'Cập nhật':'Lưu'}</button>
         </div>
       </div>

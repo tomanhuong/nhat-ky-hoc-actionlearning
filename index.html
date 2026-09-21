@@ -1178,19 +1178,36 @@ function brainDumpEnter(e){
   if(e.key!=='Enter') return;
   e.preventDefault();
   const ta = e.target;
-  const val = ta.value;
   const pos = ta.selectionStart;
+  const posEnd = ta.selectionEnd;
+  const val = ta.value;
   const before = val.slice(0, pos);
-  const after = val.slice(pos);
-  // Count how many numbered lines already exist to pick the next number
-  const existingNums = (val.match(/^\s*\d+\./gm)||[]).length;
-  const nextNum = existingNums + 1;
-  const insert = '\n' + nextNum + '. ';
-  ta.value = before + insert + after;
-  const newPos = pos + insert.length;
-  ta.selectionStart = ta.selectionEnd = newPos;
+  const after = val.slice(posEnd);
+  // The new line is created right after `before`. Its line index = number of
+  // newlines in `before` + 1 (0-based new line index).
+  const newLineIndex = before.split('\n').length; // 0-based index of the newly created line
+  const combined = before + '\n' + after;
+  const renumbered = renumberLines(combined);
+  ta.value = renumbered.text;
+  // Caret goes to the start of the new line's content ("N. |")
+  const lines = renumbered.text.split('\n');
+  let caret = 0;
+  for(let i=0;i<newLineIndex && i<lines.length;i++){ caret += lines[i].length + 1; }
+  const prefixLen = (lines[newLineIndex]||'').match(/^\s*\d+\.\s?/);
+  caret += prefixLen ? prefixLen[0].length : 0;
+  ta.selectionStart = ta.selectionEnd = caret;
   markDirty();
   updateBrainDumpCount(ta.value);
+}
+// Renumber every line as "N. <content>", stripping any existing leading number.
+function renumberLines(text){
+  const rawLines = text.split('\n');
+  let out = [];
+  for(let i=0;i<rawLines.length;i++){
+    const content = rawLines[i].replace(/^\s*\d+\.\s?/, '');
+    out.push((i+1) + '. ' + content);
+  }
+  return { text: out.join('\n') };
 }
 function updateBrainDumpCount(text){
   const el = document.getElementById('brainDumpCount');

@@ -1101,7 +1101,7 @@ function renderModal(){
     <div class="field">
       <label class="field-label">Đổ não ra về vấn đề <span class="req">*</span></label>
       <div class="brain-dump-guide">⏱️ Dành 5 phút — mỗi lần nhấn Enter sẽ tự thêm số dòng (mục tiêu đủ <strong>10 dòng</strong>). Đổ hết mọi suy nghĩ liên quan: bối cảnh, cảm xúc, ảnh hưởng, người liên quan...</div>
-      <textarea id="f_desc" rows="12" placeholder="1. " oninput="markDirty();updateBrainDumpCount(this.value)" onkeydown="brainDumpEnter(event)">${esc(p.desc)}</textarea>
+      <textarea id="f_desc" rows="12" placeholder="1. " oninput="brainDumpInput(event)" oncompositionstart="brainDumpCompositionStart()" oncompositionend="brainDumpCompositionEnd(event)">${esc(p.desc)}</textarea>
       <div class="hint" id="brainDumpCount">💡 Cứ viết thoải mái, chưa cần gọn. Mỗi Enter thêm 1 dòng có số.</div>
     </div>
     <div class="field">
@@ -1174,40 +1174,44 @@ function addModalTag(){
   document.getElementById('tagList').innerHTML = renderTagChips();
 }
 function removeModalTag(i){ MODAL.tags.splice(i,1); document.getElementById('tagList').innerHTML = renderTagChips(); }
-function brainDumpEnter(e){
-  if(e.key!=='Enter') return;
-  e.preventDefault();
-  const ta = e.target;
-  const pos = ta.selectionStart;
-  const posEnd = ta.selectionEnd;
-  const val = ta.value;
-  const before = val.slice(0, pos);
-  const after = val.slice(posEnd);
-  // The new line is created right after `before`. Its line index = number of
-  // newlines in `before` + 1 (0-based new line index).
-  const newLineIndex = before.split('\n').length; // 0-based index of the newly created line
-  const combined = before + '\n' + after;
-  const renumbered = renumberLines(combined);
-  ta.value = renumbered.text;
-  // Caret goes to the start of the new line's content ("N. |")
-  const lines = renumbered.text.split('\n');
-  let caret = 0;
-  for(let i=0;i<newLineIndex && i<lines.length;i++){ caret += lines[i].length + 1; }
-  const prefixLen = (lines[newLineIndex]||'').match(/^\s*\d+\.\s?/);
-  caret += prefixLen ? prefixLen[0].length : 0;
-  ta.selectionStart = ta.selectionEnd = caret;
+// IME-safe auto-numbering: we do NOT intercept the Enter keystroke (that
+// conflicts with Vietnamese input methods and can duplicate characters).
+// Instead we renumber the whole field a tick after any input settles.
+let _brainDumpComposing = false;
+function brainDumpCompositionStart(){ _brainDumpComposing = true; }
+function brainDumpCompositionEnd(e){ _brainDumpComposing = false; brainDumpAutoNumber(e.target); }
+function brainDumpInput(e){
   markDirty();
-  updateBrainDumpCount(ta.value);
+  if(_brainDumpComposing) return; // wait until IME finishes composing a char
+  brainDumpAutoNumber(e.target);
 }
-// Renumber every line as "N. <content>", stripping any existing leading number.
-function renumberLines(text){
-  const rawLines = text.split('\n');
-  let out = [];
-  for(let i=0;i<rawLines.length;i++){
-    const content = rawLines[i].replace(/^\s*\d+\.\s?/, '');
-    out.push((i+1) + '. ' + content);
-  }
-  return { text: out.join('\n') };
+function brainDumpAutoNumber(ta){
+  const val = ta.value;
+  const pos = ta.selectionStart;
+  // Renumber every non-empty-structured line as "N. content"
+  const lines = val.split('\n');
+  // Count characters before caret per line to restore caret afterwards
+  let lineStart = val.slice(0, pos).split('\n').length - 1; // caret line index
+  let colInLine = pos - (val.slice(0, pos).lastIndexOf('\n') + 1); // caret column in that line
+  const out = lines.map((ln, i)=>{
+    const content = ln.replace(/^\s*\d+\.\s?/, '');
+    return (i+1) + '. ' + content;
+  });
+  const newText = out.join('\n');
+  if(newText === val){ updateBrainDumpCount(val); return; } // nothing changed, avoid caret jump
+  // Restore caret: figure out how the prefix length changed on the caret's line
+  const oldPrefix = (lines[lineStart]||'').match(/^\s*\d+\.\s?/);
+  const oldPrefixLen = oldPrefix ? oldPrefix[0].length : 0;
+  const newPrefix = (out[lineStart]||'').match(/^\s*\d+\.\s?/);
+  const newPrefixLen = newPrefix ? newPrefix[0].length : 0;
+  // content column (relative to text after prefix) stays the same
+  const contentCol = Math.max(0, colInLine - oldPrefixLen);
+  let newCaret = 0;
+  for(let i=0;i<lineStart && i<out.length;i++){ newCaret += out[i].length + 1; }
+  newCaret += newPrefixLen + contentCol;
+  ta.value = newText;
+  ta.selectionStart = ta.selectionEnd = newCaret;
+  updateBrainDumpCount(newText);
 }
 function updateBrainDumpCount(text){
   const el = document.getElementById('brainDumpCount');

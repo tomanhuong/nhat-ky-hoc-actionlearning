@@ -188,6 +188,91 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .cross-notice{background:rgba(248,81,73,.14);border:1px solid rgba(248,81,73,.4);color:#ffb4b0;border-radius:var(--radius-sm);padding:10px 13px;margin-bottom:10px;font-size:14px;}
 .cross-notice strong{color:#fff;}
 .cross-intro{font-size:12.5px;color:var(--ink-dim);background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.25);border-radius:var(--radius-sm);padding:9px 12px;margin-bottom:14px;line-height:1.5;}
+
+/* ---- REPORT ---- */
+.rp-head{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;}
+.rp-head-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px;}
+.rp-h1{font-size:18px;font-weight:600;}
+.rp-range{font-size:12px;font-family:'Space Mono',monospace;color:var(--ink-dim);margin-top:2px;}
+.rp-muted{color:var(--ink-faint);font-size:.9em;}
+.rp-custom{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
+.rp-custom label{flex:1;min-width:140px;font-size:11px;font-family:'Space Mono',monospace;color:var(--ink-dim);display:flex;flex-direction:column;gap:4px;}
+.rp-custom input{padding:8px 10px;font-size:14px;}
+.rp-section{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;}
+.rp-sec-title{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;display:flex;align-items:center;gap:8px;}
+.rp-no{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--gold);color:var(--gold-ink);font-size:11px;}
+.rp-sec-sub{font-size:13px;color:var(--ink-dim);font-style:italic;margin:4px 0 12px 30px;}
+.rp-subhead{font-size:11px;font-family:'Space Mono',monospace;color:var(--teal);font-weight:700;margin:12px 0 6px;}
+.rp-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:8px;}
+.rp-card{background:rgba(0,0,0,.14);border:1px solid var(--border-soft);border-left:3px solid var(--teal);border-radius:var(--radius-sm);padding:9px 11px;}
+.rp-card.lag{border-left-color:var(--gold);}
+.rp-card-l{font-size:10.5px;font-family:'Space Mono',monospace;color:var(--ink-dim);line-height:1.3;}
+.rp-card-v{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;margin:2px 0;}
+.rp-card-v small{font-size:12px;color:var(--ink-faint);font-weight:400;}
+.rp-delta{font-size:10.5px;font-family:'Space Mono',monospace;}
+.rp-delta.up{color:var(--teal);} .rp-delta.down{color:var(--red);} .rp-delta.flat{color:var(--ink-faint);}
+.rp-funnel{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;}
+.rp-f-row{display:grid;grid-template-columns:62px minmax(110px,150px) 1fr 34px;gap:8px;align-items:center;font-size:13px;}
+.rp-f-note{grid-column:2 / -1;font-size:11px;color:var(--ink-faint);margin-top:-4px;}
+.rp-f-note:empty{display:none;}
+.rp-f-tag{font-family:'Space Mono',monospace;font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:999px;text-align:center;}
+.rp-f-tag.hoc{color:var(--teal);background:var(--teal-bg);} .rp-f-tag.hv{color:var(--gold);background:rgba(255,212,0,.14);} .rp-f-tag.kq{color:#c4b5fd;background:rgba(167,139,250,.18);}
+.rp-f-bar{height:10px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;}
+.rp-f-fill{height:100%;border-radius:999px;} .rp-f-fill.hoc{background:var(--teal);} .rp-f-fill.hv{background:var(--gold);} .rp-f-fill.kq{background:#a78bfa;}
+.rp-f-n{font-family:'Space Mono',monospace;font-weight:700;text-align:right;}
+.rp-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px;padding:0 4px;}
+.rp-table{width:100%;border-collapse:collapse;font-size:13px;min-width:640px;}
+.rp-table th{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--ink-dim);text-align:left;padding:7px 6px;border-bottom:1px solid var(--border);vertical-align:bottom;line-height:1.3;}
+.rp-table th small{font-weight:400;font-size:9px;}
+.rp-table td{padding:8px 6px;border-bottom:1px solid var(--border-soft);font-family:'Space Mono',monospace;font-size:12px;white-space:nowrap;}
+.rp-table tbody tr{cursor:pointer;} .rp-table tbody tr:hover{background:var(--panel-hover);}
+.rp-me-table{min-width:0;} .rp-me-table tbody tr{cursor:default;}
+.rp-rank{font-size:15px !important;text-align:center;}
+.rp-pts{font-weight:700;color:var(--gold);}
+.rp-ok{color:var(--teal);} .rp-bad{color:var(--red);} .rp-x{color:#c4b5fd;}
+.rp-light{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:middle;}
+.rp-light.green{background:var(--teal);box-shadow:0 0 6px var(--teal);} .rp-light.yellow{background:var(--amber);box-shadow:0 0 6px var(--amber);} .rp-light.red{background:var(--red);box-shadow:0 0 6px var(--red);}
+.rp-formula{font-size:12px;color:var(--ink-dim);margin-top:10px;line-height:1.6;}
+.rp-formula summary{cursor:pointer;font-family:'Space Mono',monospace;font-size:11px;color:var(--teal);}
+.rp-today{display:flex;flex-direction:column;gap:6px;background:rgba(0,0,0,.14);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:10px;font-size:13px;}
+.rp-miss{line-height:2;}
+.rp-heat{border-collapse:separate;border-spacing:3px;font-size:10px;font-family:'Space Mono',monospace;}
+.rp-heat th{color:var(--ink-faint);font-weight:400;text-align:center;min-width:18px;}
+.rp-heat th.rp-hm-today{color:var(--gold);font-weight:700;}
+.rp-hm-name{text-align:left !important;white-space:nowrap;padding-right:6px;position:sticky;left:0;background:#1f1d55;z-index:1;}
+.rp-heat td{padding:0;text-align:center;}
+.rp-cell{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:4px;font-size:9px;color:#fff;vertical-align:middle;}
+.rp-cell.lv0{background:rgba(255,255,255,.06);border:1px dashed rgba(255,255,255,.14);}
+.rp-cell.lv1{background:rgba(0,167,157,.35);} .rp-cell.lv2{background:rgba(0,167,157,.65);} .rp-cell.lv3{background:var(--teal);}
+.rp-cell.today{outline:2px solid var(--gold);outline-offset:1px;}
+.rp-streak{color:var(--amber);font-weight:700;padding-left:4px !important;}
+.rp-legend{display:flex;align-items:center;gap:4px;flex-wrap:wrap;font-size:10.5px;color:var(--ink-faint);margin-top:8px;}
+.rp-legend .rp-cell{width:12px;height:12px;}
+.rp-alert{border:1px solid var(--border);border-left:4px solid var(--amber);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;background:rgba(253,185,19,.06);}
+.rp-alert.red{border-left-color:var(--red);background:rgba(248,81,73,.07);}
+.rp-alert-who{margin-bottom:6px;}
+.rp-alert-item{display:flex;gap:8px;align-items:flex-start;font-size:13px;margin-top:5px;}
+.rp-dot{width:9px;height:9px;border-radius:50%;margin-top:6px;flex-shrink:0;} .rp-dot.red{background:var(--red);} .rp-dot.yellow{background:var(--amber);}
+.rp-tip{font-size:12px;color:var(--ink-dim);font-style:italic;}
+.rp-settings{margin-top:10px;font-size:12px;}
+.rp-settings summary{cursor:pointer;font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-dim);}
+.rp-settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin-top:8px;}
+.rp-settings-grid label{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:var(--ink-dim);}
+.rp-settings-grid input{width:64px;padding:5px 8px;font-size:13px;}
+.rp-me-head{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px;}
+.rp-me-head select{width:auto;min-width:140px;}
+.rp-me-stats{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:13px;font-family:'Space Mono',monospace;color:var(--ink-dim);}
+.rp-me-stats strong{color:var(--ink);}
+.rp-trend{display:flex;gap:6px;align-items:flex-end;}
+.rp-tw{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;}
+.rp-tw-bar{width:100%;max-width:34px;height:60px;background:rgba(255,255,255,.06);border-radius:4px;display:flex;align-items:flex-end;overflow:hidden;}
+.rp-tw-bar div{width:100%;background:var(--teal);border-radius:4px 4px 0 0;}
+.rp-tw-n{font-size:11px;font-family:'Space Mono',monospace;font-weight:700;}
+.rp-tw-l{font-size:9px;font-family:'Space Mono',monospace;color:var(--ink-faint);}
+.rp-todo{display:flex;flex-direction:column;gap:5px;}
+.rp-todo-i{font-size:13px;padding:6px 10px;border-radius:8px;background:rgba(0,0,0,.14);border-left:3px solid var(--border);}
+.rp-todo-i.bad{border-left-color:var(--red);} .rp-todo-i.warn{border-left-color:var(--amber);} .rp-todo-i.cross{border-left-color:#a78bfa;}
+@media(max-width:520px){ .rp-f-row{grid-template-columns:56px 1fr 30px;} .rp-f-bar{grid-column:2 / -1;grid-row:2;} .rp-f-note{grid-row:3;} }
 .card-keywords{font-size:12.5px;color:var(--gold);margin-top:6px;font-style:italic;}
 .bp-intro{background:rgba(255,212,0,.06);border:1px solid rgba(255,212,0,.28);border-radius:var(--radius);padding:16px 18px;margin-bottom:18px;font-size:14px;line-height:1.6;}
 .bp-intro-title{font-family:'Space Mono',monospace;font-size:13px;color:var(--gold);font-weight:700;margin-bottom:6px;}
@@ -299,7 +384,7 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 <div id="app" class="hidden">
   <div class="shell">
     <header class="app-header">
-      <h1>LÀM CHỦ SỰ HỌC <span style="font-size:11px;color:var(--ink-faint);font-family:'Space Mono',monospace;font-weight:400">v2.1</span></h1>
+      <h1>LÀM CHỦ SỰ HỌC <span style="font-size:11px;color:var(--ink-faint);font-family:'Space Mono',monospace;font-weight:400">v2.2</span></h1>
       <p>Không gian để bạn tự quản lý việc ứng dụng học tập, giải quyết vấn đề thực tế, tạo ra kết quả đột phá.</p>
       <div class="who-row">
         <span id="whoLabel"></span>
@@ -316,6 +401,7 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 
     <div class="stats-grid" id="statsGrid"></div>
 
+    <div id="globalFilters">
     <div class="toolbar">
       <input id="searchInput" type="text" placeholder="Tìm kiếm nội dung..." oninput="onSearchInput()"/>
       <select id="personFilterSel" onchange="onPersonFilterChange()"></select>
@@ -333,6 +419,7 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
       <button id="clearDateBtn" class="btn btn-ghost btn-sm hidden" onclick="clearDateFilter()">✕ Xoá lọc ngày</button>
     </div>
     <div class="hint" style="margin-bottom:12px">Lọc theo ngày tạo — áp dụng cho mọi tab, kết hợp cùng lúc với tìm kiếm, người và trạng thái.</div>
+    </div>
 
     <div class="tabs" id="tabsBar"></div>
 
@@ -369,6 +456,7 @@ let STATE = {
   tab: localStorage.getItem('lcsh_tab') || 'problems',
   problemSubTab: 'all',
   actionSubTab: 'all',
+  report: { period: localStorage.getItem('lcsh_report_period') || 'week', from:'', to:'', member:null },
   search: '',
   personFilter: 'all',
   dateFrom: '',
@@ -408,6 +496,8 @@ function isOverdue(d){
 function todayISO(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'), 2400); }
 function norm(s){ return (s||'').toString().toLowerCase(); }
+// Google Sheets may turn the stored '1' into the number 1 (or TRUE) on read — accept all forms
+function isCrossQ(q){ const v = q && q.isCross; return v===true || v===1 || v==='1' || String(v).toUpperCase()==='TRUE'; }
 function emptyMsg(text){ return STATE.dataLoaded ? text : 'Đang tải dữ liệu...'; }
 // Stable, distinct color per member name — same name always yields the same hue
 const MEMBER_COLORS = ['#00A79D','#FDB913','#f85149','#a78bfa','#38bdf8','#fb923c','#34d399','#f472b6','#facc15','#60a5fa'];
@@ -446,10 +536,29 @@ async function apiPost(payload){
   const res = await fetch(API_URL, { method:'POST', body: JSON.stringify(Object.assign({pwd: STATE.pwd}, payload)) });
   return res.json();
 }
+// Stamp milestone timestamps whenever a status changes, so the report can
+// count "completed / answered / applied in this period" accurately.
+// Every status change in the app goes through createRecord/updateRecord,
+// so doing it here guarantees no call site is missed.
+function stampPatch(type, prev, patch){
+  const now = new Date().toISOString();
+  const p = Object.assign({}, patch, {updatedAt: now});
+  if(p.status !== undefined && (!prev || p.status !== prev.status)){
+    if(type==='actions' || type==='problems'){
+      p.doneAt = p.status==='done' ? now : '';
+    } else if(type==='questions'){
+      p.answeredAt = p.status==='answered' ? ((prev && prev.answeredAt) || now) : '';
+    } else if(type==='learnings'){
+      p.appliedAt = p.status==='applied' ? now : '';
+    }
+  }
+  return p;
+}
 // Optimistic create: the record (with its id already set by the caller)
 // appears in STATE.data instantly. Sync to the sheet happens in the
 // background; on failure the insert is rolled back and the user is told.
 function createRecord(type, record){
+  if((type==='actions'||type==='problems') && record.status==='done' && !record.doneAt) record.doneAt = new Date().toISOString();
   STATE.data[type].push(record);
   saveCache();
   apiPost({type, op:'create', record}).then(r=>{
@@ -473,6 +582,7 @@ function updateRecord(type, id, patch){
   const idx = arr.findIndex(x=>x.id===id);
   if(idx===-1) return;
   const prev = Object.assign({}, arr[idx]);
+  patch = stampPatch(type, prev, patch);
   arr[idx] = Object.assign({}, arr[idx], patch);
   saveCache();
   apiPost({type, op:'update', id, patch}).then(r=>{
@@ -812,11 +922,11 @@ function getSeenCross(){
 function unseenCrossQuestions(){
   const seen = getSeenCross();
   return (STATE.data.questions||[]).filter(q=>
-    (q.isCross==='1'||q.isCross===true) && q.member===STATE.member && !seen.has(q.id)
+    isCrossQ(q) && q.member===STATE.member && !seen.has(q.id)
   );
 }
 function markCrossSeen(){
-  const all = (STATE.data.questions||[]).filter(q=>(q.isCross==='1'||q.isCross===true) && q.member===STATE.member).map(q=>q.id);
+  const all = (STATE.data.questions||[]).filter(q=>isCrossQ(q) && q.member===STATE.member).map(q=>q.id);
   try { localStorage.setItem(seenCrossKey(), JSON.stringify(all)); } catch(e){}
 }
 function renderTabs(){
@@ -825,7 +935,8 @@ function renderTabs(){
     {id:'questions', label:'CÂU HỎI'},
     {id:'actions', label:'HÀNH ĐỘNG'},
     {id:'learnings', label:'BÀI HỌC'},
-    {id:'bestPractices', label:'THỰC HÀNH HIỆU QUẢ'}
+    {id:'bestPractices', label:'THỰC HÀNH HIỆU QUẢ'},
+    {id:'report', label:'📊 BÁO CÁO'}
   ];
   const unseen = unseenCrossQuestions().length;
   document.getElementById('tabsBar').innerHTML = tabs.map(t=>{
@@ -897,12 +1008,15 @@ function renderStats(){
 /* ---------------- content router ---------------- */
 function renderContent(){
   const el = document.getElementById('content');
+  const gf = document.getElementById('globalFilters');
+  if(gf) gf.classList.toggle('hidden', STATE.tab==='report');
   try {
     if(STATE.tab==='problems') el.innerHTML = renderProblemsTab();
     else if(STATE.tab==='questions') el.innerHTML = renderQuestionsTab();
     else if(STATE.tab==='actions') el.innerHTML = renderActionsTab();
     else if(STATE.tab==='learnings') el.innerHTML = renderLearningsTab();
     else if(STATE.tab==='bestPractices') el.innerHTML = renderBestPracticesTab();
+    else if(STATE.tab==='report') el.innerHTML = renderReportTab();
   } catch(err){
     console.error('render error:', err);
     el.innerHTML = '<div class="empty-note">Có lỗi khi hiển thị. Thử bấm ⟳ làm mới hoặc tải lại trang.</div>';
@@ -1348,7 +1462,7 @@ function renderProblemDetailSections(p, questions, actions, learnings){
 function renderModalQuestions(list){
   if(!list.length) return '<div class="hint">Chưa có câu hỏi nào.</div>';
   return list.map(q=>{
-    const cross = q.isCross==='1' || q.isCross===true;
+    const cross = isCrossQ(q);
     const crossBadge = cross ? `<br><span class="cross-badge">❓ ${esc(q.askedBy||'?')} hỏi</span>` : '';
     return `<div class="qa-block ${cross?'qa-cross':''}">
     <div class="list-row" style="margin-bottom:6px">
@@ -1629,7 +1743,7 @@ function renderQuestionsTab(){
   );
   const body = renderListTab('Tất cả câu hỏi', list, q=>{
     const problem = STATE.data.problems.find(p=>p.id===q.problemId);
-    const cross = q.isCross==='1' || q.isCross===true;
+    const cross = isCrossQ(q);
     const crossBadge = cross ? `<span class="cross-badge">❓ ${esc(q.askedBy||'?')} hỏi → ${esc(q.member||'?')}</span>` : '';
     return `<div class="qa-block ${cross?'qa-cross':''}">
       <div class="list-row" style="margin-bottom:6px">
@@ -1817,6 +1931,408 @@ function confirmSuggestion(id){
 function dismissSuggestion(id){
   deleteRecord('bpSuggestions', id);
   refreshKeepScroll();
+}
+
+/* ================================================================
+   REPORT — 6 tầng từ tổng quan đến chi tiết
+   (4DX scoreboard · Kirkpatrick funnel · bảng thành viên · lịch
+    chuyên cần · cảnh báo can thiệp · hồ sơ cá nhân)
+   ================================================================ */
+const REPORT_DEFAULT_RULES = {noLogDays:3, overdueCount:3, completionPct:30, staleDays:7, crossDays:3};
+const POINTS = {day:5, problem:3, question:1, crossAsk:2, answer:1, action:1, actionDone:3, learning:2, applied:3, bp:5};
+const DAY_MS = 86400000;
+
+function reportRules(){
+  try { return Object.assign({}, REPORT_DEFAULT_RULES, JSON.parse(localStorage.getItem('lcsh_report_rules')||'{}')); }
+  catch(e){ return Object.assign({}, REPORT_DEFAULT_RULES); }
+}
+function setReportRule(k, v){
+  const r = reportRules(); const n = Number(v);
+  if(Number.isFinite(n) && n>=0){ r[k]=n; try{ localStorage.setItem('lcsh_report_rules', JSON.stringify(r)); }catch(e){} }
+  refreshKeepScroll();
+}
+function toMs(v){ if(v===undefined||v===null||v==='') return null; const t = new Date(v).getTime(); return isNaN(t) ? null : t; }
+function sod(d){ const x = new Date(d); x.setHours(0,0,0,0); return x; }
+function addDays(d, n){ const x = new Date(d); x.setDate(x.getDate()+n); return x; }
+function dayKey(t){ const x = new Date(t); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); }
+function fmtDM(t){ const x = new Date(t); return String(x.getDate()).padStart(2,'0')+'/'+String(x.getMonth()+1).padStart(2,'0'); }
+function same(a, m){ return String(a||'').trim()===m; }
+// Milestone times, with a fallback estimate for older records created before milestones existed
+function doneTs(r){ const t = toMs(r.doneAt); if(t) return t; return r.status==='done' ? (toMs(r.updatedAt) || toMs(r.createdAt)) : null; }
+function answeredTs(q){ const t = toMs(q.answeredAt); if(t) return t; return (q.status==='answered' || (q.answer && String(q.answer).trim())) ? (toMs(q.updatedAt) || toMs(q.createdAt)) : null; }
+function appliedTs(l){ const t = toMs(l.appliedAt); if(t) return t; return l.status==='applied' ? (toMs(l.updatedAt) || toMs(l.createdAt)) : null; }
+
+function reportPeriod(){
+  const R = STATE.report, now = new Date(), y = now.getFullYear(), m = now.getMonth(), today = sod(now);
+  let s, e, ps, pe, label;
+  if(R.period==='today'){ s=today; e=addDays(today,1); ps=addDays(s,-1); pe=s; label='Hôm nay'; }
+  else if(R.period==='month'){ s=new Date(y,m,1); e=new Date(y,m+1,1); ps=new Date(y,m-1,1); pe=s; label='Tháng này'; }
+  else if(R.period==='quarter'){ const q=Math.floor(m/3); s=new Date(y,q*3,1); e=new Date(y,q*3+3,1); ps=new Date(y,q*3-3,1); pe=s; label='Quý này'; }
+  else if(R.period==='year'){ s=new Date(y,0,1); e=new Date(y+1,0,1); ps=new Date(y-1,0,1); pe=s; label='Năm nay'; }
+  else if(R.period==='custom'){
+    s = R.from ? new Date(R.from+'T00:00:00') : addDays(today,-6);
+    e = R.to ? addDays(new Date(R.to+'T00:00:00'),1) : addDays(today,1);
+    if(isNaN(s)) s = addDays(today,-6);
+    if(isNaN(e) || e<=s) e = addDays(s,1);
+    ps = new Date(s.getTime() - (e-s)); pe = s; label='Tùy chỉnh';
+  }
+  else { const dow=(today.getDay()+6)%7; s=addDays(today,-dow); e=addDays(s,7); ps=addDays(s,-7); pe=s; label='Tuần này'; }
+  const effEnd = Math.min(e.getTime(), addDays(today,1).getTime()); // don't count future days as "missing"
+  return { s:s.getTime(), e:e.getTime(), ps:ps.getTime(), pe:pe.getTime(), effEnd, label };
+}
+function periodDays(P){
+  const out = []; let d = new Date(P.s);
+  while(d.getTime() < P.effEnd){ out.push(d.getTime()); d = addDays(d,1); }
+  return out;
+}
+function reportMembers(){
+  const set = new Set();
+  (STATE.data.presetNames||[]).forEach(n=>{ if(isValidMember(n)) set.add(String(n).trim()); });
+  ['problems','questions','actions','learnings','bestPractices'].forEach(t=>(STATE.data[t]||[]).forEach(r=>{
+    if(isValidMember(r.member)) set.add(String(r.member).trim());
+    if(t==='questions' && isValidMember(r.askedBy)) set.add(String(r.askedBy).trim());
+  }));
+  return Array.from(set);
+}
+// Every dated trace a member leaves = a "ghi chép" (used for active days, streaks, heatmap)
+function buildEvents(){
+  const ev = [], D = STATE.data;
+  const add = (m, t, type)=>{ if(t && isValidMember(m)) ev.push({m:String(m).trim(), t, type}); };
+  (D.problems||[]).forEach(p=>{ add(p.member,toMs(p.createdAt),'problem'); add(p.member,toMs(p.updatedAt),'touch'); add(p.member,toMs(p.doneAt),'problemDone'); });
+  (D.questions||[]).forEach(q=>{ add(q.askedBy||q.member,toMs(q.createdAt),'question'); add(q.member,toMs(q.answeredAt),'answer'); });
+  (D.actions||[]).forEach(a=>{ add(a.member,toMs(a.createdAt),'action'); add(a.member,toMs(a.updatedAt),'touch'); add(a.member,toMs(a.doneAt),'actionDone'); });
+  (D.learnings||[]).forEach(l=>{ add(l.member,toMs(l.createdAt),'learning'); add(l.member,toMs(l.appliedAt),'applied'); });
+  (D.bestPractices||[]).forEach(b=>add(b.member,toMs(b.createdAt),'bp'));
+  return ev;
+}
+function memberMetrics(m, s, e, events){
+  const inP = t => t!==null && t!==undefined && t>=s && t<e;
+  const D = STATE.data;
+  const probs = (D.problems||[]).filter(p=>same(p.member,m));
+  const qs = D.questions||[];
+  const acts = (D.actions||[]).filter(a=>same(a.member,m));
+  const lrn = (D.learnings||[]).filter(l=>same(l.member,m));
+  const bps = (D.bestPractices||[]).filter(b=>same(b.member,m));
+  const r = { member:m };
+  r.activeDays   = new Set(events.filter(x=>x.m===m && inP(x.t)).map(x=>dayKey(x.t))).size;
+  r.problems     = probs.filter(p=>inP(toMs(p.createdAt))).length;
+  r.problemsDone = probs.filter(p=>inP(doneTs(p))).length;
+  r.selfQ        = qs.filter(q=>!isCrossQ(q) && same(q.askedBy||q.member,m) && inP(toMs(q.createdAt))).length;
+  r.crossAsked   = qs.filter(q=>isCrossQ(q) && same(q.askedBy,m) && inP(toMs(q.createdAt))).length;
+  r.crossRecv    = qs.filter(q=>isCrossQ(q) && same(q.member,m) && inP(toMs(q.createdAt))).length;
+  r.answers      = qs.filter(q=>same(q.member,m) && inP(answeredTs(q))).length;
+  r.actions      = acts.filter(a=>inP(toMs(a.createdAt))).length;
+  r.actionsDone  = acts.filter(a=>inP(doneTs(a))).length;
+  r.doneWithDl   = acts.filter(a=>inP(doneTs(a)) && a.deadline).length;
+  r.onTime       = acts.filter(a=>{
+    const t = doneTs(a); if(!inP(t) || !a.deadline) return false;
+    const dl = new Date(String(a.deadline).includes('T') ? a.deadline : a.deadline+'T23:59:59').getTime();
+    return !isNaN(dl) && t<=dl;
+  }).length;
+  r.overdueNow   = acts.filter(a=>a.status!=='done' && isOverdue(a.deadline)).length;
+  r.learnings    = lrn.filter(l=>inP(toMs(l.createdAt))).length;
+  r.applied      = lrn.filter(l=>inP(appliedTs(l))).length;
+  r.bp           = bps.filter(b=>inP(toMs(b.createdAt))).length;
+  const eff = probs.filter(p=>inP(doneTs(p))).map(p=>Number(p.effectiveness)).filter(n=>Number.isFinite(n) && n>0);
+  r.effSum = eff.reduce((a,b)=>a+b,0); r.effN = eff.length;
+  r.effAvg = eff.length ? r.effSum/eff.length : null;
+  r.points = r.activeDays*POINTS.day + r.problems*POINTS.problem + r.selfQ*POINTS.question + r.crossAsked*POINTS.crossAsk
+           + r.answers*POINTS.answer + r.actions*POINTS.action + r.actionsDone*POINTS.actionDone
+           + r.learnings*POINTS.learning + r.applied*POINTS.applied + r.bp*POINTS.bp;
+  return r;
+}
+function memberAlerts(m, events, P){
+  const R = reportRules(), out = [], today = sod(new Date()).getTime(), D = STATE.data;
+  const mine = events.filter(x=>x.m===m);
+  if(!mine.length){
+    out.push({lvl:'red', text:'Chưa có ghi chép nào', tip:'Hỏi thăm, cùng chọn 1 vấn đề nhỏ để bắt đầu.'});
+  } else {
+    let last = 0; mine.forEach(x=>{ if(x.t>last) last=x.t; });
+    const gap = Math.round((today - sod(last).getTime())/DAY_MS);
+    if(gap >= R.noLogDays) out.push({lvl:'red', text:gap+' ngày chưa ghi chép', tip:'Nhắn hỏi thăm, cùng chọn 1 việc nhỏ để ghi lại hôm nay.'});
+  }
+  const acts = (D.actions||[]).filter(a=>same(a.member,m));
+  const od = acts.filter(a=>a.status!=='done' && isOverdue(a.deadline));
+  if(od.length >= R.overdueCount) out.push({lvl:'red', text:od.length+' hành động quá hạn', tip:'Rà lại hạn chót, chia nhỏ việc hoặc dời hạn hợp lý.'});
+  const created = acts.filter(a=>{ const t=toMs(a.createdAt); return t!==null && t>=P.s && t<P.e; });
+  if(created.length >= 3){
+    const pct = Math.round(created.filter(a=>a.status==='done').length / created.length * 100);
+    if(pct < R.completionPct) out.push({lvl:'yellow', text:'Hoàn thành hành động '+pct+'%', tip:'Giảm số cam kết, tập trung 1–2 việc quan trọng nhất tuần.'});
+  }
+  const stale = (D.problems||[]).filter(p=>same(p.member,m) && p.status==='inprogress' && (today - (toMs(p.updatedAt)||toMs(p.createdAt)||today)) > R.staleDays*DAY_MS);
+  if(stale.length) out.push({lvl:'yellow', text:stale.length+' vấn đề đang tiến hành không cập nhật > '+R.staleDays+' ngày', tip:'Cập nhật kết quả hoặc chuyển trạng thái.'});
+  const crossWait = (D.questions||[]).filter(q=>isCrossQ(q) && same(q.member,m) && !(q.answer && String(q.answer).trim()) && (today - (toMs(q.createdAt)||today)) > R.crossDays*DAY_MS);
+  if(crossWait.length) out.push({lvl:'yellow', text:crossWait.length+' câu hỏi chéo chưa trả lời > '+R.crossDays+' ngày', tip:'Dành 10 phút trả lời câu hỏi đồng đội đặt cho mình.'});
+  return out;
+}
+function memberStreak(m, events){
+  const days = new Set(events.filter(x=>x.m===m).map(x=>dayKey(x.t)));
+  let d = sod(new Date()); if(!days.has(dayKey(d))) d = addDays(d,-1);
+  let n = 0; while(days.has(dayKey(d))){ n++; d = addDays(d,-1); }
+  return n;
+}
+function lightOf(alerts){ return alerts.some(a=>a.lvl==='red') ? 'red' : (alerts.some(a=>a.lvl==='yellow') ? 'yellow' : 'green'); }
+function sumK(list, k){ return list.reduce((a,r)=>a+(r[k]||0),0); }
+function deltaHtml(cur, prev){
+  if(!prev && !cur) return '<span class="rp-delta flat">—</span>';
+  if(!prev) return '<span class="rp-delta up">mới</span>';
+  const pct = Math.round((cur-prev)/prev*100);
+  if(pct===0) return '<span class="rp-delta flat">= kỳ trước</span>';
+  return `<span class="rp-delta ${pct>0?'up':'down'}">${pct>0?'↑':'↓'} ${Math.abs(pct)}%</span>`;
+}
+
+/* ---- handlers ---- */
+function setReportPeriod(p){ STATE.report.period = p; try{ localStorage.setItem('lcsh_report_period', p); }catch(e){} refreshKeepScroll(); }
+function setReportCustom(){
+  STATE.report.from = document.getElementById('rp_from').value;
+  STATE.report.to = document.getElementById('rp_to').value;
+  refreshKeepScroll();
+}
+function selectReportMember(m){
+  STATE.report.member = m;
+  renderContent();
+  const el = document.getElementById('rp-personal'); if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ---- main render ---- */
+function renderReportTab(){
+  const P = reportPeriod(), events = buildEvents(), members = reportMembers(), days = periodDays(P);
+  if(!members.length) return `<div class="empty-note">${emptyMsg('Chưa có thành viên hay dữ liệu nào để báo cáo.')}</div>`;
+  const cur = members.map(m=>memberMetrics(m, P.s, P.e, events));
+  const prev = members.map(m=>memberMetrics(m, P.ps, P.pe, events));
+  const prevBy = {}; prev.forEach(r=>prevBy[r.member]=r);
+  cur.forEach(r=>{ r.alerts = memberAlerts(r.member, events, P); r.light = lightOf(r.alerts); r.streak = memberStreak(r.member, events); });
+  const ranked = cur.slice().sort((a,b)=> b.points-a.points || b.activeDays-a.activeDays || a.member.localeCompare(b.member));
+  ranked.forEach((r,i)=>r.rank=i+1);
+
+  return renderReportHeader(P)
+    + renderReportScoreboard(cur, prev, members, days)
+    + renderReportFunnel(cur)
+    + renderReportTable(ranked, days)
+    + renderReportHeatmap(ranked, events, P, days)
+    + renderReportAlerts(ranked)
+    + renderReportPersonal(ranked, prevBy, events, members);
+}
+
+function renderReportHeader(P){
+  const R = STATE.report;
+  const chips = [['today','Hôm nay'],['week','Tuần này'],['month','Tháng này'],['quarter','Quý này'],['year','Năm nay'],['custom','Tùy chỉnh']]
+    .map(([k,l])=>`<button class="chip ${R.period===k?'active':''}" onclick="setReportPeriod('${k}')">${l}</button>`).join('');
+  const custom = R.period==='custom' ? `<div class="rp-custom">
+      <label>Từ <input id="rp_from" type="date" value="${esc(R.from)}" onchange="setReportCustom()"/></label>
+      <label>Đến <input id="rp_to" type="date" value="${esc(R.to)}" onchange="setReportCustom()"/></label>
+    </div>` : '';
+  const rangeTxt = fmtDate(P.s)+' → '+fmtDate(P.e - DAY_MS);
+  return `<div class="rp-head">
+    <div class="rp-head-row">
+      <div><div class="rp-h1">📊 Báo cáo rèn luyện</div><div class="rp-range">${P.label} · ${rangeTxt} <span class="rp-muted">(so với kỳ trước cùng độ dài)</span></div></div>
+      <button class="icon-btn" title="Làm mới dữ liệu" onclick="loadAll(false)">⟳</button>
+    </div>
+    <div class="chip-row" style="margin-bottom:0">${chips}</div>
+    ${custom}
+  </div>`;
+}
+
+function rpSection(no, title, sub, body, id){
+  return `<section class="rp-section"${id?` id="${id}"`:''}>
+    <div class="rp-sec-title"><span class="rp-no">${no}</span>${title}</div>
+    ${sub?`<div class="rp-sec-sub">${sub}</div>`:''}
+    ${body}
+  </section>`;
+}
+
+/* Tầng 1 — Bảng điểm đội (4DX: hiểu trong 5 giây, có cả chỉ số dẫn dắt và kết quả) */
+function renderReportScoreboard(cur, prev, members, days){
+  const activeNow = cur.filter(r=>r.activeDays>0).length, activePrev = prev.filter(r=>r.activeDays>0).length;
+  const qNow = sumK(cur,'selfQ')+sumK(cur,'crossAsked'), qPrev = sumK(prev,'selfQ')+sumK(prev,'crossAsked');
+  const onTimePct = sumK(cur,'doneWithDl') ? Math.round(sumK(cur,'onTime')/sumK(cur,'doneWithDl')*100) : null;
+  const effN = sumK(cur,'effN'), effAvg = effN ? (sumK(cur,'effSum')/effN) : null;
+  const card = (label, val, d, cls='') => `<div class="rp-card ${cls}"><div class="rp-card-l">${label}</div><div class="rp-card-v">${val}</div>${d||''}</div>`;
+  const lead = [
+    card('Thành viên hoạt động', activeNow+'<small>/'+members.length+'</small>', deltaHtml(activeNow, activePrev)),
+    card('Tổng ngày có ghi chép', sumK(cur,'activeDays'), deltaHtml(sumK(cur,'activeDays'), sumK(prev,'activeDays'))),
+    card('Vấn đề mới', sumK(cur,'problems'), deltaHtml(sumK(cur,'problems'), sumK(prev,'problems'))),
+    card('Câu hỏi đặt ra', qNow, deltaHtml(qNow, qPrev)),
+    card('Hành động cam kết', sumK(cur,'actions'), deltaHtml(sumK(cur,'actions'), sumK(prev,'actions'))),
+    card('Bài học rút ra', sumK(cur,'learnings'), deltaHtml(sumK(cur,'learnings'), sumK(prev,'learnings')))
+  ].join('');
+  const lag = [
+    card('Hành động hoàn thành', sumK(cur,'actionsDone'), deltaHtml(sumK(cur,'actionsDone'), sumK(prev,'actionsDone')), 'lag'),
+    card('Đúng hạn', onTimePct===null?'—':onTimePct+'%', '<span class="rp-delta flat">trên số có hạn chót</span>', 'lag'),
+    card('Vấn đề hoàn thành', sumK(cur,'problemsDone'), deltaHtml(sumK(cur,'problemsDone'), sumK(prev,'problemsDone')), 'lag'),
+    card('Bài học đã áp dụng', sumK(cur,'applied'), deltaHtml(sumK(cur,'applied'), sumK(prev,'applied')), 'lag'),
+    card('Hiệu quả TB', effAvg===null?'—':effAvg.toFixed(1)+'<small>/10</small>', '<span class="rp-delta flat">vấn đề xong trong kỳ</span>', 'lag'),
+    card('Thực hành hiệu quả', sumK(cur,'bp'), deltaHtml(sumK(cur,'bp'), sumK(prev,'bp')), 'lag')
+  ].join('');
+  const body = `<div class="rp-subhead">⚡ Chỉ số dẫn dắt — việc làm được mỗi ngày</div><div class="rp-cards">${lead}</div>
+    <div class="rp-subhead">🎯 Chỉ số kết quả — thành quả tạo ra</div><div class="rp-cards">${lag}</div>`;
+  return rpSection('1','Bảng điểm đội','Đội đang tiến hay lùi? Nhìn 5 giây là biết.', body);
+}
+
+/* Tầng 2 — Phễu Học → Hành vi → Kết quả (Kirkpatrick) */
+function renderReportFunnel(cur){
+  const P_ = sumK(cur,'problems'), Q = sumK(cur,'selfQ')+sumK(cur,'crossAsked'), L = sumK(cur,'learnings');
+  const A = sumK(cur,'actions'), AD = sumK(cur,'actionsDone'), AP = sumK(cur,'applied'), PD = sumK(cur,'problemsDone'), BP = sumK(cur,'bp');
+  const effN = sumK(cur,'effN'), effAvg = effN ? (sumK(cur,'effSum')/effN).toFixed(1) : null;
+  const ratio = (a,b)=> b ? (a/b).toFixed(1) : '—';
+  const pct = (a,b)=> b ? Math.round(a/b*100)+'%' : '—';
+  const rows = [
+    {lvl:'hoc', tag:'HỌC', label:'Vấn đề đưa ra', n:P_, note:''},
+    {lvl:'hoc', tag:'HỌC', label:'Câu hỏi làm rõ', n:Q, note:'TB '+ratio(Q,P_)+' câu/vấn đề'},
+    {lvl:'hoc', tag:'HỌC', label:'Bài học rút ra', n:L, note:'TB '+ratio(L,P_)+' bài học/vấn đề'},
+    {lvl:'hv',  tag:'HÀNH VI', label:'Hành động cam kết', n:A, note:'TB '+ratio(A,P_)+' hành động/vấn đề'},
+    {lvl:'hv',  tag:'HÀNH VI', label:'Hành động hoàn thành', n:AD, note:pct(AD,A)+' so với số cam kết'},
+    {lvl:'hv',  tag:'HÀNH VI', label:'Bài học đã áp dụng', n:AP, note:pct(AP,L)+' so với số bài học'},
+    {lvl:'kq',  tag:'KẾT QUẢ', label:'Vấn đề hoàn thành', n:PD, note:effAvg?('hiệu quả TB '+effAvg+'/10'):''},
+    {lvl:'kq',  tag:'KẾT QUẢ', label:'Thực hành hiệu quả', n:BP, note:'kho đúc kết của đội'}
+  ];
+  const max = Math.max(1, ...rows.map(r=>r.n));
+  const body = `<div class="rp-funnel">${rows.map(r=>`
+    <div class="rp-f-row">
+      <span class="rp-f-tag ${r.lvl}">${r.tag}</span>
+      <span class="rp-f-label">${r.label}</span>
+      <div class="rp-f-bar"><div class="rp-f-fill ${r.lvl}" style="width:${Math.max(2, r.n/max*100)}%"></div></div>
+      <span class="rp-f-n">${r.n}</span>
+      <span class="rp-f-note">${r.note}</span>
+    </div>`).join('')}</div>
+    <div class="hint">Học chỉ có giá trị khi chuyển thành hành vi và kết quả — nhìn chỗ thanh "tụt" mạnh nhất để biết đội đang nghẽn ở đâu.</div>`;
+  return rpSection('2','Phễu Học → Hành vi → Kết quả','Việc học có đang biến thành hành động và kết quả thật không?', body);
+}
+
+/* Tầng 3 — Bảng thành viên, xếp hạng đầy đủ */
+function renderReportTable(ranked, days){
+  const medal = n => n===1?'🥇':n===2?'🥈':n===3?'🥉':n;
+  const light = l => `<span class="rp-light ${l}" title="${l==='red'?'Cần can thiệp':l==='yellow'?'Cần chú ý':'Ổn'}"></span>`;
+  const rows = ranked.map(r=>`<tr onclick="selectReportMember('${esc(r.member).replace(/'/g,"\\'")}')">
+    <td class="rp-rank">${medal(r.rank)}</td>
+    <td class="rp-name">${memberBadge(r.member)}</td>
+    <td class="rp-pts">${r.points}</td>
+    <td>${r.activeDays}<span class="rp-muted">/${days.length||0}</span></td>
+    <td>${r.problems}</td>
+    <td>${r.selfQ}<span class="rp-muted"> · </span><span class="rp-x">${r.crossAsked}</span><span class="rp-muted"> · </span>${r.crossRecv}</td>
+    <td>${r.answers}</td>
+    <td>${r.actions}<span class="rp-muted">/</span><span class="rp-ok">${r.actionsDone}</span>${r.overdueNow?`<span class="rp-muted">/</span><span class="rp-bad">${r.overdueNow}</span>`:''}</td>
+    <td>${r.learnings}<span class="rp-muted">/</span><span class="rp-ok">${r.applied}</span></td>
+    <td>${r.effAvg===null?'<span class="rp-muted">—</span>':r.effAvg.toFixed(1)}</td>
+    <td>${light(r.light)}</td>
+  </tr>`).join('');
+  const body = `<div class="rp-scroll"><table class="rp-table">
+    <thead><tr><th>#</th><th>Thành viên</th><th>Điểm</th><th>Ngày HĐ</th><th>Vấn đề</th><th>Câu hỏi<br><small>tự · <span class="rp-x">chéo đặt</span> · nhận</small></th><th>Trả lời</th><th>Hành động<br><small>tạo/<span class="rp-ok">xong</span>/<span class="rp-bad">trễ</span></small></th><th>Bài học<br><small>có/<span class="rp-ok">áp dụng</span></small></th><th>Hiệu quả</th><th>Đèn</th></tr></thead>
+    <tbody>${rows}</tbody></table></div>
+    <details class="rp-formula"><summary>Cách tính điểm rèn luyện</summary>
+      Mỗi ngày có ghi chép +${POINTS.day} · Vấn đề +${POINTS.problem} · Câu hỏi tự đặt +${POINTS.question} · Câu hỏi chéo đặt cho đồng đội +${POINTS.crossAsk} · Trả lời +${POINTS.answer} · Hành động cam kết +${POINTS.action} · Hành động hoàn thành +${POINTS.actionDone} · Bài học +${POINTS.learning} · Bài học áp dụng +${POINTS.applied} · Thực hành hiệu quả +${POINTS.bp}.
+      Chuyên cần được thưởng nhiều nhất vì đó là chỉ số dẫn dắt quan trọng nhất.
+    </details>
+    <div class="hint">Bấm vào một dòng để xem chi tiết người đó ở tầng 6.</div>`;
+  return rpSection('3','Bảng thành viên','Ai đang đóng góp gì — xếp hạng theo điểm rèn luyện trong kỳ.', body);
+}
+
+/* Tầng 4 — Lịch chuyên cần (người × ngày) */
+function renderReportHeatmap(ranked, events, P, days){
+  const today = sod(new Date()).getTime(), todayKey = dayKey(today);
+  const countBy = {}; // member -> dayKey -> count
+  events.forEach(x=>{ const k=dayKey(x.t); const o = countBy[x.m] || (countBy[x.m] = {}); o[k] = (o[k]||0)+1; });
+  const doneToday = ranked.filter(r=>(countBy[r.member]||{})[todayKey]);
+  const missToday = ranked.filter(r=>!(countBy[r.member]||{})[todayKey]);
+  const todayLine = `<div class="rp-today">
+    <div><strong>Hôm nay đã ghi: ${doneToday.length}/${ranked.length}</strong></div>
+    ${missToday.length ? `<div class="rp-miss">Còn thiếu: ${missToday.map(r=>memberBadge(r.member)).join(' ')}</div>` : '<div class="rp-ok">✅ Cả đội đã ghi chép hôm nay!</div>'}
+  </div>`;
+
+  let cols, cellFn, weekMode = days.length > 31;
+  if(!days.length){
+    return rpSection('4','Lịch chuyên cần','Ai có ghi chép ngày nào — ô trống là ngày thiếu.', todayLine + '<div class="empty-note">Kỳ đã chọn chưa bắt đầu.</div>');
+  }
+  if(!weekMode){
+    cols = days.map(t=>({key:dayKey(t), label:String(new Date(t).getDate()), title:fmtDate(t), isToday: dayKey(t)===todayKey}));
+    cellFn = (m, c)=>{ const n=(countBy[m]||{})[c.key]||0; const lv = n===0?0:n<=2?1:n<=5?2:3;
+      return `<td><span class="rp-cell lv${lv}${c.isToday?' today':''}" title="${esc(m)} · ${c.title}: ${n} ghi chép"></span></td>`; };
+  } else {
+    const weeks = []; days.forEach(t=>{ const d=new Date(t); const dow=(d.getDay()+6)%7; const ws=addDays(sod(d),-dow).getTime(); if(!weeks.length || weeks[weeks.length-1].ws!==ws) weeks.push({ws, days:[]}); weeks[weeks.length-1].days.push(t); });
+    cols = weeks.map(w=>({key:w.ws, label:fmtDM(w.ws), title:'Tuần từ '+fmtDate(w.ws), days:w.days}));
+    cellFn = (m, c)=>{ const act = c.days.filter(t=>(countBy[m]||{})[dayKey(t)]).length; const ratio = act/c.days.length; const lv = act===0?0:ratio<0.4?1:ratio<0.8?2:3;
+      return `<td><span class="rp-cell lv${lv}" title="${esc(m)} · ${c.title}: ${act}/${c.days.length} ngày">${act||''}</span></td>`; };
+  }
+  const head = `<tr><th class="rp-hm-name">Thành viên</th>${cols.map(c=>`<th class="${c.isToday?'rp-hm-today':''}" title="${c.title}">${c.label}</th>`).join('')}<th>🔥</th></tr>`;
+  const rows = ranked.map(r=>`<tr><td class="rp-hm-name">${memberBadge(r.member)}</td>${cols.map(c=>cellFn(r.member,c)).join('')}<td class="rp-streak">${r.streak||''}</td></tr>`).join('');
+  const legend = `<div class="rp-legend">Ít <span class="rp-cell lv0"></span><span class="rp-cell lv1"></span><span class="rp-cell lv2"></span><span class="rp-cell lv3"></span> Nhiều${weekMode?' · mỗi ô = 1 tuần, số = ngày có ghi chép':' · mỗi ô = 1 ngày'} · 🔥 = chuỗi ngày liên tục</div>`;
+  const body = todayLine + `<div class="rp-scroll"><table class="rp-heat">${head}${rows}</table></div>` + legend;
+  return rpSection('4','Lịch chuyên cần','Ai có ghi chép ngày nào — ô trống là ngày thiếu (định mức: ≥ 1 ghi chép/ngày).', body);
+}
+
+/* Tầng 5 — Cảnh báo can thiệp */
+function renderReportAlerts(ranked){
+  const R = reportRules();
+  const flagged = ranked.filter(r=>r.alerts.length).sort((a,b)=> (a.light==='red'?0:1)-(b.light==='red'?0:1));
+  const list = flagged.length ? flagged.map(r=>`<div class="rp-alert ${r.light}">
+      <div class="rp-alert-who">${memberBadge(r.member)}</div>
+      ${r.alerts.map(a=>`<div class="rp-alert-item"><span class="rp-dot ${a.lvl}"></span><div><strong>${a.text}</strong><div class="rp-tip">💡 ${a.tip}</div></div></div>`).join('')}
+    </div>`).join('') : '<div class="empty-note">✅ Không có cảnh báo nào — đội đang chạy tốt.</div>';
+  const num = (k,label)=>`<label>${label} <input type="number" min="0" value="${R[k]}" onchange="setReportRule('${k}', this.value)"/></label>`;
+  const settings = `<details class="rp-settings"><summary>⚙️ Chỉnh ngưỡng cảnh báo</summary>
+    <div class="rp-settings-grid">
+      ${num('noLogDays','🔴 Số ngày không ghi chép ≥')}
+      ${num('overdueCount','🔴 Số hành động quá hạn ≥')}
+      ${num('completionPct','🟡 Tỷ lệ hoàn thành hành động < (%)')}
+      ${num('staleDays','🟡 Vấn đề không cập nhật > (ngày)')}
+      ${num('crossDays','🟡 Câu hỏi chéo chưa trả lời > (ngày)')}
+    </div>
+    <div class="hint">Ngưỡng lưu trên thiết bị này.</div>
+  </details>`;
+  return rpSection('5','Cảnh báo can thiệp','Ai cần được hỗ trợ ngay, kèm gợi ý cách can thiệp.', list + settings);
+}
+
+/* Tầng 6 — Tôi đang ở đâu (hồ sơ cá nhân) */
+function renderReportPersonal(ranked, prevBy, events, members){
+  let m = STATE.report.member;
+  if(!m || !members.includes(m)) m = members.includes(STATE.member) ? STATE.member : ranked[0].member;
+  const me = ranked.find(r=>r.member===m), pv = prevBy[m] || {};
+  const n = ranked.length;
+  const avg = k => ranked.reduce((a,r)=>a+(r[k]||0),0)/(n||1);
+  const opts = members.map(x=>`<option value="${esc(x)}" ${x===m?'selected':''}>${esc(x)}</option>`).join('');
+  const metrics = [
+    ['Ngày có ghi chép','activeDays'],['Vấn đề','problems'],['Câu hỏi tự đặt','selfQ'],['Câu hỏi chéo đã đặt','crossAsked'],
+    ['Câu trả lời','answers'],['Hành động cam kết','actions'],['Hành động hoàn thành','actionsDone'],
+    ['Bài học','learnings'],['Bài học áp dụng','applied'],['Điểm rèn luyện','points']
+  ];
+  const rows = metrics.map(([label,k])=>{
+    const v = me[k]||0, p = pv[k]||0, a = avg(k);
+    const vsAvg = v > a ? 'rp-ok' : (v < a ? 'rp-bad' : '');
+    return `<tr><td>${label}</td><td class="rp-pts">${v}</td><td>${p} ${deltaHtml(v,p)}</td><td class="${vsAvg}">${a.toFixed(1)}</td></tr>`;
+  }).join('');
+  // Trend: active days per week, last 8 weeks
+  const thisWeek = addDays(sod(new Date()), -((new Date().getDay()+6)%7));
+  const myDays = new Set(events.filter(x=>x.m===m).map(x=>dayKey(x.t)));
+  const weeks = [];
+  for(let i=7;i>=0;i--){
+    const ws = addDays(thisWeek, -7*i); let c = 0;
+    for(let d=0; d<7; d++){ const t = addDays(ws,d); if(t.getTime() <= Date.now() && myDays.has(dayKey(t))) c++; }
+    weeks.push({label:fmtDM(ws), c});
+  }
+  const trend = `<div class="rp-trend">${weeks.map(w=>`<div class="rp-tw" title="Tuần ${w.label}: ${w.c}/7 ngày"><div class="rp-tw-bar"><div style="height:${w.c/7*100}%"></div></div><div class="rp-tw-n">${w.c}</div><div class="rp-tw-l">${w.label}</div></div>`).join('')}</div>`;
+  // Things needing attention
+  const D = STATE.data, R = reportRules(), today = sod(new Date()).getTime();
+  const od = (D.actions||[]).filter(a=>same(a.member,m) && a.status!=='done' && isOverdue(a.deadline)).slice(0,5);
+  const stale = (D.problems||[]).filter(p=>same(p.member,m) && p.status==='inprogress' && (today-(toMs(p.updatedAt)||toMs(p.createdAt)||today)) > R.staleDays*DAY_MS).slice(0,5);
+  const cw = (D.questions||[]).filter(q=>isCrossQ(q) && same(q.member,m) && !(q.answer && String(q.answer).trim())).slice(0,5);
+  const todo = (od.length||stale.length||cw.length) ? `<div class="rp-todo">
+      ${od.map(a=>`<div class="rp-todo-i bad">⏰ ${esc(a.text)} <span class="rp-muted">· hạn ${fmtDeadline(a.deadline)}</span></div>`).join('')}
+      ${stale.map(p=>`<div class="rp-todo-i warn">📌 ${esc(p.title)} <span class="rp-muted">· lâu chưa cập nhật</span></div>`).join('')}
+      ${cw.map(q=>`<div class="rp-todo-i cross">❓ ${esc(q.text)} <span class="rp-muted">· ${esc(q.askedBy||'?')} hỏi, chưa trả lời</span></div>`).join('')}
+    </div>` : '<div class="rp-ok" style="font-size:13px">✅ Không có việc tồn đọng cần chú ý.</div>';
+  const body = `<div class="rp-me-head">
+      <select onchange="selectReportMember(this.value)">${opts}</select>
+      <div class="rp-me-stats">
+        <span>Hạng <strong>#${me.rank}</strong>/${n}</span>
+        <span>Điểm <strong>${me.points}</strong></span>
+        <span>🔥 Chuỗi <strong>${me.streak}</strong> ngày</span>
+        <span class="rp-light ${me.light}"></span>
+      </div>
+    </div>
+    <div class="rp-scroll"><table class="rp-table rp-me-table"><thead><tr><th>Chỉ số</th><th>Kỳ này</th><th>Kỳ trước</th><th>TB đội</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="rp-subhead">📈 Số ngày có ghi chép — 8 tuần gần nhất</div>${trend}
+    <div class="rp-subhead">📋 Việc cần chú ý</div>${todo}`;
+  return rpSection('6','Tôi đang ở đâu','So với chính mình kỳ trước và trung bình đội — chọn tên để xem từng người.', body, 'rp-personal');
 }
 
 /* ---------------- export backup ---------------- */

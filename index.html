@@ -273,6 +273,50 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .rp-todo-i{font-size:13px;padding:6px 10px;border-radius:8px;background:rgba(0,0,0,.14);border-left:3px solid var(--border);}
 .rp-todo-i.bad{border-left-color:var(--red);} .rp-todo-i.warn{border-left-color:var(--amber);} .rp-todo-i.cross{border-left-color:#a78bfa;}
 @media(max-width:520px){ .rp-f-row{grid-template-columns:56px 1fr 30px;} .rp-f-bar{grid-column:2 / -1;grid-row:2;} .rp-f-note{grid-row:3;} }
+
+/* ---- LEADERBOARD (streak) ---- */
+.lb-card{background:#1f1d55;border:1px solid var(--border);border-radius:var(--radius);padding:12px 0 10px;margin-bottom:14px;overflow:hidden;}
+.lb-summary{font-size:13px;color:var(--ink-dim);padding:0 16px 10px;}
+.lb-summary strong{color:var(--gold);}
+.lb-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.lb{border-collapse:separate;border-spacing:0;min-width:100%;}
+.lb th,.lb td{border-bottom:1px solid var(--border-soft);}
+.lb th{font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.04em;color:var(--ink-dim);padding:10px 6px;text-transform:uppercase;vertical-align:middle;}
+.lb tbody tr, .lb tr{cursor:pointer;}
+.lb tr:hover td{background-color:rgba(255,255,255,.03);}
+.lb-name{position:sticky;left:0;z-index:2;background:#1f1d55;min-width:190px;max-width:190px;text-align:left;padding:10px 10px 10px 16px !important;}
+.lb-streak{position:sticky;left:190px;z-index:2;background:#1f1d55;min-width:92px;text-align:center;border-right:1px solid var(--border) !important;}
+.lb th.lb-name,.lb th.lb-streak{z-index:3;}
+.lb-person{display:flex;align-items:center;gap:10px;}
+.lb-av{position:relative;flex-shrink:0;width:38px;height:38px;border-radius:11px;display:inline-flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:700;font-size:16px;color:#fff;}
+.lb-rank{position:absolute;top:-7px;right:-7px;width:19px;height:19px;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;color:#241D00;border:2px solid #1f1d55;}
+.lb-rank.r1{background:#FFD400;} .lb-rank.r2{background:#cbd5e1;} .lb-rank.r3{background:#f59e5b;}
+.lb-pname{font-size:15px;font-weight:600;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:130px;}
+.lb-pmeta{font-size:10.5px;font-family:'Space Mono',monospace;color:var(--ink-faint);}
+.lb-fire{display:inline-block;font-family:'Space Mono',monospace;font-weight:700;font-size:14px;color:#fb923c;background:rgba(251,146,60,.14);border:1px solid rgba(251,146,60,.35);border-radius:999px;padding:5px 11px;white-space:nowrap;}
+.lb-fire.zero{color:var(--ink-faint);background:rgba(255,255,255,.05);border-color:var(--border);}
+.lb-day{text-align:center;min-width:52px;padding:8px 4px !important;}
+.lb th.lb-day{line-height:1.25;}
+.lb-wd{display:block;font-weight:400;color:var(--ink-faint);}
+.lb-dm{display:block;font-size:12px;color:var(--ink);}
+.lb-sub{display:block;font-size:9px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink-faint);}
+.lb-sub.today{color:#38bdf8;}
+.lb .is-today{background:rgba(56,189,248,.08);border-left:1px solid rgba(56,189,248,.35);border-right:1px solid rgba(56,189,248,.35);}
+.lb th.is-today .lb-dm{color:#38bdf8;}
+.lb-ok,.lb-no{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-size:14px;font-weight:700;}
+.lb-ok{color:#34d399;background:rgba(52,211,153,.16);}
+.lb-no{color:var(--red);background:rgba(248,81,73,.14);font-size:12px;}
+.lb-pre{color:var(--ink-faint);font-size:16px;}
+.lb-rule{font-size:11.5px;color:var(--ink-dim);line-height:1.55;padding:10px 16px 0;}
+.lb-rule strong{color:var(--ink);}
+.rp-detail-toggle{margin-bottom:14px;font-size:12px;}
+@media(max-width:520px){
+  .lb-name{min-width:150px;max-width:150px;padding-left:10px !important;}
+  .lb-streak{left:150px;min-width:74px;}
+  .lb-pname{max-width:92px;font-size:13.5px;}
+  .lb-av{width:32px;height:32px;font-size:14px;}
+  .lb-fire{font-size:12px;padding:4px 8px;}
+}
 .card-keywords{font-size:12.5px;color:var(--gold);margin-top:6px;font-style:italic;}
 .bp-intro{background:rgba(255,212,0,.06);border:1px solid rgba(255,212,0,.28);border-radius:var(--radius);padding:16px 18px;margin-bottom:18px;font-size:14px;line-height:1.6;}
 .bp-intro-title{font-family:'Space Mono',monospace;font-size:13px;color:var(--gold);font-weight:700;margin-bottom:6px;}
@@ -384,7 +428,7 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 <div id="app" class="hidden">
   <div class="shell">
     <header class="app-header">
-      <h1>LÀM CHỦ SỰ HỌC <span style="font-size:11px;color:var(--ink-faint);font-family:'Space Mono',monospace;font-weight:400">v2.2</span></h1>
+      <h1>LÀM CHỦ SỰ HỌC <span style="font-size:11px;color:var(--ink-faint);font-family:'Space Mono',monospace;font-weight:400">v2.3</span></h1>
       <p>Không gian để bạn tự quản lý việc ứng dụng học tập, giải quyết vấn đề thực tế, tạo ra kết quả đột phá.</p>
       <div class="who-row">
         <span id="whoLabel"></span>
@@ -456,7 +500,7 @@ let STATE = {
   tab: localStorage.getItem('lcsh_tab') || 'problems',
   problemSubTab: 'all',
   actionSubTab: 'all',
-  report: { period: localStorage.getItem('lcsh_report_period') || 'week', from:'', to:'', member:null },
+  report: { from:'', to:'', member:null, showDetail:false },
   search: '',
   personFilter: 'all',
   dateFrom: '',
@@ -1962,23 +2006,23 @@ function doneTs(r){ const t = toMs(r.doneAt); if(t) return t; return r.status===
 function answeredTs(q){ const t = toMs(q.answeredAt); if(t) return t; return (q.status==='answered' || (q.answer && String(q.answer).trim())) ? (toMs(q.updatedAt) || toMs(q.createdAt)) : null; }
 function appliedTs(l){ const t = toMs(l.appliedAt); if(t) return t; return l.status==='applied' ? (toMs(l.updatedAt) || toMs(l.createdAt)) : null; }
 
+function isoOf(d){ return dayKey(d); }
+function ensureReportRange(){
+  const R = STATE.report, today = sod(new Date());
+  if(!R.to) R.to = isoOf(today);
+  if(!R.from) R.from = isoOf(addDays(today,-13)); // default: last 14 days
+  if(R.from > R.to){ const t=R.from; R.from=R.to; R.to=t; }
+}
 function reportPeriod(){
-  const R = STATE.report, now = new Date(), y = now.getFullYear(), m = now.getMonth(), today = sod(now);
-  let s, e, ps, pe, label;
-  if(R.period==='today'){ s=today; e=addDays(today,1); ps=addDays(s,-1); pe=s; label='Hôm nay'; }
-  else if(R.period==='month'){ s=new Date(y,m,1); e=new Date(y,m+1,1); ps=new Date(y,m-1,1); pe=s; label='Tháng này'; }
-  else if(R.period==='quarter'){ const q=Math.floor(m/3); s=new Date(y,q*3,1); e=new Date(y,q*3+3,1); ps=new Date(y,q*3-3,1); pe=s; label='Quý này'; }
-  else if(R.period==='year'){ s=new Date(y,0,1); e=new Date(y+1,0,1); ps=new Date(y-1,0,1); pe=s; label='Năm nay'; }
-  else if(R.period==='custom'){
-    s = R.from ? new Date(R.from+'T00:00:00') : addDays(today,-6);
-    e = R.to ? addDays(new Date(R.to+'T00:00:00'),1) : addDays(today,1);
-    if(isNaN(s)) s = addDays(today,-6);
-    if(isNaN(e) || e<=s) e = addDays(s,1);
-    ps = new Date(s.getTime() - (e-s)); pe = s; label='Tùy chỉnh';
-  }
-  else { const dow=(today.getDay()+6)%7; s=addDays(today,-dow); e=addDays(s,7); ps=addDays(s,-7); pe=s; label='Tuần này'; }
-  const effEnd = Math.min(e.getTime(), addDays(today,1).getTime()); // don't count future days as "missing"
-  return { s:s.getTime(), e:e.getTime(), ps:ps.getTime(), pe:pe.getTime(), effEnd, label };
+  ensureReportRange();
+  const R = STATE.report, today = sod(new Date());
+  let s = new Date(R.from+'T00:00:00'), e = addDays(new Date(R.to+'T00:00:00'),1);
+  if(isNaN(s)) s = addDays(today,-13);
+  if(isNaN(e) || e<=s) e = addDays(s,1);
+  const ps = new Date(s.getTime() - (e-s)), pe = s;
+  const effEnd = Math.min(e.getTime(), addDays(today,1).getTime()); // future days are never "missing"
+  const nDays = Math.round((e-s)/DAY_MS);
+  return { s:s.getTime(), e:e.getTime(), ps:ps.getTime(), pe:pe.getTime(), effEnd, label: nDays+' ngày' };
 }
 function periodDays(P){
   const out = []; let d = new Date(P.s);
@@ -2065,12 +2109,28 @@ function memberAlerts(m, events, P){
   if(crossWait.length) out.push({lvl:'yellow', text:crossWait.length+' câu hỏi chéo chưa trả lời > '+R.crossDays+' ngày', tip:'Dành 10 phút trả lời câu hỏi đồng đội đặt cho mình.'});
   return out;
 }
-function memberStreak(m, events){
-  const days = new Set(events.filter(x=>x.m===m).map(x=>dayKey(x.t)));
-  let d = sod(new Date()); if(!days.has(dayKey(d))) d = addDays(d,-1);
-  let n = 0; while(days.has(dayKey(d))){ n++; d = addDays(d,-1); }
-  return n;
+// STREAK RULE: count days that have >= 1 ghi chép in an unbroken chain.
+// A single missed day does NOT break the chain (and is not counted);
+// 2 missed days in a row break it. Today without an entry yet is "pending",
+// not a miss, because the day isn't over.
+function activeDaySet(m, events){ return new Set(events.filter(x=>x.m===m).map(x=>dayKey(x.t))); }
+function streakAsOf(days, endTs){
+  if(!days.size) return 0;
+  let minKey = null; days.forEach(k=>{ if(minKey===null || k<minKey) minKey=k; });
+  const todayK = dayKey(sod(new Date()));
+  let d = sod(endTs);
+  if(dayKey(d)===todayK && !days.has(todayK)) d = addDays(d,-1); // today still pending
+  let count = 0, gap = 0;
+  for(let i=0;i<5000;i++){
+    const k = dayKey(d);
+    if(k < minKey) break;
+    if(days.has(k)){ count++; gap = 0; }
+    else { gap++; if(gap>=2) break; }
+    d = addDays(d,-1);
+  }
+  return count;
 }
+function memberStreak(m, events){ return streakAsOf(activeDaySet(m, events), sod(new Date()).getTime()); }
 function lightOf(alerts){ return alerts.some(a=>a.lvl==='red') ? 'red' : (alerts.some(a=>a.lvl==='yellow') ? 'yellow' : 'green'); }
 function sumK(list, k){ return list.reduce((a,r)=>a+(r[k]||0),0); }
 function deltaHtml(cur, prev){
@@ -2082,14 +2142,22 @@ function deltaHtml(cur, prev){
 }
 
 /* ---- handlers ---- */
-function setReportPeriod(p){ STATE.report.period = p; try{ localStorage.setItem('lcsh_report_period', p); }catch(e){} refreshKeepScroll(); }
-function setReportCustom(){
-  STATE.report.from = document.getElementById('rp_from').value;
-  STATE.report.to = document.getElementById('rp_to').value;
+function setReportRange(kind){
+  const R = STATE.report, today = sod(new Date());
+  R.to = isoOf(today);
+  if(kind==='month') R.from = isoOf(new Date(today.getFullYear(), today.getMonth(), 1));
+  else R.from = isoOf(addDays(today, -(Number(kind)-1)));
   refreshKeepScroll();
 }
+function setReportCustom(){
+  const f = document.getElementById('rp_from').value, t = document.getElementById('rp_to').value;
+  if(f) STATE.report.from = f; if(t) STATE.report.to = t;
+  refreshKeepScroll();
+}
+function toggleReportDetail(){ STATE.report.showDetail = !STATE.report.showDetail; refreshKeepScroll(); }
 function selectReportMember(m){
   STATE.report.member = m;
+  STATE.report.showDetail = true;
   renderContent();
   const el = document.getElementById('rp-personal'); if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
 }
@@ -2098,38 +2166,108 @@ function selectReportMember(m){
 function renderReportTab(){
   const P = reportPeriod(), events = buildEvents(), members = reportMembers(), days = periodDays(P);
   if(!members.length) return `<div class="empty-note">${emptyMsg('Chưa có thành viên hay dữ liệu nào để báo cáo.')}</div>`;
-  const cur = members.map(m=>memberMetrics(m, P.s, P.e, events));
-  const prev = members.map(m=>memberMetrics(m, P.ps, P.pe, events));
-  const prevBy = {}; prev.forEach(r=>prevBy[r.member]=r);
-  cur.forEach(r=>{ r.alerts = memberAlerts(r.member, events, P); r.light = lightOf(r.alerts); r.streak = memberStreak(r.member, events); });
-  const ranked = cur.slice().sort((a,b)=> b.points-a.points || b.activeDays-a.activeDays || a.member.localeCompare(b.member));
-  ranked.forEach((r,i)=>r.rank=i+1);
 
-  return renderReportHeader(P)
-    + renderReportScoreboard(cur, prev, members, days)
-    + renderReportFunnel(cur)
-    + renderReportTable(ranked, days)
-    + renderReportHeatmap(ranked, events, P, days)
-    + renderReportAlerts(ranked)
-    + renderReportPersonal(ranked, prevBy, events, members);
+  // Leaderboard order (by streak) drives everything below
+  const lb = buildLeaderboard(members, events, P, days);
+  let html = renderReportHeader(P) + renderLeaderboard(lb, days);
+
+  html += `<button class="btn btn-ghost btn-block rp-detail-toggle" onclick="toggleReportDetail()">${STATE.report.showDetail ? '▲ Ẩn phân tích chi tiết' : '📈 Xem phân tích chi tiết — bảng điểm, phễu học, cảnh báo, hồ sơ cá nhân'}</button>`;
+  if(STATE.report.showDetail){
+    const cur = members.map(m=>memberMetrics(m, P.s, P.e, events));
+    const prev = members.map(m=>memberMetrics(m, P.ps, P.pe, events));
+    const prevBy = {}; prev.forEach(r=>prevBy[r.member]=r);
+    const curBy = {}; cur.forEach(r=>curBy[r.member]=r);
+    const ranked = lb.map((row,i)=>{
+      const r = curBy[row.m];
+      r.rank = i+1; r.streak = row.streak;
+      r.alerts = memberAlerts(r.member, events, P); r.light = lightOf(r.alerts);
+      return r;
+    });
+    html += renderReportScoreboard(cur, prev, members, days)
+          + renderReportFunnel(cur)
+          + renderReportAlerts(ranked)
+          + renderReportPersonal(ranked, prevBy, events, members);
+  }
+  return html;
 }
 
 function renderReportHeader(P){
-  const R = STATE.report;
-  const chips = [['today','Hôm nay'],['week','Tuần này'],['month','Tháng này'],['quarter','Quý này'],['year','Năm nay'],['custom','Tùy chỉnh']]
-    .map(([k,l])=>`<button class="chip ${R.period===k?'active':''}" onclick="setReportPeriod('${k}')">${l}</button>`).join('');
-  const custom = R.period==='custom' ? `<div class="rp-custom">
-      <label>Từ <input id="rp_from" type="date" value="${esc(R.from)}" onchange="setReportCustom()"/></label>
-      <label>Đến <input id="rp_to" type="date" value="${esc(R.to)}" onchange="setReportCustom()"/></label>
-    </div>` : '';
-  const rangeTxt = fmtDate(P.s)+' → '+fmtDate(P.e - DAY_MS);
+  const R = STATE.report, today = sod(new Date()), todayK = isoOf(today);
+  const is = (from)=> R.to===todayK && R.from===from;
+  const chips = [
+    ['7','7 ngày', isoOf(addDays(today,-6))],
+    ['14','14 ngày', isoOf(addDays(today,-13))],
+    ['30','30 ngày', isoOf(addDays(today,-29))],
+    ['month','Tháng này', isoOf(new Date(today.getFullYear(), today.getMonth(), 1))]
+  ].map(([k,l,f])=>`<button class="chip ${is(f)?'active':''}" onclick="setReportRange('${k}')">${l}</button>`).join('');
   return `<div class="rp-head">
     <div class="rp-head-row">
-      <div><div class="rp-h1">📊 Báo cáo rèn luyện</div><div class="rp-range">${P.label} · ${rangeTxt} <span class="rp-muted">(so với kỳ trước cùng độ dài)</span></div></div>
+      <div class="rp-h1">🏆 Bảng xếp hạng chuỗi rèn luyện</div>
       <button class="icon-btn" title="Làm mới dữ liệu" onclick="loadAll(false)">⟳</button>
     </div>
-    <div class="chip-row" style="margin-bottom:0">${chips}</div>
-    ${custom}
+    <div class="rp-custom">
+      <label>Từ ngày <input id="rp_from" type="date" value="${esc(R.from)}" onchange="setReportCustom()"/></label>
+      <label>Đến ngày <input id="rp_to" type="date" value="${esc(R.to)}" onchange="setReportCustom()"/></label>
+    </div>
+    <div class="chip-row" style="margin:10px 0 0">${chips}</div>
+  </div>`;
+}
+
+const WEEKDAY_VI = ['CN','T2','T3','T4','T5','T6','T7'];
+function buildLeaderboard(members, events, P, days){
+  const countBy = {};
+  events.forEach(x=>{ const k=dayKey(x.t); const o = countBy[x.m] || (countBy[x.m] = {}); o[k] = (o[k]||0)+1; });
+  const endTs = days.length ? days[days.length-1] : P.s;
+  const rows = members.map(m=>{
+    const set = activeDaySet(m, events);
+    let first = null; set.forEach(k=>{ if(first===null || k<first) first=k; });
+    const c = countBy[m] || {};
+    return {
+      m, set, first, counts:c,
+      streak: streakAsOf(set, endTs),
+      active: days.filter(t=>set.has(dayKey(t))).length,
+      total: days.reduce((a,t)=>a+(c[dayKey(t)]||0),0)
+    };
+  });
+  rows.sort((a,b)=> b.streak-a.streak || b.active-a.active || b.total-a.total || a.m.localeCompare(b.m));
+  return rows;
+}
+function lbAvatar(name, rank){
+  const c = memberColor(name);
+  const letter = (String(name).trim()[0]||'?').toUpperCase();
+  const badge = rank<=3 ? `<span class="lb-rank r${rank}">${rank}</span>` : '';
+  return `<span class="lb-av" style="background:linear-gradient(135deg, ${c}, ${c}99)">${esc(letter)}${badge}</span>`;
+}
+function renderLeaderboard(lb, days){
+  const todayK = dayKey(sod(new Date())), yK = dayKey(addDays(sod(new Date()),-1));
+  const cols = days.slice().reverse(); // newest first, like the reference
+  const doneToday = lb.filter(r=>r.set.has(todayK)).length;
+  const inRange = days.some(t=>dayKey(t)===todayK);
+  const head = `<tr>
+      <th class="lb-name">Thành viên</th>
+      <th class="lb-streak">🔥 Streak</th>
+      ${cols.map(t=>{ const k=dayKey(t), d=new Date(t);
+        const sub = k===todayK ? '<span class="lb-sub today">Hôm nay</span>' : (k===yK ? '<span class="lb-sub">Hôm qua</span>' : '');
+        return `<th class="lb-day ${k===todayK?'is-today':''}"><span class="lb-wd">${WEEKDAY_VI[d.getDay()]}</span><span class="lb-dm">${d.getDate()}/${d.getMonth()+1}</span>${sub}</th>`;
+      }).join('')}
+    </tr>`;
+  const body = lb.map((r,i)=>`<tr onclick="selectReportMember('${esc(r.m).replace(/'/g,"\\'")}')">
+      <td class="lb-name"><div class="lb-person">${lbAvatar(r.m, i+1)}<div><div class="lb-pname">${esc(r.m)}</div><div class="lb-pmeta">ghi ${r.active}/${days.length} ngày</div></div></div></td>
+      <td class="lb-streak"><span class="lb-fire ${r.streak?'':'zero'}">🔥 ${r.streak}</span></td>
+      ${cols.map(t=>{ const k=dayKey(t), n=r.counts[k]||0, isT = k===todayK;
+        let cell;
+        if(n>0) cell = `<span class="lb-ok" title="${fmtDate(t)}: ${n} ghi chép">✓</span>`;
+        else if(r.first===null || k<r.first) cell = `<span class="lb-pre" title="Chưa tham gia">·</span>`;
+        else cell = `<span class="lb-no" title="${fmtDate(t)}: chưa có ghi chép">✕</span>`;
+        return `<td class="lb-day ${isT?'is-today':''}">${cell}</td>`;
+      }).join('')}
+    </tr>`).join('');
+  const summary = inRange
+    ? `<div class="lb-summary">Hôm nay đã ghi chép: <strong>${doneToday}/${lb.length}</strong> người</div>` : '';
+  return `<div class="lb-card">
+    ${summary}
+    <div class="lb-scroll"><table class="lb">${head}${body}</table></div>
+    <div class="lb-rule">🔥 <strong>Streak</strong> = số ngày có ghi chép liên tiếp. Được nghỉ lẻ <strong>1 ngày</strong> vẫn giữ chuỗi (ngày nghỉ không cộng); nghỉ <strong>2 ngày liền</strong> thì chuỗi về 0. Hôm nay chưa ghi thì chưa tính là nghỉ. · ✓ có ghi chép · ✕ chưa ghi · Bấm vào tên để xem chi tiết.</div>
   </div>`;
 }
 
@@ -2199,67 +2337,6 @@ function renderReportFunnel(cur){
   return rpSection('2','Phễu Học → Hành vi → Kết quả','Việc học có đang biến thành hành động và kết quả thật không?', body);
 }
 
-/* Tầng 3 — Bảng thành viên, xếp hạng đầy đủ */
-function renderReportTable(ranked, days){
-  const medal = n => n===1?'🥇':n===2?'🥈':n===3?'🥉':n;
-  const light = l => `<span class="rp-light ${l}" title="${l==='red'?'Cần can thiệp':l==='yellow'?'Cần chú ý':'Ổn'}"></span>`;
-  const rows = ranked.map(r=>`<tr onclick="selectReportMember('${esc(r.member).replace(/'/g,"\\'")}')">
-    <td class="rp-rank">${medal(r.rank)}</td>
-    <td class="rp-name">${memberBadge(r.member)}</td>
-    <td class="rp-pts">${r.points}</td>
-    <td>${r.activeDays}<span class="rp-muted">/${days.length||0}</span></td>
-    <td>${r.problems}</td>
-    <td>${r.selfQ}<span class="rp-muted"> · </span><span class="rp-x">${r.crossAsked}</span><span class="rp-muted"> · </span>${r.crossRecv}</td>
-    <td>${r.answers}</td>
-    <td>${r.actions}<span class="rp-muted">/</span><span class="rp-ok">${r.actionsDone}</span>${r.overdueNow?`<span class="rp-muted">/</span><span class="rp-bad">${r.overdueNow}</span>`:''}</td>
-    <td>${r.learnings}<span class="rp-muted">/</span><span class="rp-ok">${r.applied}</span></td>
-    <td>${r.effAvg===null?'<span class="rp-muted">—</span>':r.effAvg.toFixed(1)}</td>
-    <td>${light(r.light)}</td>
-  </tr>`).join('');
-  const body = `<div class="rp-scroll"><table class="rp-table">
-    <thead><tr><th>#</th><th>Thành viên</th><th>Điểm</th><th>Ngày HĐ</th><th>Vấn đề</th><th>Câu hỏi<br><small>tự · <span class="rp-x">chéo đặt</span> · nhận</small></th><th>Trả lời</th><th>Hành động<br><small>tạo/<span class="rp-ok">xong</span>/<span class="rp-bad">trễ</span></small></th><th>Bài học<br><small>có/<span class="rp-ok">áp dụng</span></small></th><th>Hiệu quả</th><th>Đèn</th></tr></thead>
-    <tbody>${rows}</tbody></table></div>
-    <details class="rp-formula"><summary>Cách tính điểm rèn luyện</summary>
-      Mỗi ngày có ghi chép +${POINTS.day} · Vấn đề +${POINTS.problem} · Câu hỏi tự đặt +${POINTS.question} · Câu hỏi chéo đặt cho đồng đội +${POINTS.crossAsk} · Trả lời +${POINTS.answer} · Hành động cam kết +${POINTS.action} · Hành động hoàn thành +${POINTS.actionDone} · Bài học +${POINTS.learning} · Bài học áp dụng +${POINTS.applied} · Thực hành hiệu quả +${POINTS.bp}.
-      Chuyên cần được thưởng nhiều nhất vì đó là chỉ số dẫn dắt quan trọng nhất.
-    </details>
-    <div class="hint">Bấm vào một dòng để xem chi tiết người đó ở tầng 6.</div>`;
-  return rpSection('3','Bảng thành viên','Ai đang đóng góp gì — xếp hạng theo điểm rèn luyện trong kỳ.', body);
-}
-
-/* Tầng 4 — Lịch chuyên cần (người × ngày) */
-function renderReportHeatmap(ranked, events, P, days){
-  const today = sod(new Date()).getTime(), todayKey = dayKey(today);
-  const countBy = {}; // member -> dayKey -> count
-  events.forEach(x=>{ const k=dayKey(x.t); const o = countBy[x.m] || (countBy[x.m] = {}); o[k] = (o[k]||0)+1; });
-  const doneToday = ranked.filter(r=>(countBy[r.member]||{})[todayKey]);
-  const missToday = ranked.filter(r=>!(countBy[r.member]||{})[todayKey]);
-  const todayLine = `<div class="rp-today">
-    <div><strong>Hôm nay đã ghi: ${doneToday.length}/${ranked.length}</strong></div>
-    ${missToday.length ? `<div class="rp-miss">Còn thiếu: ${missToday.map(r=>memberBadge(r.member)).join(' ')}</div>` : '<div class="rp-ok">✅ Cả đội đã ghi chép hôm nay!</div>'}
-  </div>`;
-
-  let cols, cellFn, weekMode = days.length > 31;
-  if(!days.length){
-    return rpSection('4','Lịch chuyên cần','Ai có ghi chép ngày nào — ô trống là ngày thiếu.', todayLine + '<div class="empty-note">Kỳ đã chọn chưa bắt đầu.</div>');
-  }
-  if(!weekMode){
-    cols = days.map(t=>({key:dayKey(t), label:String(new Date(t).getDate()), title:fmtDate(t), isToday: dayKey(t)===todayKey}));
-    cellFn = (m, c)=>{ const n=(countBy[m]||{})[c.key]||0; const lv = n===0?0:n<=2?1:n<=5?2:3;
-      return `<td><span class="rp-cell lv${lv}${c.isToday?' today':''}" title="${esc(m)} · ${c.title}: ${n} ghi chép"></span></td>`; };
-  } else {
-    const weeks = []; days.forEach(t=>{ const d=new Date(t); const dow=(d.getDay()+6)%7; const ws=addDays(sod(d),-dow).getTime(); if(!weeks.length || weeks[weeks.length-1].ws!==ws) weeks.push({ws, days:[]}); weeks[weeks.length-1].days.push(t); });
-    cols = weeks.map(w=>({key:w.ws, label:fmtDM(w.ws), title:'Tuần từ '+fmtDate(w.ws), days:w.days}));
-    cellFn = (m, c)=>{ const act = c.days.filter(t=>(countBy[m]||{})[dayKey(t)]).length; const ratio = act/c.days.length; const lv = act===0?0:ratio<0.4?1:ratio<0.8?2:3;
-      return `<td><span class="rp-cell lv${lv}" title="${esc(m)} · ${c.title}: ${act}/${c.days.length} ngày">${act||''}</span></td>`; };
-  }
-  const head = `<tr><th class="rp-hm-name">Thành viên</th>${cols.map(c=>`<th class="${c.isToday?'rp-hm-today':''}" title="${c.title}">${c.label}</th>`).join('')}<th>🔥</th></tr>`;
-  const rows = ranked.map(r=>`<tr><td class="rp-hm-name">${memberBadge(r.member)}</td>${cols.map(c=>cellFn(r.member,c)).join('')}<td class="rp-streak">${r.streak||''}</td></tr>`).join('');
-  const legend = `<div class="rp-legend">Ít <span class="rp-cell lv0"></span><span class="rp-cell lv1"></span><span class="rp-cell lv2"></span><span class="rp-cell lv3"></span> Nhiều${weekMode?' · mỗi ô = 1 tuần, số = ngày có ghi chép':' · mỗi ô = 1 ngày'} · 🔥 = chuỗi ngày liên tục</div>`;
-  const body = todayLine + `<div class="rp-scroll"><table class="rp-heat">${head}${rows}</table></div>` + legend;
-  return rpSection('4','Lịch chuyên cần','Ai có ghi chép ngày nào — ô trống là ngày thiếu (định mức: ≥ 1 ghi chép/ngày).', body);
-}
-
 /* Tầng 5 — Cảnh báo can thiệp */
 function renderReportAlerts(ranked){
   const R = reportRules();
@@ -2279,7 +2356,7 @@ function renderReportAlerts(ranked){
     </div>
     <div class="hint">Ngưỡng lưu trên thiết bị này.</div>
   </details>`;
-  return rpSection('5','Cảnh báo can thiệp','Ai cần được hỗ trợ ngay, kèm gợi ý cách can thiệp.', list + settings);
+  return rpSection('3','Cảnh báo can thiệp','Ai cần được hỗ trợ ngay, kèm gợi ý cách can thiệp.', list + settings);
 }
 
 /* Tầng 6 — Tôi đang ở đâu (hồ sơ cá nhân) */
@@ -2323,7 +2400,7 @@ function renderReportPersonal(ranked, prevBy, events, members){
   const body = `<div class="rp-me-head">
       <select onchange="selectReportMember(this.value)">${opts}</select>
       <div class="rp-me-stats">
-        <span>Hạng <strong>#${me.rank}</strong>/${n}</span>
+        <span>Hạng chuỗi <strong>#${me.rank}</strong>/${n}</span>
         <span>Điểm <strong>${me.points}</strong></span>
         <span>🔥 Chuỗi <strong>${me.streak}</strong> ngày</span>
         <span class="rp-light ${me.light}"></span>
@@ -2332,7 +2409,7 @@ function renderReportPersonal(ranked, prevBy, events, members){
     <div class="rp-scroll"><table class="rp-table rp-me-table"><thead><tr><th>Chỉ số</th><th>Kỳ này</th><th>Kỳ trước</th><th>TB đội</th></tr></thead><tbody>${rows}</tbody></table></div>
     <div class="rp-subhead">📈 Số ngày có ghi chép — 8 tuần gần nhất</div>${trend}
     <div class="rp-subhead">📋 Việc cần chú ý</div>${todo}`;
-  return rpSection('6','Tôi đang ở đâu','So với chính mình kỳ trước và trung bình đội — chọn tên để xem từng người.', body, 'rp-personal');
+  return rpSection('4','Tôi đang ở đâu','So với chính mình kỳ trước và trung bình đội — chọn tên để xem từng người.', body, 'rp-personal');
 }
 
 /* ---------------- export backup ---------------- */

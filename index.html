@@ -317,7 +317,7 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .lb-rank{position:absolute;top:-7px;right:-7px;width:19px;height:19px;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;color:#241D00;border:2px solid #1f1d55;}
 .lb-rank.r1{background:#FFD400;} .lb-rank.r2{background:#cbd5e1;} .lb-rank.r3{background:#f59e5b;}
 .lb-pname{font-size:15px;font-weight:600;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:130px;}
-.lb-pmeta{font-size:10.5px;font-family:'Space Mono',monospace;color:var(--ink-faint);}
+.lb-pmeta{font-size:10.5px;font-family:'Space Mono',monospace;color:var(--ink-faint);white-space:nowrap;}
 .lb-fire{display:inline-block;font-family:'Space Mono',monospace;font-weight:700;font-size:14px;color:#fb923c;background:rgba(251,146,60,.14);border:1px solid rgba(251,146,60,.35);border-radius:999px;padding:5px 11px;white-space:nowrap;}
 .lb-fire.zero{color:var(--ink-faint);background:rgba(255,255,255,.05);border-color:var(--border);}
 .lb-day{text-align:center;min-width:52px;padding:8px 4px !important;}
@@ -400,6 +400,208 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
 .top-actions{display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px;}
+/* ---- 18:00 rule + recognition on the leaderboard ---- */
+.lb-late,.lb-wait{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-size:13px;}
+.lb-late{background:rgba(253,185,19,.18);color:var(--amber);}
+.lb-wait{color:var(--ink-faint);border:1px dashed rgba(255,255,255,.22);font-size:12px;}
+.lb-recog{min-width:84px;text-align:center;border-right:1px solid var(--border-soft);}
+.lb th.lb-recog{line-height:1.25;}
+.lb-rc{display:inline-block;font-family:'Space Mono',monospace;font-weight:700;font-size:13px;padding:3px 9px;border-radius:999px;}
+.lb-rc.green{color:#34d399;background:rgba(52,211,153,.14);}
+.lb-rc.yellow{color:#241D00;background:var(--amber);}
+.lb-rc.red{color:#fff;background:var(--red);}
+.lb-rc.wait{color:var(--ink-faint);border:1px dashed rgba(255,255,255,.22);}
+.lb-rc-miss{display:block;font-size:9.5px;font-family:'Space Mono',monospace;margin-top:3px;}
+.lb-rc-miss.yellow{color:var(--amber);} .lb-rc-miss.red{color:var(--red);}
+.lb .is-thu{background-color:rgba(167,139,250,.06);}
+.lb .is-today.is-thu{background-color:rgba(56,189,248,.08);}
+.lb-rchip{display:block;margin:4px auto 0;width:max-content;font-size:9.5px;font-family:'Space Mono',monospace;padding:1px 6px;border-radius:999px;white-space:nowrap;}
+.lb-rchip.ok{color:#c4b5fd;background:rgba(167,139,250,.2);}
+.lb-rchip.late{color:var(--amber);background:var(--amber-bg);}
+.lb-rchip.miss{color:#fff;background:rgba(248,81,73,.7);}
+.lb-rchip.pending{color:var(--ink-faint);border:1px dashed rgba(255,255,255,.25);}
+/* ---- recognition tab ---- */
+.rc-sub{font-size:13px;color:var(--ink-dim);line-height:1.55;}
+.rc-sub strong{color:var(--ink);}
+.ring-chain{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;margin-top:12px;}
+.ring-node{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;color:var(--c);background:color-mix(in srgb, var(--c) 14%, transparent);border:1px solid color-mix(in srgb, var(--c) 40%, transparent);}
+.ring-node.me{outline:2px solid var(--gold);outline-offset:1px;}
+.ring-node.buddy{outline:2px dashed var(--gold);outline-offset:1px;}
+.ring-arr{color:var(--ink-faint);font-size:12px;}
+.rc-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-radius:var(--radius-sm);padding:10px 13px;margin-bottom:12px;font-size:14px;line-height:1.5;}
+.rc-banner.open{background:rgba(255,212,0,.12);border:1px solid rgba(255,212,0,.45);}
+.rc-banner.late{background:var(--amber-bg);border:1px solid rgba(253,185,19,.45);}
+.rc-banner.recv{background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.45);}
+.rc-closed{font-size:14px;line-height:1.6;background:rgba(0,0,0,.14);border-radius:var(--radius-sm);padding:12px 14px;}
+.rc-status{font-size:13.5px;border-radius:var(--radius-sm);padding:9px 12px;margin:10px 0;}
+.rc-status.open{background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.4);}
+.rc-status.ok{background:var(--teal-bg);border:1px solid rgba(0,167,157,.45);}
+.rc-status.late{background:var(--amber-bg);border:1px solid rgba(253,185,19,.5);}
+.rc-to{font-size:14px;margin:4px 0 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.rc-digest{background:rgba(0,0,0,.16);border:1px solid var(--border-soft);border-radius:var(--radius-sm);padding:8px 12px;margin-bottom:14px;}
+.rc-digest summary{cursor:pointer;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:var(--teal);padding:4px 0;}
+.rc-dg-stats{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-dim);margin:6px 0 8px;}
+.rc-dg-stats strong{color:#34d399;}
+.rc-dg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px 14px;}
+.rc-dg-t{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:var(--ink-dim);}
+.rc-dg-n{display:inline-block;min-width:18px;text-align:center;border-radius:999px;background:rgba(255,255,255,.08);color:var(--ink);font-size:10px;padding:0 5px;margin-left:2px;}
+.rc-dg ul{margin:4px 0 0 18px;padding:0;font-size:13px;line-height:1.5;}
+.rc-dg li{margin-bottom:2px;}
+.rc-none{font-size:12px;color:var(--ink-faint);margin:2px 0 0 4px;}
+.rc-field{display:flex;flex-direction:column;gap:3px;margin-bottom:12px;}
+.rc-q{font-size:15px;font-weight:600;}
+.rc-hint{font-size:12px;color:var(--ink-faint);font-style:italic;}
+.rc-field textarea{margin-top:4px;font-size:15px;line-height:1.55;}
+.rc-item{background:rgba(0,0,0,.14);border:1px solid var(--border);border-left:3px solid #a78bfa;border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;}
+.rc-item.is-new{border-color:#a78bfa;box-shadow:0 0 0 1px rgba(167,139,250,.35);}
+.rc-item-h{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px;}
+.rc-arrow{font-size:11px;color:var(--ink-faint);font-family:'Space Mono',monospace;}
+.rc-date{font-size:11px;color:var(--ink-dim);font-family:'Space Mono',monospace;margin-left:auto;}
+.rc-chip{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;}
+.rc-chip.ok{color:var(--teal);background:var(--teal-bg);}
+.rc-chip.late{color:var(--amber);background:var(--amber-bg);}
+.rc-chip.new{color:#fff;background:#a78bfa;}
+.rc-ans{display:grid;grid-template-columns:130px 1fr;gap:8px;font-size:14px;line-height:1.5;padding:4px 0;border-top:1px solid var(--border-soft);}
+.rc-ans:first-of-type{border-top:none;}
+.rc-ans-l{font-size:11.5px;color:var(--ink-dim);font-family:'Space Mono',monospace;padding-top:2px;}
+.rc-ans-v{white-space:pre-wrap;}
+.rc-week-h{font-family:'Space Mono',monospace;font-size:11.5px;font-weight:700;color:var(--gold);margin:14px 0 6px;}
+.rc-week-h:first-of-type{margin-top:4px;}
+.rg{border-collapse:separate;border-spacing:0;font-size:12px;font-family:'Space Mono',monospace;min-width:100%;}
+.rg th{font-size:10px;color:var(--ink-dim);font-weight:700;padding:6px 6px;text-align:center;border-bottom:1px solid var(--border);line-height:1.3;}
+.rg td{padding:7px 6px;text-align:center;border-bottom:1px solid var(--border-soft);white-space:nowrap;}
+.rg .rg-name{text-align:left;}
+.rg .rg-to{text-align:left;color:var(--ink-dim);font-size:11px;}
+.rg .is-today{background:rgba(56,189,248,.08);}
+.rg-s{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;font-size:12px;}
+.rg-s.ok{color:#34d399;background:rgba(52,211,153,.16);}
+.rg-s.late{color:var(--amber);background:var(--amber-bg);}
+.rg-s.miss{color:var(--red);background:rgba(248,81,73,.14);}
+.rg-s.pending{color:var(--ink-faint);border:1px dashed rgba(255,255,255,.25);}
+.rg-s.future,.rg-s.na{color:var(--ink-faint);}
+.rc-settings summary{cursor:pointer;list-style:none;}
+.rc-settings summary::-webkit-details-marker{display:none;}
+.ring-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:7px 0;border-bottom:1px solid var(--border-soft);}
+.ring-no{font-family:'Space Mono',monospace;font-size:11px;color:var(--gold);width:18px;}
+.ring-to{flex:1;font-size:12.5px;color:var(--ink-dim);}
+.ring-add{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.ring-add select,.ring-add input{flex:1;min-width:130px;width:auto;padding:8px 10px;font-size:14px;}
+.ring-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px;}
+@media(max-width:520px){ .rc-ans{grid-template-columns:1fr;gap:2px;} .rc-date{margin-left:0;} }
+/* ---- seed ledger / behavior matrix / trend ---- */
+.lb-ex,.lb-off{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-size:13px;}
+.lb-ex{background:rgba(56,189,248,.14);}
+.lb-off{color:var(--ink-faint);}
+.rc-banner.seed{background:rgba(52,211,153,.10);border:1px solid rgba(52,211,153,.4);}
+.rp-warn{color:var(--amber);}
+.sd-info{display:flex;flex-direction:column;gap:4px;font-size:13px;line-height:1.55;background:rgba(0,0,0,.14);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:10px;}
+.sd-info strong{color:var(--ink);}
+.sd-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.sd-form{background:rgba(0,0,0,.18);border:1px solid rgba(255,212,0,.35);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:12px;}
+.sd-form.ex{border-color:rgba(56,189,248,.4);}
+.sd-form-t{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:var(--gold);margin-bottom:10px;}
+.sd-form.ex .sd-form-t{color:#38bdf8;}
+.sd-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;}
+.sd-grid label{display:flex;flex-direction:column;gap:4px;font-size:11px;font-family:'Space Mono',monospace;color:var(--ink-dim);}
+.sd-grid input,.sd-grid select{font-family:'Crimson Text',Georgia,serif;font-size:15px;padding:8px 10px;}
+.sd-wide{grid-column:1 / -1;}
+.sd-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.sd-actions .btn,.sd-bar .btn{flex-shrink:0;white-space:nowrap;}
+.tr-na{position:absolute;bottom:34px;left:0;right:0;text-align:center;font-size:9px;color:var(--ink-faint);font-style:italic;line-height:1.2;}
+.sd-days{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 8px;}
+.sd-day{display:flex;align-items:center;gap:4px;font-size:13px;}
+.sd-day input{width:auto;}
+.sd-sub{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:var(--ink-dim);margin:12px 0 6px;}
+.sd-li{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;line-height:1.45;padding:6px 0;border-bottom:1px solid var(--border-soft);}
+.sd-li.paid{opacity:.6;}
+.sd-li > span:nth-child(2){flex:1;min-width:150px;}
+.sd-d{font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-dim);min-width:58px;}
+.sd-amt{font-family:'Space Mono',monospace;font-weight:700;font-size:12px;}
+.sd-amt.ok{color:#34d399;}
+.sd-tag{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;}
+.sd-tag.ok{color:#34d399;background:rgba(52,211,153,.14);}
+.sd-tag.due{color:var(--amber);background:var(--amber-bg);}
+.sd-table td{vertical-align:middle;}
+.sd-table tfoot td{border-top:1px solid var(--border);border-bottom:none;}
+.sd-row.open td{background:rgba(255,212,0,.06);}
+.sd-chev{color:var(--ink-faint);font-size:10px;}
+.sd-detail td{white-space:normal !important;font-family:'Crimson Text',Georgia,serif !important;background:rgba(0,0,0,.12);}
+.sd-detail-in{padding:2px 0 4px;}
+.sd-detail-card{border:1px solid rgba(255,212,0,.35);border-radius:var(--radius-sm);background:rgba(0,0,0,.16);padding:10px 12px;margin-top:10px;}
+.sd-detail-h{display:flex;align-items:center;gap:8px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:var(--gold);margin-bottom:8px;}
+.sd-detail-h .sd-dt{flex:1;}
+.sd-cols{min-width:0;}
+.sd-sum{font-size:13.5px;line-height:1.6;margin-bottom:4px;}
+.sd-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:4px 22px;}
+.sd-bal{font-family:'Space Mono',monospace;font-weight:700;}
+.sd-bal.red{color:var(--red);} .sd-bal.yellow{color:var(--amber);} .sd-bal.green{color:#34d399;}
+.sd-pre{white-space:pre-wrap;font-family:'Space Mono',monospace;font-size:11.5px;line-height:1.6;background:rgba(0,0,0,.2);border-radius:var(--radius-sm);padding:10px 12px;margin-top:8px;color:var(--ink);}
+.bm-table td{text-align:center;}
+.bm-table td:first-child,.bm-table th:first-child{text-align:left;}
+.bm-name{font-family:'Crimson Text',Georgia,serif !important;font-size:14px !important;}
+.bm-c{display:inline-block;font-weight:700;font-size:12px;padding:2px 8px;border-radius:999px;}
+.bm-c.good{color:#34d399;background:rgba(52,211,153,.14);}
+.bm-c.mid{color:var(--amber);background:var(--amber-bg);}
+.bm-c.bad{color:#ffb4b0;background:rgba(248,81,73,.18);}
+.bm-n{display:block;font-size:9.5px;color:var(--ink-faint);margin-top:2px;}
+.tr-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--ink-dim);margin-bottom:8px;}
+.tr-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle;}
+.tr-chart{display:flex;gap:6px;}
+.tr-axis{display:flex;flex-direction:column;justify-content:space-between;height:120px;font-size:9.5px;font-family:'Space Mono',monospace;color:var(--ink-faint);text-align:right;min-width:30px;}
+.tr-plot{position:relative;flex:1;display:flex;gap:6px;}
+.tr-grid{position:absolute;left:0;right:0;top:0;height:120px;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;}
+.tr-grid i{display:block;height:1px;background:rgba(255,255,255,.07);}
+.tr-w{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;cursor:default;position:relative;z-index:1;}
+.tr-w:hover .tr-bars{background:rgba(255,255,255,.04);}
+.tr-bars{height:120px;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:2px;border-radius:4px;}
+.tr-b{width:min(14px,40%);border-radius:4px 4px 0 0;min-height:0;}
+.tr-l{font-size:9.5px;font-family:'Space Mono',monospace;color:var(--ink-faint);white-space:nowrap;}
+.rc-banner.seed.red{background:rgba(248,81,73,.10);border-color:rgba(248,81,73,.45);}
+.rc-banner-act{display:flex;align-items:center;gap:6px;}
+/* ---- Nhịp vận hành (tài liệu Markdown) ---- */
+.md-page{max-width:760px;margin:0 auto;}
+.md-doc{font-size:17px;line-height:1.6;color:var(--ink);overflow-wrap:anywhere;-webkit-user-select:text;user-select:text;}
+.md-doc > :first-child{margin-top:0;}
+.md-doc h1{font-size:22px;line-height:1.3;font-weight:600;margin:0 0 14px;}
+.md-doc h2{font-family:'Space Mono',monospace;font-size:15px;line-height:1.45;letter-spacing:.02em;color:var(--gold);margin:6px 0 14px;}
+.md-doc h3{font-family:'Space Mono',monospace;font-size:14px;line-height:1.45;color:var(--teal);margin:20px 0 10px;}
+.md-doc p{margin:0 0 10px;}
+.md-doc ul,.md-doc ol{margin:0 0 12px;padding-left:24px;}
+.md-doc li{margin:4px 0;}
+.md-doc li::marker{color:var(--ink-dim);}
+.md-doc hr{border:none;border-top:1px solid var(--border);margin:26px 0;}
+.md-doc a{color:var(--teal);text-decoration:underline;text-underline-offset:3px;}
+.md-doc strong{font-weight:600;color:#fff;}
+.md-doc code{font-family:'Space Mono',monospace;font-size:.8em;background:rgba(255,255,255,.08);border:1px solid var(--border);padding:1px 6px;border-radius:6px;white-space:nowrap;}
+.md-doc p.md-anchor{margin:0;height:0;overflow:hidden;}
+.md-doc [id]{scroll-margin-top:16px;}
+.md-doc blockquote{background:rgba(0,167,157,.09);border-left:4px solid var(--teal);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:12px 14px;margin:0 0 14px;}
+.md-doc blockquote > :last-child{margin-bottom:0;}
+.md-doc blockquote ol,.md-doc blockquote ul{margin-bottom:6px;}
+.md-doc blockquote.md-hero{background:linear-gradient(135deg,rgba(255,212,0,.13),rgba(255,212,0,.04));border-left:5px solid var(--gold);padding:16px 16px 14px;margin-bottom:12px;}
+.md-doc blockquote.md-hero h1,.md-doc blockquote.md-hero h2,.md-doc blockquote.md-hero h3,.md-doc blockquote.md-hero h4{font-family:'Crimson Text',Georgia,serif;font-size:26px;line-height:1.25;font-weight:700;color:var(--gold);letter-spacing:.01em;margin:0 0 6px;}
+.md-doc blockquote.md-hero p{margin:0 0 8px;}
+.md-table{overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--panel);margin:0 0 14px;}
+.md-table table{border-collapse:collapse;width:100%;font-size:16px;line-height:1.45;}
+.md-table th{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;text-align:left;color:var(--ink-dim);background:rgba(255,255,255,.04);padding:9px 10px;border-bottom:1px solid var(--border);white-space:nowrap;}
+.md-table td{padding:9px 10px;border-bottom:1px solid var(--border-soft);vertical-align:top;overflow-wrap:normal;min-width:4.5em;}
+.md-table tr:last-child td{border-bottom:none;}
+.md-table td.md-nw{white-space:nowrap;}
+.md-doc details{border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--panel);padding:0 14px;margin:0 0 10px;}
+.md-doc details > summary{list-style:none;cursor:pointer;min-height:48px;display:flex;align-items:center;gap:10px;margin:0 -14px;padding:10px 14px;font-weight:600;font-size:17px;line-height:1.35;-webkit-user-select:none;user-select:none;border-radius:var(--radius-sm);}
+.md-doc details > summary::-webkit-details-marker{display:none;}
+.md-doc details > summary::before{content:'▶';flex-shrink:0;font-size:11px;color:var(--teal);transition:transform .18s ease;}
+.md-doc details[open] > summary::before{transform:rotate(90deg);}
+.md-doc details > summary:active{background:var(--panel-hover);}
+.md-doc details[open]{padding-bottom:6px;}
+.md-doc details[open] > summary{margin-bottom:10px;border-bottom:1px solid var(--border-soft);border-radius:var(--radius-sm) var(--radius-sm) 0 0;}
+.md-doc details details{margin-left:10px;border-left:3px solid rgba(0,167,157,.5);background:rgba(255,255,255,.025);}
+.md-doc details details > summary{font-size:16.5px;}
+.md-msg-wrap{margin:0 0 12px;}
+.md-doc blockquote.md-msg{background:rgba(255,255,255,.06);border-left-color:var(--amber);margin:0 0 8px;-webkit-touch-callout:default;}
+.md-copy{display:inline-flex;align-items:center;min-height:40px;padding:8px 14px;border-radius:999px;border:1px solid rgba(0,167,157,.45);background:var(--teal-bg);color:var(--teal);font-size:12.5px;font-weight:700;}
+.md-copy.done{border-color:rgba(52,211,153,.5);color:#34d399;background:rgba(52,211,153,.12);}
+@media (prefers-reduced-motion: reduce){ .md-doc details > summary::before{transition:none;} }
 </style>
 </head>
 <body>
@@ -453,7 +655,7 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 <div id="app" class="hidden">
   <div class="shell">
     <header class="app-header">
-      <h1>LÀM CHỦ SỰ HỌC <span style="font-size:11px;color:var(--ink-faint);font-family:'Space Mono',monospace;font-weight:400">v2.4</span></h1>
+      <h1>LÀM CHỦ SỰ HỌC <span style="font-size:11px;color:var(--ink-faint);font-family:'Space Mono',monospace;font-weight:400">v2.7</span></h1>
       <p>Không gian để bạn tự quản lý việc ứng dụng học tập, giải quyết vấn đề thực tế, tạo ra kết quả đột phá.</p>
       <div class="who-row">
         <span id="whoLabel"></span>
@@ -468,6 +670,7 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
       </div>
     </header>
 
+    <div id="recogBanner"></div>
     <div class="stats-grid" id="statsGrid"></div>
 
     <div id="globalFilters">
@@ -537,7 +740,9 @@ let STATE = {
   dataLoaded: false,
   pageSize: 30,
   shownCount: 30,
-  data: { problems:[], questions:[], actions:[], learnings:[], bestPractices:[], bpSuggestions:[], presetNames:[] }
+  recogWeeks: 3, ringDraft: null, ringOpen: false,
+  seedOpen: null, seedForm: null, seedDraft: null, exForm: false, seedSettings: false,
+  data: { problems:[], questions:[], actions:[], learnings:[], bestPractices:[], bpSuggestions:[], recognitions:[], seeds:[], exemptions:[], config:{}, presetNames:[] }
 };
 
 let pollTimer = null;
@@ -632,7 +837,7 @@ function stampPatch(type, prev, patch){
    3) While writes are pending, background reloads wait, so a server snapshot
       can't overwrite fresh local changes. */
 let _writeChain = Promise.resolve();
-const FATAL_ERRORS = ['unauthorized','unknown_type','unknown_op'];
+const FATAL_ERRORS = ['unauthorized','unknown_type','unknown_op','forbidden_key'];
 async function postWithRetry(payload){
   const delays = [0, 1000, 2500, 5000];
   let last = {ok:false, error:'network'};
@@ -754,6 +959,7 @@ async function init(){
         if(!ping.ok){
           localStorage.removeItem('lcsh_pwd');
           localStorage.removeItem(CACHE_KEY);
+          localStorage.removeItem('lcsh_nhip_md');
           toast('Mật khẩu đã thay đổi — cần đăng nhập lại.');
           setTimeout(()=>location.reload(), 1500);
         }
@@ -769,6 +975,7 @@ async function init(){
       return;
     } else {
       localStorage.removeItem('lcsh_pwd');
+      localStorage.removeItem('lcsh_nhip_md');
     }
   }
   document.getElementById('bootLoading').classList.add('hidden');
@@ -826,6 +1033,7 @@ function doLogout(){
   if(!confirm('Đăng xuất khỏi thiết bị này?')) return;
   localStorage.removeItem('lcsh_pwd');
   localStorage.removeItem(CACHE_KEY);
+  localStorage.removeItem('lcsh_nhip_md');
   location.reload();
 }
 
@@ -1027,22 +1235,28 @@ function renderTabs(){
     {id:'actions', label:'HÀNH ĐỘNG'},
     {id:'learnings', label:'BÀI HỌC'},
     {id:'bestPractices', label:'THỰC HÀNH HIỆU QUẢ'},
+    {id:'nhip', label:'🔄 NHỊP VẬN HÀNH'},
+    {id:'recog', label:'💬 GHI NHẬN'},
     {id:'report', label:'📊 BÁO CÁO'}
   ];
   const unseen = unseenCrossQuestions().length;
+  const recogN = recogBadgeCount();
   document.getElementById('tabsBar').innerHTML = tabs.map(t=>{
-    const badge = (t.id==='questions' && unseen>0) ? `<span class="tab-notif">${unseen}</span>` : '';
+    const n = t.id==='questions' ? unseen : (t.id==='recog' ? recogN : 0);
+    const badge = n>0 ? `<span class="tab-notif">${n}</span>` : '';
     return `<button class="tab-btn ${STATE.tab===t.id?'active':''}" onclick="setTab('${t.id}')">${t.label}${badge}</button>`;
   }).join('');
+  renderRecogBanner();
 }
 function setTab(tab){
-  STATE.tab = tab; STATE.shownCount = STATE.pageSize; localStorage.setItem('lcsh_tab', tab);
+  STATE.tab = tab; STATE.shownCount = STATE.pageSize; localStorage.setItem('lcsh_tab', tab); STATE._tabAt = Date.now();
   if(tab==='questions') markCrossSeen();
+  if(tab==='recog') markRecogSeen();
   renderTabs(); renderContent();
   const c=document.getElementById('content'); if(c) c.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
-function renderAll(){ renderStats(); renderContent(); }
+function renderAll(){ renderTabs(); renderStats(); renderContent(); }
 // Re-render stats + current tab but keep the user's scroll position, so
 // toggling a single item's status doesn't jump the page to the top.
 function refreshKeepScroll(){
@@ -1101,7 +1315,9 @@ function renderContent(){
   const el = document.getElementById('content');
   const _focus = captureFocus('content');
   const gf = document.getElementById('globalFilters');
-  if(gf) gf.classList.toggle('hidden', STATE.tab==='report');
+  if(gf) gf.classList.toggle('hidden', STATE.tab==='report' || STATE.tab==='recog' || STATE.tab==='nhip');
+  const fab = document.querySelector('.fab');
+  if(fab) fab.classList.toggle('hidden', STATE.tab==='nhip');
   try {
     if(STATE.tab==='problems') el.innerHTML = renderProblemsTab();
     else if(STATE.tab==='questions') el.innerHTML = renderQuestionsTab();
@@ -1109,6 +1325,8 @@ function renderContent(){
     else if(STATE.tab==='learnings') el.innerHTML = renderLearningsTab();
     else if(STATE.tab==='bestPractices') el.innerHTML = renderBestPracticesTab();
     else if(STATE.tab==='report') el.innerHTML = renderReportTab();
+    else if(STATE.tab==='recog') el.innerHTML = renderRecogTab();
+    else if(STATE.tab==='nhip') renderNhipTab(el);
   } catch(err){
     console.error('render error:', err);
     el.innerHTML = '<div class="empty-note">Có lỗi khi hiển thị. Thử bấm ⟳ làm mới hoặc tải lại trang.</div>';
@@ -2169,11 +2387,33 @@ function setReportRule(k, v){
   refreshKeepScroll();
 }
 function toMs(v){ if(v===undefined||v===null||v==='') return null; const t = new Date(v).getTime(); return isNaN(t) ? null : t; }
-function sod(d){ const x = new Date(d); x.setHours(0,0,0,0); return x; }
-function addDays(d, n){ const x = new Date(d); x.setDate(x.getDate()+n); return x; }
-function dayKey(t){ const x = new Date(t); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); }
-function fmtDM(t){ const x = new Date(t); return String(x.getDate()).padStart(2,'0')+'/'+String(x.getMonth()+1).padStart(2,'0'); }
-function same(a, m){ return String(a||'').trim()===m; }
+/* ---- Vietnam-time date helpers (UTC+7, no DST) ----
+   All report/streak/recognition dates use Vietnam time regardless of the
+   device's timezone, so 18:00 and "thứ Năm" mean the same for everyone. */
+const VN_OFF = 7*3600000;
+function nowMs(){ return Date.now(); }
+function nfc(s){ return String(s===undefined||s===null?'':s).trim().normalize('NFC'); }
+function vnD(t){ return new Date(new Date(t).getTime() + VN_OFF); }
+function vnHour(t){ return vnD(t).getUTCHours(); }
+function vnDow(t){ return vnD(t).getUTCDay(); }
+function sod(d){ const t = new Date(d).getTime(); return new Date(Math.floor((t + VN_OFF)/DAY_MS)*DAY_MS - VN_OFF); }
+function addDays(d, n){ return new Date(new Date(d).getTime() + n*DAY_MS); }
+function dayKey(t){ const x = vnD(t); return x.getUTCFullYear()+'-'+String(x.getUTCMonth()+1).padStart(2,'0')+'-'+String(x.getUTCDate()).padStart(2,'0'); }
+function keyToMs(k){ return new Date(k+'T00:00:00+07:00').getTime(); }
+function fmtDM(t){ const x = vnD(t); return String(x.getUTCDate()).padStart(2,'0')+'/'+String(x.getUTCMonth()+1).padStart(2,'0'); }
+function fmtDMs(t){ const x = vnD(t); return x.getUTCDate()+'/'+(x.getUTCMonth()+1); }
+function fmtDMY(t){ return fmtDM(t)+'/'+vnD(t).getUTCFullYear(); }
+function fmtHM(t){ if(t===null||t===undefined) return '--:--'; const x = vnD(t); return String(x.getUTCHours()).padStart(2,'0')+':'+String(x.getUTCMinutes()).padStart(2,'0'); }
+function vnMonthStart(t){ const x = vnD(t); return new Date(Date.UTC(x.getUTCFullYear(), x.getUTCMonth(), 1) - VN_OFF); }
+function fmtLeft(ms){
+  if(ms<=0) return '0 phút';
+  const m = Math.floor(ms/60000), d = Math.floor(m/1440), h = Math.floor((m%1440)/60), mm = m%60;
+  if(d) return d+' ngày '+h+' giờ';
+  if(h) return h+' giờ '+mm+' phút';
+  return mm+' phút';
+}
+function clip(s, n){ s = String(s||''); return s.length>n ? s.slice(0,n-1)+'…' : s; }
+function same(a, m){ return nfc(a)===nfc(m); }
 // Milestone times, with a fallback estimate for older records created before milestones existed
 function doneTs(r){ const t = toMs(r.doneAt); if(t) return t; return r.status==='done' ? (toMs(r.updatedAt) || toMs(r.createdAt)) : null; }
 function answeredTs(q){ const t = toMs(q.answeredAt); if(t) return t; return (q.status==='answered' || (q.answer && String(q.answer).trim())) ? (toMs(q.updatedAt) || toMs(q.createdAt)) : null; }
@@ -2181,15 +2421,15 @@ function appliedTs(l){ const t = toMs(l.appliedAt); if(t) return t; return l.sta
 
 function isoOf(d){ return dayKey(d); }
 function ensureReportRange(){
-  const R = STATE.report, today = sod(new Date());
+  const R = STATE.report, today = sod(nowMs());
   if(!R.to) R.to = isoOf(today);
   if(!R.from) R.from = isoOf(addDays(today,-13)); // default: last 14 days
   if(R.from > R.to){ const t=R.from; R.from=R.to; R.to=t; }
 }
 function reportPeriod(){
   ensureReportRange();
-  const R = STATE.report, today = sod(new Date());
-  let s = new Date(R.from+'T00:00:00'), e = addDays(new Date(R.to+'T00:00:00'),1);
+  const R = STATE.report, today = sod(nowMs());
+  let s = new Date(R.from+'T00:00:00+07:00'), e = addDays(new Date(R.to+'T00:00:00+07:00'),1);
   if(isNaN(s)) s = addDays(today,-13);
   if(isNaN(e) || e<=s) e = addDays(s,1);
   const ps = new Date(s.getTime() - (e-s)), pe = s;
@@ -2204,17 +2444,18 @@ function periodDays(P){
 }
 function reportMembers(){
   const set = new Set();
-  (STATE.data.presetNames||[]).forEach(n=>{ if(isValidMember(n)) set.add(String(n).trim()); });
+  (STATE.data.presetNames||[]).forEach(n=>{ if(isValidMember(n)) set.add(nfc(n)); });
   ['problems','questions','actions','learnings','bestPractices'].forEach(t=>(STATE.data[t]||[]).forEach(r=>{
-    if(isValidMember(r.member)) set.add(String(r.member).trim());
-    if(t==='questions' && isValidMember(r.askedBy)) set.add(String(r.askedBy).trim());
+    if(isValidMember(r.member)) set.add(nfc(r.member));
+    if(t==='questions' && isValidMember(r.askedBy)) set.add(nfc(r.askedBy));
   }));
+  buddyRing().forEach(n=>{ if(isValidMember(n)) set.add(n); }); // everyone in the ring shows on the board
   return Array.from(set);
 }
 // Every dated trace a member leaves = a "ghi chép" (used for active days, streaks, heatmap)
 function buildEvents(){
   const ev = [], D = STATE.data;
-  const add = (m, t, type)=>{ if(t && isValidMember(m)) ev.push({m:String(m).trim(), t, type}); };
+  const add = (m, t, type)=>{ if(t && isValidMember(m)) ev.push({m:nfc(m), t, type}); };
   (D.problems||[]).forEach(p=>{ add(p.member,toMs(p.createdAt),'problem'); add(p.member,toMs(p.updatedAt),'touch'); add(p.member,toMs(p.doneAt),'problemDone'); });
   (D.questions||[]).forEach(q=>{ add(q.askedBy||q.member,toMs(q.createdAt),'question'); add(q.member,toMs(q.answeredAt),'answer'); });
   (D.actions||[]).forEach(a=>{ add(a.member,toMs(a.createdAt),'action'); add(a.member,toMs(a.updatedAt),'touch'); add(a.member,toMs(a.doneAt),'actionDone'); });
@@ -2259,7 +2500,7 @@ function memberMetrics(m, s, e, events){
   return r;
 }
 function memberAlerts(m, events, P){
-  const R = reportRules(), out = [], today = sod(new Date()).getTime(), D = STATE.data;
+  const R = reportRules(), out = [], today = sod(nowMs()).getTime(), D = STATE.data;
   const mine = events.filter(x=>x.m===m);
   if(!mine.length){
     out.push({lvl:'red', text:'Chưa có ghi chép nào', tip:'Hỏi thăm, cùng chọn 1 vấn đề nhỏ để bắt đầu.'});
@@ -2280,30 +2521,64 @@ function memberAlerts(m, events, P){
   if(stale.length) out.push({lvl:'yellow', text:stale.length+' vấn đề đang tiến hành không cập nhật > '+R.staleDays+' ngày', tip:'Cập nhật kết quả hoặc chuyển trạng thái.'});
   const crossWait = (D.questions||[]).filter(q=>isCrossQ(q) && same(q.member,m) && !(q.answer && String(q.answer).trim()) && (today - (toMs(q.createdAt)||today)) > R.crossDays*DAY_MS);
   if(crossWait.length) out.push({lvl:'yellow', text:crossWait.length+' câu hỏi chéo chưa trả lời > '+R.crossDays+' ngày', tip:'Dành 10 phút trả lời câu hỏi đồng đội đặt cho mình.'});
+  const rec = monthRecog(m, nowMs());
+  if(rec.misses>=2) out.push({lvl:'red', text:'Nghỉ ghi nhận đồng đội '+rec.misses+' lần trong tháng '+rec.monthNo+' — vi phạm kỷ luật', tip:'Trao đổi trực tiếp, cam kết lại lịch ghi nhận mỗi thứ Năm.'});
+  else if(rec.misses===1) out.push({lvl:'yellow', text:'Đã nghỉ 1 lần ghi nhận đồng đội tháng '+rec.monthNo+' — hết lượt nghỉ', tip:'Đặt nhắc lịch thứ Năm, ghi nhận trước 24:00.'});
+  if(inSeedScope(m)){
+    const L = ledger(m, events);
+    if(L.level==='red') out.push({lvl:'red', text:'Còn '+money(L.balance)+' chưa gieo hạt — có khoản quá '+SEED_STALE_DAYS+' ngày ('+L.age+' ngày)', tip:'Nhắc gieo hạt và bấm 🌱 Cập nhật đã gieo hạt ở mục Kỷ luật & gieo hạt.'});
+    else if(L.level==='yellow') out.push({lvl:'yellow', text:'Còn '+money(L.balance)+' chưa gieo hạt', tip:'Gieo hạt trong tuần, rồi cập nhật để lưu lịch sử.'});
+  }
   return out;
 }
-// STREAK RULE: count days that have >= 1 ghi chép in an unbroken chain.
-// A single missed day does NOT break the chain (and is not counted);
-// 2 missed days in a row break it. Today without an entry yet is "pending",
-// not a miss, because the day isn't over.
-function activeDaySet(m, events){ return new Set(events.filter(x=>x.m===m).map(x=>dayKey(x.t))); }
-function streakAsOf(days, endTs){
+// STREAK RULE (v2.5)
+// • A day is VALID when it has >= 1 ghi chép created before 18:00 (giờ VN).
+// • From RULE18_FROM on, entries after 18:00 are shown as "late" (⏰) and the
+//   day counts as missed. Days before RULE18_FROM keep the old rule.
+// • One missed day keeps the chain (not counted); two missed days in a row
+//   break it. Today is "pending" until 18:00.
+const CUTOFF_HOUR = 18;
+function cfg(k){ return String(((STATE.data||{}).config||{})[k] || '').trim(); }
+function cfgDate(k){ const v = cfg(k); return /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : '9999-12-31'; }
+function rule18From(){ return cfgDate('RULE18_FROM'); }
+function isOnTimeEntry(t){ return dayKey(t) < rule18From() || vnHour(t) < CUTOFF_HOUR; }
+function dayStatusMap(m, events){
+  const map = {};
+  events.forEach(x=>{
+    if(x.m!==m) return;
+    const k = dayKey(x.t), ok = isOnTimeEntry(x.t);
+    const cur = map[k] || (map[k] = {st:'late', n:0, first:null, firstLate:null});
+    cur.n++;
+    if(ok){ cur.st = 'ok'; if(cur.first===null || x.t<cur.first) cur.first = x.t; }
+    else if(cur.firstLate===null || x.t<cur.firstLate) cur.firstLate = x.t;
+  });
+  return map;
+}
+function validDaySet(map){ const s = new Set(); Object.keys(map).forEach(k=>{ if(map[k].st==='ok') s.add(k); }); return s; }
+function activeDaySet(m, events){ return validDaySet(dayStatusMap(m, events)); }
+function minKeyOf(map){ let mk = null; Object.keys(map).forEach(k=>{ if(mk===null || k<mk) mk = k; }); return mk; }
+function isTodayPending(validSet){
+  const now = nowMs(), tk = dayKey(now);
+  return !validSet.has(tk) && (tk < rule18From() || vnHour(now) < CUTOFF_HOUR);
+}
+function streakAsOf(days, endTs, minKey, neutral){
   if(!days.size) return 0;
-  let minKey = null; days.forEach(k=>{ if(minKey===null || k<minKey) minKey=k; });
-  const todayK = dayKey(sod(new Date()));
+  if(!minKey){ days.forEach(k=>{ if(!minKey || k<minKey) minKey = k; }); }
+  const todayK = dayKey(nowMs());
   let d = sod(endTs);
-  if(dayKey(d)===todayK && !days.has(todayK)) d = addDays(d,-1); // today still pending
+  if(dayKey(d)===todayK && isTodayPending(days)) d = addDays(d,-1); // today still has time
   let count = 0, gap = 0;
   for(let i=0;i<5000;i++){
     const k = dayKey(d);
     if(k < minKey) break;
     if(days.has(k)){ count++; gap = 0; }
+    else if(neutral && neutral(k)){ /* ngày miễn / ngày nghỉ cố định: bỏ qua */ }
     else { gap++; if(gap>=2) break; }
     d = addDays(d,-1);
   }
   return count;
 }
-function memberStreak(m, events){ return streakAsOf(activeDaySet(m, events), sod(new Date()).getTime()); }
+function memberStreak(m, events){ const map = dayStatusMap(m, events); return streakAsOf(validDaySet(map), sod(nowMs()).getTime(), minKeyOf(map), k=>isJournalNeutral(m,k)); }
 function lightOf(alerts){ return alerts.some(a=>a.lvl==='red') ? 'red' : (alerts.some(a=>a.lvl==='yellow') ? 'yellow' : 'green'); }
 function sumK(list, k){ return list.reduce((a,r)=>a+(r[k]||0),0); }
 function deltaHtml(cur, prev){
@@ -2316,9 +2591,9 @@ function deltaHtml(cur, prev){
 
 /* ---- handlers ---- */
 function setReportRange(kind){
-  const R = STATE.report, today = sod(new Date());
+  const R = STATE.report, today = sod(nowMs());
   R.to = isoOf(today);
-  if(kind==='month') R.from = isoOf(new Date(today.getFullYear(), today.getMonth(), 1));
+  if(kind==='month') R.from = isoOf(vnMonthStart(today));
   else R.from = isoOf(addDays(today, -(Number(kind)-1)));
   refreshKeepScroll();
 }
@@ -2344,7 +2619,7 @@ function renderReportTab(){
   const lb = buildLeaderboard(members, events, P, days);
   let html = renderReportHeader(P) + renderLeaderboard(lb, days);
 
-  html += `<button class="btn btn-ghost btn-block rp-detail-toggle" onclick="toggleReportDetail()">${STATE.report.showDetail ? '▲ Ẩn phân tích chi tiết' : '📈 Xem phân tích chi tiết — bảng điểm, phễu học, cảnh báo, hồ sơ cá nhân'}</button>`;
+  html += `<button class="btn btn-ghost btn-block rp-detail-toggle" onclick="toggleReportDetail()">${STATE.report.showDetail ? '▲ Ẩn phân tích chi tiết' : '📈 Xem phân tích chi tiết — kỷ luật & gieo hạt, cam kết hành vi, xu hướng, bảng điểm, phễu học, ghi nhận, cảnh báo, hồ sơ'}</button>`;
   if(STATE.report.showDetail){
     const cur = members.map(m=>memberMetrics(m, P.s, P.e, events));
     const prev = members.map(m=>memberMetrics(m, P.ps, P.pe, events));
@@ -2356,8 +2631,12 @@ function renderReportTab(){
       r.alerts = memberAlerts(r.member, events, P); r.light = lightOf(r.alerts);
       return r;
     });
-    html += renderReportScoreboard(cur, prev, members, days)
+    html += renderReportSeeds(P, days, events)
+          + renderBehaviorMatrix(P, days, events)
+          + renderComplianceTrend(events)
+          + renderReportScoreboard(cur, prev, members, days)
           + renderReportFunnel(cur)
+          + renderReportRecog(P)
           + renderReportAlerts(ranked)
           + renderReportPersonal(ranked, prevBy, events, members);
   }
@@ -2365,13 +2644,13 @@ function renderReportTab(){
 }
 
 function renderReportHeader(P){
-  const R = STATE.report, today = sod(new Date()), todayK = isoOf(today);
+  const R = STATE.report, today = sod(nowMs()), todayK = isoOf(today);
   const is = (from)=> R.to===todayK && R.from===from;
   const chips = [
     ['7','7 ngày', isoOf(addDays(today,-6))],
     ['14','14 ngày', isoOf(addDays(today,-13))],
     ['30','30 ngày', isoOf(addDays(today,-29))],
-    ['month','Tháng này', isoOf(new Date(today.getFullYear(), today.getMonth(), 1))]
+    ['month','Tháng này', isoOf(vnMonthStart(today))]
   ].map(([k,l,f])=>`<button class="chip ${is(f)?'active':''}" onclick="setReportRange('${k}')">${l}</button>`).join('');
   return `<div class="rp-head">
     <div class="rp-head-row">
@@ -2388,18 +2667,17 @@ function renderReportHeader(P){
 
 const WEEKDAY_VI = ['CN','T2','T3','T4','T5','T6','T7'];
 function buildLeaderboard(members, events, P, days){
-  const countBy = {};
-  events.forEach(x=>{ const k=dayKey(x.t); const o = countBy[x.m] || (countBy[x.m] = {}); o[k] = (o[k]||0)+1; });
   const endTs = days.length ? days[days.length-1] : P.s;
   const rows = members.map(m=>{
-    const set = activeDaySet(m, events);
-    let first = null; set.forEach(k=>{ if(first===null || k<first) first=k; });
-    const c = countBy[m] || {};
+    const map = dayStatusMap(m, events), valid = validDaySet(map), first = minKeyOf(map);
     return {
-      m, set, first, counts:c,
-      streak: streakAsOf(set, endTs),
-      active: days.filter(t=>set.has(dayKey(t))).length,
-      total: days.reduce((a,t)=>a+(c[dayKey(t)]||0),0)
+      m, map, valid, first,
+      streak: streakAsOf(valid, endTs, first, k=>isJournalNeutral(m,k)),
+      active: days.filter(t=>valid.has(dayKey(t))).length,
+      req: days.filter(t=>{ const k = dayKey(t); return valid.has(k) || !isJournalNeutral(m,k); }).length,
+      late: days.filter(t=>{ const k = dayKey(t), x = map[k]; return x && x.st==='late' && !isJournalNeutral(m,k); }).length,
+      total: days.reduce((a,t)=>a+((map[dayKey(t)]||{}).n||0),0),
+      rec: monthRecog(m, endTs)
     };
   });
   rows.sort((a,b)=> b.streak-a.streak || b.active-a.active || b.total-a.total || a.m.localeCompare(b.m));
@@ -2412,35 +2690,53 @@ function lbAvatar(name, rank){
   return `<span class="lb-av" style="background:linear-gradient(135deg, ${c}, ${c}99)">${esc(letter)}${badge}</span>`;
 }
 function renderLeaderboard(lb, days){
-  const todayK = dayKey(sod(new Date())), yK = dayKey(addDays(sod(new Date()),-1));
-  const cols = days.slice().reverse(); // newest first, like the reference
-  const doneToday = lb.filter(r=>r.set.has(todayK)).length;
+  const now = nowMs(), todayK = dayKey(now), yK = dayKey(addDays(sod(now),-1));
+  const ruleFrom = rule18From(), ruleOn = todayK >= ruleFrom;
+  const cols = days.slice().reverse(); // newest first
+  const okToday = lb.filter(r=>r.valid.has(todayK)).length;
   const inRange = days.some(t=>dayKey(t)===todayK);
+  const monthNo = lb.length ? lb[0].rec.monthNo : '';
   const head = `<tr>
       <th class="lb-name">Thành viên</th>
       <th class="lb-streak">🔥 Streak</th>
-      ${cols.map(t=>{ const k=dayKey(t), d=new Date(t);
+      <th class="lb-recog" title="Ghi nhận đồng đội trong tháng: số lần đã ghi nhận đúng hạn / số thứ Năm đã qua">💬 Ghi nhận<span class="lb-sub">tháng ${monthNo}</span></th>
+      ${cols.map(t=>{ const k = dayKey(t), dow = vnDow(t);
         const sub = k===todayK ? '<span class="lb-sub today">Hôm nay</span>' : (k===yK ? '<span class="lb-sub">Hôm qua</span>' : '');
-        return `<th class="lb-day ${k===todayK?'is-today':''}"><span class="lb-wd">${WEEKDAY_VI[d.getDay()]}</span><span class="lb-dm">${d.getDate()}/${d.getMonth()+1}</span>${sub}</th>`;
+        return `<th class="lb-day ${k===todayK?'is-today':''} ${dow===4?'is-thu':''}"><span class="lb-wd">${WEEKDAY_VI[dow]}${dow===4?' 💬':''}</span><span class="lb-dm">${fmtDMs(t)}</span>${sub}</th>`;
       }).join('')}
     </tr>`;
   const body = lb.map((r,i)=>`<tr onclick="selectReportMember('${esc(r.m).replace(/'/g,"\\'")}')">
-      <td class="lb-name"><div class="lb-person">${lbAvatar(r.m, i+1)}<div><div class="lb-pname">${esc(r.m)}</div><div class="lb-pmeta">ghi ${r.active}/${days.length} ngày</div></div></div></td>
+      <td class="lb-name"><div class="lb-person">${lbAvatar(r.m, i+1)}<div><div class="lb-pname">${esc(r.m)}</div><div class="lb-pmeta" title="Số ngày ghi đúng giờ / số ngày phải ghi trong khoảng lọc (không tính ngày miễn)${r.late?' · số ngày ghi muộn':''}">✓ ${r.active}/${r.req}${r.late?` · ⏰ ${r.late}`:''}</div></div></div></td>
       <td class="lb-streak"><span class="lb-fire ${r.streak?'':'zero'}">🔥 ${r.streak}</span></td>
-      ${cols.map(t=>{ const k=dayKey(t), n=r.counts[k]||0, isT = k===todayK;
+      <td class="lb-recog">${recogMonthCell(r.rec)}</td>
+      ${cols.map(t=>{ const k = dayKey(t), x = r.map[k], isT = k===todayK, dow = vnDow(t);
         let cell;
-        if(n>0) cell = `<span class="lb-ok" title="${fmtDate(t)}: ${n} ghi chép">✓</span>`;
+        if(x && x.st==='ok') cell = `<span class="lb-ok" title="${fmtDMY(t)}: ${x.n} ghi chép · sớm nhất ${fmtHM(x.first)}">✓</span>`;
+        else if(isJournalNeutral(r.m,k)) cell = exemptCell(r.m,k);
+        else if(x) cell = `<span class="lb-late" title="${fmtDMY(t)}: ghi lúc ${fmtHM(x.firstLate)} — sau 18:00, không tính chuỗi">⏰</span>`;
         else if(r.first===null || k<r.first) cell = `<span class="lb-pre" title="Chưa tham gia">·</span>`;
-        else cell = `<span class="lb-no" title="${fmtDate(t)}: chưa có ghi chép">✕</span>`;
-        return `<td class="lb-day ${isT?'is-today':''}">${cell}</td>`;
+        else if(isT && isTodayPending(r.valid)) cell = `<span class="lb-wait" title="Chưa ghi — còn hạn đến 18:00">…</span>`;
+        else cell = `<span class="lb-no" title="${fmtDMY(t)}: chưa có ghi chép hợp lệ">✕</span>`;
+        const chip = dow===4 ? recogChip(r.m, k) : '';
+        return `<td class="lb-day ${isT?'is-today':''} ${dow===4?'is-thu':''}">${cell}${chip}</td>`;
       }).join('')}
     </tr>`).join('');
-  const summary = inRange
-    ? `<div class="lb-summary">Hôm nay đã ghi chép: <strong>${doneToday}/${lb.length}</strong> người</div>` : '';
+  let summary = '';
+  if(inRange){
+    let tail = '';
+    if(ruleOn){
+      const left = sod(now).getTime() + CUTOFF_HOUR*3600000 - now;
+      tail = left>0 ? ` · còn <strong>${fmtLeft(left)}</strong> đến 18:00` : ' · đã qua 18:00';
+    }
+    summary = `<div class="lb-summary">Hôm nay ghi đúng giờ: <strong>${okToday}/${lb.length}</strong> người${tail}</div>`;
+  }
+  const ruleNote = ruleFrom==='9999-12-31'
+    ? 'Mốc 18:00 sẽ bắt đầu áp dụng sau khi cập nhật hệ thống.'
+    : `Mốc 18:00 áp dụng từ ${fmtDMY(keyToMs(ruleFrom))}.`;
   return `<div class="lb-card">
     ${summary}
     <div class="lb-scroll"><table class="lb">${head}${body}</table></div>
-    <div class="lb-rule">🔥 <strong>Streak</strong> = số ngày có ghi chép liên tiếp. Được nghỉ lẻ <strong>1 ngày</strong> vẫn giữ chuỗi (ngày nghỉ không cộng); nghỉ <strong>2 ngày liền</strong> thì chuỗi về 0. Hôm nay chưa ghi thì chưa tính là nghỉ. · ✓ có ghi chép · ✕ chưa ghi · Bấm vào tên để xem chi tiết.</div>
+    <div class="lb-rule">🔥 <strong>Streak</strong> = số ngày ghi chép hợp lệ liên tiếp. Ngày hợp lệ = có ít nhất 1 ghi chép <strong>trước 18:00</strong> (giờ VN). Nghỉ lẻ <strong>1 ngày</strong> vẫn giữ chuỗi; nghỉ <strong>2 ngày liền</strong> thì chuỗi về 0. · ✓ đúng giờ · ⏰ ghi sau 18:00 (không tính, coi như nghỉ) · ✕ chưa ghi · … hôm nay còn hạn · 🛡 ngày miễn (không tính, không làm đứt chuỗi). · 💬 cột thứ Năm: ghi nhận đồng đội (tối đa nghỉ 1 lần/tháng). ${ruleNote} Bấm vào tên để xem chi tiết.</div>
   </div>`;
 }
 
@@ -2477,7 +2773,7 @@ function renderReportScoreboard(cur, prev, members, days){
   ].join('');
   const body = `<div class="rp-subhead">⚡ Chỉ số dẫn dắt — việc làm được mỗi ngày</div><div class="rp-cards">${lead}</div>
     <div class="rp-subhead">🎯 Chỉ số kết quả — thành quả tạo ra</div><div class="rp-cards">${lag}</div>`;
-  return rpSection('1','Bảng điểm đội','Đội đang tiến hay lùi? Nhìn 5 giây là biết.', body);
+  return rpSection('4','Bảng điểm đội','Đội đang tiến hay lùi? Nhìn 5 giây là biết.', body);
 }
 
 /* Tầng 2 — Phễu Học → Hành vi → Kết quả (Kirkpatrick) */
@@ -2507,7 +2803,7 @@ function renderReportFunnel(cur){
       <span class="rp-f-note">${r.note}</span>
     </div>`).join('')}</div>
     <div class="hint">Học chỉ có giá trị khi chuyển thành hành vi và kết quả — nhìn chỗ thanh "tụt" mạnh nhất để biết đội đang nghẽn ở đâu.</div>`;
-  return rpSection('2','Phễu Học → Hành vi → Kết quả','Việc học có đang biến thành hành động và kết quả thật không?', body);
+  return rpSection('5','Phễu Học → Hành vi → Kết quả','Việc học có đang biến thành hành động và kết quả thật không?', body);
 }
 
 /* Tầng 5 — Cảnh báo can thiệp */
@@ -2529,7 +2825,7 @@ function renderReportAlerts(ranked){
     </div>
     <div class="hint">Ngưỡng lưu trên thiết bị này.</div>
   </details>`;
-  return rpSection('3','Cảnh báo can thiệp','Ai cần được hỗ trợ ngay, kèm gợi ý cách can thiệp.', list + settings);
+  return rpSection('7','Cảnh báo can thiệp','Ai cần được hỗ trợ ngay, kèm gợi ý cách can thiệp.', list + settings);
 }
 
 /* Tầng 6 — Tôi đang ở đâu (hồ sơ cá nhân) */
@@ -2551,17 +2847,17 @@ function renderReportPersonal(ranked, prevBy, events, members){
     return `<tr><td>${label}</td><td class="rp-pts">${v}</td><td>${p} ${deltaHtml(v,p)}</td><td class="${vsAvg}">${a.toFixed(1)}</td></tr>`;
   }).join('');
   // Trend: active days per week, last 8 weeks
-  const thisWeek = addDays(sod(new Date()), -((new Date().getDay()+6)%7));
-  const myDays = new Set(events.filter(x=>x.m===m).map(x=>dayKey(x.t)));
+  const thisWeek = addDays(sod(nowMs()), -((vnDow(nowMs())+6)%7));
+  const myDays = activeDaySet(m, events); // valid (before 18:00) days only
   const weeks = [];
   for(let i=7;i>=0;i--){
     const ws = addDays(thisWeek, -7*i); let c = 0;
-    for(let d=0; d<7; d++){ const t = addDays(ws,d); if(t.getTime() <= Date.now() && myDays.has(dayKey(t))) c++; }
+    for(let d=0; d<7; d++){ const t = addDays(ws,d); if(t.getTime() <= nowMs() && myDays.has(dayKey(t))) c++; }
     weeks.push({label:fmtDM(ws), c});
   }
   const trend = `<div class="rp-trend">${weeks.map(w=>`<div class="rp-tw" title="Tuần ${w.label}: ${w.c}/7 ngày"><div class="rp-tw-bar"><div style="height:${w.c/7*100}%"></div></div><div class="rp-tw-n">${w.c}</div><div class="rp-tw-l">${w.label}</div></div>`).join('')}</div>`;
   // Things needing attention
-  const D = STATE.data, R = reportRules(), today = sod(new Date()).getTime();
+  const D = STATE.data, R = reportRules(), today = sod(nowMs()).getTime();
   const od = (D.actions||[]).filter(a=>same(a.member,m) && a.status!=='done' && isOverdue(a.deadline)).slice(0,5);
   const stale = (D.problems||[]).filter(p=>same(p.member,m) && p.status==='inprogress' && (today-(toMs(p.updatedAt)||toMs(p.createdAt)||today)) > R.staleDays*DAY_MS).slice(0,5);
   const cw = (D.questions||[]).filter(q=>isCrossQ(q) && same(q.member,m) && !(q.answer && String(q.answer).trim())).slice(0,5);
@@ -2576,18 +2872,1043 @@ function renderReportPersonal(ranked, prevBy, events, members){
         <span>Hạng chuỗi <strong>#${me.rank}</strong>/${n}</span>
         <span>Điểm <strong>${me.points}</strong></span>
         <span>🔥 Chuỗi <strong>${me.streak}</strong> ngày</span>
+        ${recogStatsSpan(m)}
+        ${seedStatsSpan(m)}
         <span class="rp-light ${me.light}"></span>
       </div>
     </div>
     <div class="rp-scroll"><table class="rp-table rp-me-table"><thead><tr><th>Chỉ số</th><th>Kỳ này</th><th>Kỳ trước</th><th>TB đội</th></tr></thead><tbody>${rows}</tbody></table></div>
-    <div class="rp-subhead">📈 Số ngày có ghi chép — 8 tuần gần nhất</div>${trend}
+    <div class="rp-subhead">📈 Số ngày ghi đúng giờ (trước 18:00) — 8 tuần gần nhất</div>${trend}
     <div class="rp-subhead">📋 Việc cần chú ý</div>${todo}`;
-  return rpSection('4','Tôi đang ở đâu','So với chính mình kỳ trước và trung bình đội — chọn tên để xem từng người.', body, 'rp-personal');
+  return rpSection('8','Tôi đang ở đâu','So với chính mình kỳ trước và trung bình đội — chọn tên để xem từng người.', body, 'rp-personal');
 }
 
 document.addEventListener('focusout', ()=>{
   setTimeout(()=>{ if(STATE.renderPending && !isUserTypingIn('content')){ STATE.renderPending = false; renderAll(); } }, 300);
 });
+
+/* ================================================================
+   GHI NHẬN ĐỒNG ĐỘI — mỗi thứ Năm (00:00–23:59 giờ VN), mỗi người đọc
+   nhật ký tuần của đồng đội mình hỗ trợ (theo vòng tròn) và ghi nhận:
+   điều hiệu quả · điều chưa hiệu quả · đề xuất. Tối đa nghỉ 1 lần/tháng.
+   ================================================================ */
+const DEFAULT_RING = ['Nhưỡng','Hào','Huy','Dịu','Loan','Ngân'];
+const RC_FIELDS = [
+  {k:'didWell',      icon:'🌟', short:'điều hiệu quả',       card:'Đã làm hiệu quả',  label:'Bạn ấy đã làm hiệu quả điều gì trong tuần vừa rồi?', hint:'Nêu việc cụ thể và kết quả nó tạo ra.'},
+  {k:'notEffective', icon:'🔍', short:'điều chưa hiệu quả',  card:'Chưa hiệu quả',    label:'Điều gì chưa hiệu quả?',                            hint:'Nói về việc làm, hành vi — không phán xét con người.'},
+  {k:'suggestion',   icon:'🌱', short:'đề xuất',             card:'Đề xuất làm thêm', label:'Đề xuất bạn ấy làm thêm điều gì?',                  hint:'Một việc cụ thể, làm được ngay trong tuần tới.'}
+];
+function recogFrom(){ return cfgDate('RECOG_FROM'); }
+function buddyRing(){ return cfg('BUDDY_RING').split(',').map(nfc).filter(Boolean); }
+function ringIndex(m){ const r = buddyRing(); return r.findIndex(x=>same(x,m)); }
+function buddyOf(m){ const r = buddyRing(), i = ringIndex(m); return (i<0 || r.length<2) ? null : r[(i+1)%r.length]; }
+function supporterOf(m){ const r = buddyRing(), i = ringIndex(m); return (i<0 || r.length<2) ? null : r[(i-1+r.length)%r.length]; }
+// weekKey is stored as "wk2026-10-15" so Sheets never turns it into a date
+function wkOf(r){
+  const v = String((r && r.weekKey) || '');
+  if(/^wk\d{4}-\d{2}-\d{2}$/.test(v)) return v.slice(2);
+  if(/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+  const t = toMs(v); return t ? dayKey(t) : '';
+}
+function thuOnOrBefore(t){ const d = sod(t); return addDays(d, -((vnDow(d)-4+7)%7)); }
+function findRecog(giver, wk){ return (STATE.data.recognitions||[]).find(r=>same(r.giver,giver) && wkOf(r)===wk); }
+// ok · late (nộp sau thứ Năm = tính nghỉ) · miss · exempt (ngày miễn) · pending (hôm nay) · future · na (không áp dụng)
+function recogStatus(m, wk){
+  if(wk < recogFrom() || !buddyOf(m)) return 'na';
+  const r = findRecog(m, wk), todayK = dayKey(nowMs());
+  if(r){ const t = toMs(r.createdAt); if(t===null || dayKey(t) <= wk) return 'ok'; }
+  if(exemptionOf(m, wk, 'recog')) return 'exempt';
+  if(r) return 'late';
+  if(wk > todayK) return 'future';
+  if(wk === todayK) return 'pending';
+  return 'miss';
+}
+function thursdaysInMonth(refTs){
+  const start = vnMonthStart(refTs), mo = vnD(start).getUTCMonth(), keys = [];
+  let d = start;
+  while(vnD(d).getUTCMonth()===mo){ if(vnDow(d)===4) keys.push(dayKey(d)); d = addDays(d,1); }
+  return {keys, monthNo: mo+1};
+}
+function monthRecog(m, refTs){
+  const {keys, monthNo} = thursdaysInMonth(refTs);
+  const list = keys.map(k=>({k, s:recogStatus(m,k)}));
+  const counted = list.filter(x=>x.s!=='na' && x.s!=='future' && x.s!=='exempt');
+  const done = counted.filter(x=>x.s==='ok').length;
+  const misses = counted.filter(x=>x.s==='miss' || x.s==='late').length;
+  const pending = counted.filter(x=>x.s==='pending').length;
+  return {list, done, misses, pending, total: counted.length - pending, monthNo,
+          applicable: counted.length>0, level: misses>=2 ? 'red' : (misses===1 ? 'yellow' : 'green')};
+}
+function recogMonthCell(rec){
+  if(!rec.applicable) return '<span class="rp-muted" title="Chưa có thứ Năm nào cần ghi nhận trong tháng">—</span>';
+  if(rec.total===0) return rec.pending ? '<span class="lb-rc wait" title="Hôm nay là ngày ghi nhận, hạn đến 24:00">…</span>' : '<span class="rp-muted">—</span>';
+  const tip = rec.level==='red' ? 'Vi phạm kỷ luật: nghỉ '+rec.misses+' lần' : (rec.level==='yellow' ? 'Cảnh báo: đã nghỉ 1 lần — hết lượt nghỉ' : 'Đạt — chưa nghỉ lần nào');
+  return `<span class="lb-rc ${rec.level}" title="${tip}">${rec.done}/${rec.total}</span>${rec.misses?`<span class="lb-rc-miss ${rec.level}">nghỉ ${rec.misses}</span>`:''}`;
+}
+function recogChip(m, wk){
+  const s = recogStatus(m, wk);
+  const map = {ok:['💬✓','Đã ghi nhận đúng hạn'], late:['💬⏰','Ghi nhận muộn — tính là nghỉ'], miss:['💬✕','Không ghi nhận — nghỉ'], exempt:['💬🛡','Được miễn ghi nhận tuần này'], pending:['💬…','Hôm nay là ngày ghi nhận — hạn đến 24:00']};
+  return map[s] ? `<span class="lb-rchip ${s}" title="${map[s][1]}">${map[s][0]}</span>` : '';
+}
+function recogStatusIcon(s){
+  const map = {ok:['✓','Đúng hạn'], late:['⏰','Nộp muộn — tính là nghỉ'], miss:['✕','Nghỉ'], exempt:['🛡','Được miễn'], pending:['…','Hôm nay, hạn đến 24:00'], future:['·','Chưa tới'], na:['—','Chưa áp dụng']};
+  const v = map[s] || map.na;
+  return `<span class="rg-s ${s}" title="${v[1]}">${v[0]}</span>`;
+}
+// What the signed-in member should do right now
+function myRecogTask(){
+  const me = STATE.member, buddy = buddyOf(me);
+  if(!buddy) return {mode:'noring'};
+  const from = recogFrom();
+  if(from==='9999-12-31') return {mode:'off', buddy};
+  const now = nowMs(), todayK = dayKey(now);
+  if(vnDow(now)===4 && todayK >= from){
+    if(findRecog(me,todayK)) return {mode:'submitted', wk:todayK, buddy};
+    return {mode: exemptionOf(me,todayK,'recog') ? 'exempt' : 'open', wk: todayK, buddy};
+  }
+  const lastK = dayKey(thuOnOrBefore(now)), nextK = dayKey(addDays(thuOnOrBefore(now),7));
+  if(lastK >= from && !findRecog(me,lastK) && !exemptionOf(me,lastK,'recog')) return {mode:'late', wk:lastK, nextK, buddy};
+  return {mode:'closed', wk:lastK, nextK, buddy};
+}
+/* ---- seen / badges / banner ---- */
+function seenRecogKey(){ return 'lcsh_seen_recog_'+(STATE.member||''); }
+function unseenRecogs(){
+  let seen; try { seen = new Set(JSON.parse(localStorage.getItem(seenRecogKey())||'[]')); } catch(e){ seen = new Set(); }
+  return (STATE.data.recognitions||[]).filter(r=>same(r.receiver, STATE.member) && !seen.has(r.id));
+}
+function markRecogSeen(){
+  STATE._recogNewIds = new Set([...(STATE._recogNewIds||[]), ...unseenRecogs().map(r=>r.id)]);
+  const ids = (STATE.data.recognitions||[]).filter(r=>same(r.receiver, STATE.member)).map(r=>r.id);
+  try { localStorage.setItem(seenRecogKey(), JSON.stringify(ids)); } catch(e){}
+}
+function recogBadgeCount(){
+  if(!STATE.member) return 0;
+  const t = myRecogTask();
+  return ((t.mode==='open' || t.mode==='late') ? 1 : 0) + unseenRecogs().length;
+}
+function renderRecogBanner(){
+  const el = document.getElementById('recogBanner'); if(!el) return;
+  if(!STATE.member || STATE.tab==='recog'){ el.innerHTML = ''; return; }
+  const t = myRecogTask(), now = nowMs();
+  let html = '';
+  if(t.mode==='open'){
+    html = `<div class="rc-banner open"><span>💬 Hôm nay là ngày <strong>Ghi nhận đồng đội</strong> — bạn ghi nhận cho ${memberBadge(t.buddy)} · còn ${fmtLeft(sod(now).getTime()+DAY_MS-now)}</span><button class="btn btn-gold btn-sm" onclick="setTab('recog')">Ghi nhận ngay</button></div>`;
+  } else if(t.mode==='late'){
+    html = `<div class="rc-banner late"><span>⏰ Bạn chưa ghi nhận cho ${memberBadge(t.buddy)} (thứ Năm ${fmtDMs(keyToMs(t.wk))}) — vẫn nộp được, nhưng tuần đó tính là nghỉ.</span><button class="btn btn-ghost btn-sm" onclick="setTab('recog')">Nộp ngay</button></div>`;
+  } else {
+    const u = unseenRecogs();
+    if(!u.length) html = seedBannerHtml();
+    else html = `<div class="rc-banner recv"><span>🎁 Bạn nhận được <strong>${u.length}</strong> ghi nhận mới từ ${memberBadge(u[0].giver)}</span><button class="btn btn-ghost btn-sm" onclick="setTab('recog')">Đọc ngay</button></div>`;
+  }
+  el.innerHTML = html;
+}
+/* ---- buddy's week, gathered for the reader ---- */
+function buddyWeekDigest(name, wk){
+  const e = keyToMs(wk), s = e - 7*DAY_MS, D = STATE.data;
+  const inW = t => t!==null && t!==undefined && t>=s && t<e;
+  const mine = arr => (arr||[]).filter(x=>same(x.member,name));
+  const map = dayStatusMap(nfc(name), buildEvents());
+  let ok = 0, late = 0;
+  for(let i=0;i<7;i++){ const x = map[dayKey(s+i*DAY_MS)]; if(x && x.st==='ok') ok++; else if(x) late++; }
+  return {
+    s, e, ok, late,
+    probs: mine(D.problems).filter(p=>inW(toMs(p.createdAt))),
+    actsDone: mine(D.actions).filter(a=>inW(doneTs(a))),
+    actsNew: mine(D.actions).filter(a=>inW(toMs(a.createdAt))),
+    qs: (D.questions||[]).filter(q=>same(q.askedBy||q.member,name) && inW(toMs(q.createdAt))),
+    ans: mine(D.questions).filter(q=>q.answer && String(q.answer).trim() && inW(answeredTs(q))),
+    lrn: mine(D.learnings).filter(l=>inW(toMs(l.createdAt)))
+  };
+}
+function renderBuddyDigest(name, wk){
+  const d = buddyWeekDigest(name, wk);
+  const list = (arr, fn, max=6)=> arr.length
+    ? `<ul>${arr.slice(0,max).map(x=>`<li>${fn(x)}</li>`).join('')}${arr.length>max?`<li class="rp-muted">+${arr.length-max} mục khác</li>`:''}</ul>`
+    : '<div class="rc-none">—</div>';
+  const grp = (icon, title, arr, fn)=> `<div class="rc-dg"><div class="rc-dg-t">${icon} ${title} <span class="rc-dg-n">${arr.length}</span></div>${list(arr, fn)}</div>`;
+  return `<details class="rc-digest" open><summary>📖 Nhật ký tuần của ${esc(name)} · ${fmtDMs(d.s)} → ${fmtDMs(d.e - DAY_MS)}</summary>
+    <div class="rc-dg-stats"><span>✓ <strong>${d.ok}</strong>/7 ngày ghi đúng giờ</span>${d.late?`<span>⏰ ${d.late} ngày ghi muộn</span>`:''}</div>
+    <div class="rc-dg-grid">
+      ${grp('📌','Vấn đề mới', d.probs, p=>esc(clip(p.title,140)))}
+      ${grp('✅','Hành động hoàn thành', d.actsDone, a=>esc(clip(a.text,120))+(a.outcome?` <span class="rp-muted">→ ${esc(clip(a.outcome,80))}</span>`:''))}
+      ${grp('➕','Hành động mới cam kết', d.actsNew, a=>esc(clip(a.text,120)))}
+      ${grp('❓','Câu hỏi đặt ra', d.qs, q=>esc(clip(q.text,140)))}
+      ${grp('💬','Câu trả lời', d.ans, q=>`<i>${esc(clip(q.text,80))}</i> — ${esc(clip(q.answer,160))}`)}
+      ${grp('💡','Bài học', d.lrn, l=>esc(clip(l.text,140)))}
+    </div>
+    ${(!d.probs.length && !d.actsNew.length && !d.actsDone.length && !d.lrn.length && !d.qs.length && !d.ans.length) ? '<div class="hint" style="padding:0 2px 6px">Tuần này đồng đội chưa có ghi chép — đây cũng là điều đáng ghi nhận và đề xuất.</div>' : ''}
+  </details>`;
+}
+/* ---- tab ---- */
+function renderRecogTab(){
+  if(unseenRecogs().length){ markRecogSeen(); setTimeout(renderTabs, 0); } // clear the badge once seen
+  const t = myRecogTask(), ring = buddyRing();
+  return `<div class="rp-head">
+      <div class="rp-h1">💬 Ghi nhận đồng đội</div>
+      <div class="rc-sub">Mỗi thứ Năm (00:00–23:59), đọc nhật ký tuần của đồng đội mình hỗ trợ và ghi nhận 3 điều: <strong>đã hiệu quả</strong> · <strong>chưa hiệu quả</strong> · <strong>đề xuất làm thêm</strong>. Tối đa nghỉ 1 lần/tháng; nộp sau 24:00 thứ Năm vẫn tính là nghỉ.</div>
+      ${ringChain(ring)}
+    </div>`
+    + renderMyRecogCard(t)
+    + renderReceivedRecogs()
+    + renderRecogDiscipline()
+    + renderTeamRecogFeed()
+    + renderRingSettings();
+}
+function ringChain(ring){
+  if(!ring.length) return '';
+  const me = STATE.member, my = buddyOf(me), sup = supporterOf(me);
+  const nodes = ring.concat([ring[0]]).map((n,i)=>{
+    const cls = same(n,me) ? 'me' : ((my && same(n,my)) ? 'buddy' : '');
+    return `<span class="ring-node ${cls}" style="--c:${memberColor(n)}">${esc(n)}</span>`;
+  }).join('<span class="ring-arr">→</span>');
+  return `<div class="ring-chain">${nodes}</div>
+    <div class="rc-sub" style="margin-top:6px">Mũi tên = người góp ý → người được góp ý.${my?` Bạn ghi nhận cho <strong>${esc(my)}</strong>; <strong>${esc(sup)}</strong> ghi nhận cho bạn.`:''}</div>`;
+}
+function renderMyRecogCard(t){
+  const me = STATE.member, title = '<div class="rp-sec-title">✍️ Phiếu ghi nhận của bạn</div>';
+  if(t.mode==='noring'){
+    const msg = buddyRing().length
+      ? `Tên “${esc(me)}” chưa có trong vòng ghi nhận. Nếu bạn thuộc nhóm, bấm <strong>Đổi người dùng</strong> và chọn đúng tên trong vòng, hoặc thêm tên vào vòng ở phần Cài đặt bên dưới.`
+      : 'Chưa thiết lập vòng ghi nhận — mở phần <strong>⚙️ Cài đặt vòng ghi nhận</strong> bên dưới.';
+    return `<section class="rp-section">${title}<div class="rc-closed">${msg}</div></section>`;
+  }
+  if(t.mode==='off') return `<section class="rp-section">${title}<div class="rc-closed">Tính năng sẽ bắt đầu sau khi cập nhật backend (file .gs mới).</div></section>`;
+  if(t.mode==='closed'){
+    const last = findRecog(me, t.wk), left = keyToMs(t.nextK) - nowMs();
+    return `<section class="rp-section">${title}
+      <div class="rc-closed">🔒 Phiếu tuần tới mở vào <strong>thứ Năm ${fmtDMY(keyToMs(t.nextK))}</strong> (còn ${fmtLeft(left)}). Bạn sẽ ghi nhận cho ${memberBadge(t.buddy)}.</div>
+      ${last ? `<div class="rc-sub" style="margin:10px 0 6px">Phiếu gần nhất của bạn:</div>${renderRecogCard(last,false)}` : ''}
+    </section>`;
+  }
+  return renderRecogForm(t);
+}
+function renderRecogForm(t){
+  const me = STATE.member, wk = t.wk, rec = findRecog(me, wk), buddy = rec ? rec.receiver : t.buddy, now = nowMs();
+  let status;
+  if(t.mode==='exempt'){ const ex = exemptionOf(me, wk, 'recog'); status = `<div class="rc-status ok">🛡 Bạn được miễn ghi nhận tuần này${ex && ex.reason ? ' ('+esc(ex.reason)+')' : ''} — không bắt buộc, vẫn gửi được nếu muốn.</div>`; }
+  else if(t.mode==='open') status = `<div class="rc-status open">🟢 Đang mở — hạn chót <strong>23:59 hôm nay</strong> (còn ${fmtLeft(sod(now).getTime()+DAY_MS-now)})</div>`;
+  else if(t.mode==='submitted') status = `<div class="rc-status ok">✓ Đã gửi lúc ${fmtHM(toMs(rec.createdAt))} — vẫn sửa được đến 23:59 hôm nay</div>`;
+  else status = `<div class="rc-status late">⏰ Đã quá hạn thứ Năm ${fmtDMs(keyToMs(wk))}. Bạn vẫn nộp được để ${esc(buddy)} nhận góp ý, nhưng tuần này tính là <strong>nghỉ</strong>.</div>`;
+  const fields = RC_FIELDS.map(f=>{
+    const dk = 'rcd_'+wk+'_'+f.k, d = getDraft(dk), v = d!==undefined ? d : (rec ? (rec[f.k]||'') : '');
+    return `<label class="rc-field"><span class="rc-q">${f.icon} ${f.label} <span class="req">*</span></span><span class="rc-hint">${f.hint}</span><textarea id="rc_${f.k}" rows="3" oninput="setDraft('${dk}', this.value)">${esc(v)}</textarea></label>`;
+  }).join('');
+  return `<section class="rp-section rc-form">
+    <div class="rp-sec-title">✍️ Phiếu ghi nhận — thứ Năm ${fmtDMY(keyToMs(wk))}</div>
+    ${status}
+    <div class="rc-to">Đồng đội của bạn: ${memberBadge(buddy)} <span class="rp-muted">🔒 theo vòng ghi nhận</span></div>
+    ${renderBuddyDigest(buddy, wk)}
+    ${fields}
+    <button class="btn btn-gold btn-block" onclick="saveRecognition('${wk}')">${rec ? '💾 Cập nhật ghi nhận' : '📨 Gửi ghi nhận'}</button>
+  </section>`;
+}
+function saveRecognition(wk){
+  const me = STATE.member, t = myRecogTask();
+  if(t.wk!==wk || !['open','submitted','late','exempt'].includes(t.mode)){ toast('Phiếu tuần này đã khoá.'); refreshKeepScroll(); return; }
+  const vals = {};
+  RC_FIELDS.forEach(f=>{ const el = document.getElementById('rc_'+f.k); vals[f.k] = el ? el.value.trim() : ''; });
+  const missing = RC_FIELDS.filter(f=>!vals[f.k]);
+  if(missing.length){
+    toast('Vui lòng trả lời đủ: '+missing.map(f=>f.short).join(', ')+'.');
+    const el = document.getElementById('rc_'+missing[0].k); if(el) el.focus();
+    return;
+  }
+  // keep a safety copy until the Sheet confirms
+  RC_FIELDS.forEach(f=>setDraft('rcd_'+wk+'_'+f.k, vals[f.k]));
+  const rec = findRecog(me, wk), buddy = rec ? rec.receiver : t.buddy;
+  const clearDrafts = ()=> RC_FIELDS.forEach(f=>{ const k = 'rcd_'+wk+'_'+f.k; if((getDraft(k)||'').trim()===vals[f.k]) setDraft(k, null); });
+  const opts = {
+    onOk: ()=>{ clearDrafts(); toast(t.mode==='late' ? '✓ Đã nộp ghi nhận cho '+buddy+' (nộp muộn — tuần này vẫn tính là nghỉ).' : '✓ Đã gửi ghi nhận cho '+buddy+'.'); refreshKeepScroll(); },
+    onFail: ()=>{ toast('Chưa lưu được — nội dung vẫn được giữ, bấm gửi lại.'); refreshKeepScroll(); }
+  };
+  if(rec) updateRecord('recognitions', rec.id, vals, opts);
+  else createRecord('recognitions', Object.assign({id:uid(), weekKey:'wk'+wk, giver:me, receiver:buddy, createdAt:new Date().toISOString(), updatedAt:new Date().toISOString()}, vals), opts);
+  toast('Đang gửi ghi nhận...');
+  refreshKeepScroll();
+}
+function renderRecogCard(r, isNew){
+  const wk = wkOf(r), t = toMs(r.createdAt);
+  const chip = (t && dayKey(t) > wk) ? '<span class="rc-chip late">nộp muộn</span>' : '<span class="rc-chip ok">đúng hạn</span>';
+  return `<div class="rc-item ${isNew?'is-new':''}">
+    <div class="rc-item-h">${memberBadge(r.giver)}<span class="rc-arrow">ghi nhận →</span>${memberBadge(r.receiver)}<span class="rc-date">thứ Năm ${wk?fmtDMs(keyToMs(wk)):'?'}</span>${chip}${isNew?'<span class="rc-chip new">Mới</span>':''}</div>
+    ${RC_FIELDS.map(f=>`<div class="rc-ans"><div class="rc-ans-l">${f.icon} ${f.card}</div><div class="rc-ans-v">${esc(r[f.k]||'')}</div></div>`).join('')}
+  </div>`;
+}
+function renderReceivedRecogs(){
+  const me = STATE.member, newIds = STATE._recogNewIds || new Set(), sup = supporterOf(me);
+  const list = (STATE.data.recognitions||[]).filter(r=>same(r.receiver,me)).sort((a,b)=>wkOf(b).localeCompare(wkOf(a)));
+  const body = list.length
+    ? list.slice(0,4).map(r=>renderRecogCard(r, newIds.has(r.id))).join('') + (list.length>4 ? `<div class="hint">Xem các phiếu cũ hơn ở mục "Phiếu ghi nhận của cả nhóm".</div>` : '')
+    : `<div class="empty-note">Chưa có ghi nhận nào gửi cho bạn${sup?` — ${esc(sup)} sẽ ghi nhận cho bạn vào thứ Năm`:''}.</div>`;
+  return `<section class="rp-section"><div class="rp-sec-title">🎁 Ghi nhận bạn nhận được</div>${body}</section>`;
+}
+function renderRecogGrid(keys, refTs){
+  const ring = buddyRing();
+  if(!ring.length) return '<div class="empty-note">Chưa thiết lập vòng ghi nhận.</div>';
+  const todayK = dayKey(nowMs()), monthNo = thursdaysInMonth(refTs).monthNo;
+  const head = `<tr><th class="rg-name">Người ghi nhận</th><th class="rg-to">→ cho</th>${keys.map(k=>`<th class="${k===todayK?'is-today':''}">T5<br>${fmtDMs(keyToMs(k))}</th>`).join('')}<th>Tháng ${monthNo}</th></tr>`;
+  const rows = ring.map(m=>`<tr><td class="rg-name">${memberBadge(m)}</td><td class="rg-to">${esc(buddyOf(m)||'')}</td>${keys.map(k=>`<td class="${k===todayK?'is-today':''}">${recogStatusIcon(recogStatus(m,k))}</td>`).join('')}<td>${recogMonthCell(monthRecog(m, refTs))}</td></tr>`).join('');
+  return `<div class="rp-scroll"><table class="rg">${head}${rows}</table></div>
+    <div class="rp-legend">✓ đúng hạn · ⏰ nộp muộn (tính nghỉ) · ✕ nghỉ · 🛡 được miễn · … hôm nay · · chưa tới · — chưa áp dụng</div>`;
+}
+function renderRecogDiscipline(){
+  const now = nowMs(), m = thursdaysInMonth(now);
+  return `<section class="rp-section"><div class="rp-sec-title">📅 Kỷ luật ghi nhận — tháng ${m.monthNo}</div>
+    <div class="rc-sub" style="margin:4px 0 10px">Tối đa nghỉ 1 lần/tháng: 🟢 chưa nghỉ · 🟡 đã nghỉ 1 lần (hết lượt) · 🔴 từ 2 lần (vi phạm kỷ luật).</div>
+    ${m.keys.length ? renderRecogGrid(m.keys, now) : '<div class="empty-note">Tháng này không có thứ Năm.</div>'}</section>`;
+}
+function renderTeamRecogFeed(){
+  const all = (STATE.data.recognitions||[]).slice();
+  const title = '<div class="rp-sec-title">📚 Phiếu ghi nhận của cả nhóm</div>';
+  if(!all.length) return `<section class="rp-section">${title}<div class="empty-note">Chưa có phiếu nào. Phiếu đầu tiên sẽ xuất hiện sau thứ Năm.</div></section>`;
+  const weeks = [...new Set(all.map(wkOf).filter(Boolean))].sort().reverse();
+  const n = STATE.recogWeeks || 3, shown = weeks.slice(0, n);
+  const body = shown.map(wk=>{
+    const items = all.filter(r=>wkOf(r)===wk).sort((a,b)=>ringIndex(a.giver)-ringIndex(b.giver));
+    return `<div class="rc-week-h">Thứ Năm ${fmtDMY(keyToMs(wk))} · ${items.length} phiếu</div>` + items.map(r=>renderRecogCard(r,false)).join('');
+  }).join('');
+  const more = weeks.length>shown.length ? `<button class="btn btn-ghost btn-block btn-sm" onclick="recogMore()">Xem thêm tuần cũ hơn (${weeks.length-shown.length})</button>` : '';
+  return `<section class="rp-section">${title}<div class="rc-sub" style="margin:4px 0 10px">Cả nhóm cùng đọc để học cách ghi nhận và góp ý của nhau.</div>${body}${more}</section>`;
+}
+function recogMore(){ STATE.recogWeeks = (STATE.recogWeeks||3) + 3; refreshKeepScroll(); }
+/* ---- ring settings ---- */
+function ringDraft(){ if(!STATE.ringDraft) STATE.ringDraft = buddyRing().length ? buddyRing() : DEFAULT_RING.slice(); return STATE.ringDraft; }
+function ringMove(i, d){ const r = ringDraft(), j = i+d; if(j<0 || j>=r.length) return; const x = r[i]; r[i] = r[j]; r[j] = x; STATE.ringOpen = true; refreshKeepScroll(); }
+function ringRemove(i){ ringDraft().splice(i,1); STATE.ringOpen = true; refreshKeepScroll(); }
+function ringAdd(){
+  const inp = document.getElementById('ringAddInput'), sel = document.getElementById('ringAddSel');
+  const v = nfc((inp && inp.value) || (sel && sel.value) || '');
+  if(!v) return;
+  const r = ringDraft();
+  if(r.some(x=>same(x,v))){ toast('Tên đã có trong vòng.'); return; }
+  r.push(v); STATE.ringOpen = true; refreshKeepScroll();
+}
+function ringCancel(){ STATE.ringDraft = null; refreshKeepScroll(); }
+function ringSave(){
+  const r = ringDraft().map(nfc).filter(Boolean);
+  if(r.length<2){ toast('Vòng cần ít nhất 2 người.'); return; }
+  if(!confirm('Lưu vòng ghi nhận mới cho cả nhóm?\n\n'+r.concat([r[0]]).join(' → '))) return;
+  const prev = cfg('BUDDY_RING'), value = r.join(', ');
+  STATE.data.config = Object.assign({}, STATE.data.config, {BUDDY_RING:value});
+  saveCache(); STATE.ringDraft = null;
+  queuedPost({type:'config', op:'setConfig', key:'BUDDY_RING', value}).then(res=>{
+    if(res && res.ok){ toast('✓ Đã lưu vòng ghi nhận.'); return; }
+    STATE.data.config = Object.assign({}, STATE.data.config, {BUDDY_RING:prev});
+    saveCache(); toast('Chưa lưu được vòng ghi nhận — đã hoàn tác.'); refreshKeepScroll();
+  });
+  refreshKeepScroll();
+}
+function renderRingSettings(){
+  const saved = buddyRing(), draft = ringDraft(), changed = draft.join('|') !== saved.join('|');
+  const pool = reportMembers().concat(DEFAULT_RING).map(nfc).filter((n,i,a)=>n && a.findIndex(x=>same(x,n))===i).filter(n=>!draft.some(x=>same(x,n)));
+  const rows = draft.map((n,i)=>`<div class="ring-row">
+      <span class="ring-no">${i+1}</span>${memberBadge(n)}<span class="ring-to">góp ý cho → <strong>${esc(draft[(i+1)%draft.length]||'')}</strong></span>
+      <span class="step-move"><button title="Lên" onclick="ringMove(${i},-1)" ${i===0?'disabled':''}>↑</button><button title="Xuống" onclick="ringMove(${i},1)" ${i===draft.length-1?'disabled':''}>↓</button></span>
+      <button class="step-del" title="Bỏ khỏi vòng" onclick="ringRemove(${i})">✕</button>
+    </div>`).join('');
+  return `<details class="rp-section rc-settings" ${(STATE.ringOpen || !saved.length) ? 'open' : ''} ontoggle="STATE.ringOpen=this.open">
+    <summary class="rp-sec-title">⚙️ Cài đặt vòng ghi nhận ${changed ? '<span class="rc-chip late">chưa lưu</span>' : ''}</summary>
+    <div class="rc-sub" style="margin:8px 0 10px">Mỗi người góp ý cho người đứng sau mình; người cuối góp ý cho người đầu. Vòng cố định — chỉ đổi khi chỉnh ở đây.</div>
+    ${rows || '<div class="empty-note">Vòng đang trống.</div>'}
+    <div class="ring-add">
+      <select id="ringAddSel"><option value="">— chọn tên —</option>${pool.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('')}</select>
+      <input id="ringAddInput" type="text" placeholder="hoặc gõ tên khác"/>
+      <button class="btn btn-teal btn-sm" onclick="ringAdd()">+ Thêm</button>
+    </div>
+    <div class="ring-actions">
+      ${changed ? '<button class="btn btn-ghost btn-sm" onclick="ringCancel()">Huỷ thay đổi</button>' : ''}
+      <button class="btn btn-gold btn-sm" onclick="ringSave()" ${changed ? '' : 'disabled'}>💾 Lưu vòng</button>
+    </div>
+  </details>`;
+}
+/* ---- report detail section ---- */
+function renderReportRecog(P){
+  const keys = []; let d = sod(P.s);
+  while(d.getTime() < P.e){ if(vnDow(d)===4) keys.push(dayKey(d)); d = addDays(d,1); }
+  const body = !buddyRing().length ? '<div class="empty-note">Chưa thiết lập vòng ghi nhận.</div>'
+    : (keys.length ? renderRecogGrid(keys, Math.min(P.e - DAY_MS, nowMs())) : '<div class="empty-note">Khoảng thời gian đã chọn không có thứ Năm nào.</div>');
+  return rpSection('6','Ghi nhận đồng đội','Mỗi thứ Năm, mỗi người ghi nhận cho đồng đội mình hỗ trợ. Tối đa nghỉ 1 lần/tháng.',
+    body + `<button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="setTab('recog')">💬 Mở trang Ghi nhận để đọc các phiếu</button>`);
+}
+// refresh the Thursday banner / countdowns once a minute
+setInterval(()=>{ try { if(STATE.member){ renderRecogBanner(); } } catch(e){} }, 60000);
+
+function recogStatsSpan(m){
+  const r = monthRecog(m, nowMs());
+  if(!r.applicable) return '';
+  return `<span>💬 Ghi nhận T${r.monthNo} <strong>${r.done}/${r.total}</strong>${r.misses?` · nghỉ ${r.misses}`:''}</span>`;
+}
+
+/* ================================================================
+   SỔ GIEO HẠT — mỗi lỗi kỷ luật quy ra tiền gieo hạt (góp quỹ từ thiện)
+   • Nhật ký: mỗi ngày không có ghi chép trước 18:00 (kể cả ghi muộn) → SEED_JOURNAL
+   • Ghi nhận: mỗi thứ Năm nghỉ / nộp muộn → SEED_RECOG; lần đầu mỗi tháng được miễn
+   • Ngày miễn (ốm, công tác…) và ngày nghỉ cố định không phát sinh, không làm đứt chuỗi
+   • Còn nợ = phát sinh − đã gieo (tự khai), cộng dồn; tiền gieo trả khoản cũ trước
+   ================================================================ */
+const SEED_DEFAULTS = {SEED_JOURNAL:20000, SEED_RECOG:50000};
+const SEED_STALE_DAYS = 14;
+const TREND_COLORS = {j:'#00A79D', r:'#9575ef'}; // validated pair on the dark surface
+function seedRate(k){ const v = cfg(k), n = Number(v); return (v!=='' && Number.isFinite(n) && n>=0) ? n : SEED_DEFAULTS[k]; }
+function money(n){ n = Math.round(Number(n)||0); const s = String(Math.abs(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'.'); return (n<0?'−':'')+s+'đ'; }
+function jsq(s){ return esc(String(s===undefined||s===null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")); }
+function maxKey(a, b){ return a>b ? a : b; }
+function seedFrom(){ return cfgDate('SEED_FROM'); }
+function journalSeedFrom(){ return maxKey(seedFrom(), rule18From()); }
+function recogSeedFrom(){ return maxKey(seedFrom(), recogFrom()); }
+function offDays(){ return cfg('SEED_OFF_DAYS').split(',').map(x=>parseInt(x,10)).filter(n=>n>=0 && n<=6); }
+function dkOf(v){ const s = String(v||''); if(/^d\d{4}-\d{2}-\d{2}$/.test(s)) return s.slice(1); if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s; const t = toMs(s); return t ? dayKey(t) : ''; }
+function exemptionOf(m, key, kind){ return (STATE.data.exemptions||[]).find(e=>same(e.member,m) && dkOf(e.dateKey)===key && (e.kind==='all' || e.kind===kind)); }
+function isOffDay(key){ return offDays().includes(vnDow(keyToMs(key))); }
+function isJournalNeutral(m, key){ return isOffDay(key) || !!exemptionOf(m, key, 'journal'); }
+function journalReqFrom(map){ const j = journalSeedFrom(), f = minKeyOf(map); return (f && f < j) ? f : j; }
+function deadlineTs(d){
+  const s = String(d||'').trim(); if(!s) return NaN;
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return new Date(s+'T23:59:59+07:00').getTime();
+  const t = new Date(/T/.test(s) && !/(Z|[+-]\d{2}:?\d{2})$/.test(s) ? s+'+07:00' : s).getTime();
+  if(isNaN(t)) return NaN;
+  const v = vnD(t); return (v.getUTCHours()===0 && v.getUTCMinutes()===0) ? t + DAY_MS - 1000 : t; // date-only → end of that day
+}
+function thuOnOrAfter(t){ const d = sod(t); return addDays(d, (4 - vnDow(d) + 7) % 7); }
+function seedMembers(){ return buddyRing(); }
+function inSeedScope(m){ return seedMembers().some(x=>same(x,m)); }
+function exemptCell(m, k){
+  const e = exemptionOf(m, k, 'journal');
+  return e ? `<span class="lb-ex" title="Ngày miễn: ${esc(e.reason||'')}">🛡</span>` : '<span class="lb-off" title="Ngày nghỉ cố định — không tính">—</span>';
+}
+// every disciplinary item from the start date until now
+function debtItems(m, events){
+  const now = nowMs(), todayK = dayKey(now), endT = sod(now).getTime(), items = [];
+  const jFrom = journalSeedFrom();
+  if(jFrom !== '9999-12-31'){
+    const map = dayStatusMap(nfc(m), events || buildEvents());
+    for(let t = keyToMs(jFrom); t <= endT; t += DAY_MS){
+      const k = dayKey(t), x = map[k];
+      if(x && x.st==='ok') continue;
+      if(k===todayK && vnHour(now) < CUTOFF_HOUR) continue;   // today is still open
+      if(isJournalNeutral(m, k)) continue;
+      items.push({k, type:'journal', amount: seedRate('SEED_JOURNAL'), free:false,
+        reason: x ? 'Ghi nhật ký muộn ('+fmtHM(x.firstLate)+', sau 18:00)' : 'Không ghi nhật ký'});
+    }
+  }
+  const rFrom = recogSeedFrom();
+  if(rFrom !== '9999-12-31' && buddyOf(m)){
+    const freeUsed = {};
+    for(let d = thuOnOrAfter(keyToMs(rFrom)); d.getTime() <= endT; d = addDays(d,7)){
+      const k = dayKey(d), s = recogStatus(m, k);
+      if(s!=='miss' && s!=='late') continue;
+      const mon = k.slice(0,7), free = !freeUsed[mon]; freeUsed[mon] = true;
+      items.push({k, type:'recog', amount: free ? 0 : seedRate('SEED_RECOG'), free,
+        reason: (s==='late' ? 'Nộp ghi nhận muộn' : 'Không ghi nhận đồng đội') + (free ? ' — lượt nghỉ đầu tháng, miễn' : '')});
+    }
+  }
+  return items.sort((a,b)=>a.k.localeCompare(b.k) || (a.type<b.type?-1:1));
+}
+function seedsOf(m){
+  return (STATE.data.seeds||[]).filter(s=>same(s.member,m))
+    .sort((a,b)=>dkOf(b.sownAt).localeCompare(dkOf(a.sownAt)) || (toMs(b.createdAt)||0)-(toMs(a.createdAt)||0));
+}
+function ledger(m, events){
+  const items = debtItems(m, events), seeds = seedsOf(m);
+  const owed = items.reduce((a,x)=>a+x.amount,0), sown = seeds.reduce((a,s)=>a+(Number(s.amount)||0),0);
+  let left = sown, oldest = null;
+  items.forEach(it=>{                                  // money sown pays the oldest items first
+    if(!it.amount){ it.paid = true; return; }
+    if(left >= it.amount){ left -= it.amount; it.paid = true; }
+    else { it.paid = false; if(!oldest) oldest = it.k; left = 0; }
+  });
+  const balance = owed - sown;
+  const age = oldest ? Math.round((sod(nowMs()).getTime() - keyToMs(oldest))/DAY_MS) : 0;
+  return {m, items, seeds, owed, sown, balance, oldest, age,
+          level: balance<=0 ? 'green' : (age>SEED_STALE_DAYS ? 'red' : 'yellow')};
+}
+// what each person had to do / did / missed within a period
+function periodDiscipline(m, P, days, events){
+  const map = dayStatusMap(nfc(m), events), now = nowMs(), todayK = dayKey(now);
+  const r = {req:0, ok:0, late:0, miss:0, ex:0, rReq:0, rOk:0, rLate:0, rMiss:0, rEx:0}, from = journalReqFrom(map);
+  days.forEach(t=>{
+    const k = dayKey(t), x = map[k];
+    if(k < from && !x) return;                                   // not started yet
+    if(isJournalNeutral(m,k)){ r.ex++; return; }
+    if(k===todayK && !(x && x.st==='ok') && vnHour(now) < CUTOFF_HOUR) return; // pending
+    r.req++;
+    if(x && x.st==='ok') r.ok++; else if(x) r.late++; else r.miss++;
+  });
+  if(buddyOf(m)) days.forEach(t=>{
+    if(vnDow(t)!==4) return;
+    const s = recogStatus(m, dayKey(t));
+    if(s==='exempt'){ r.rEx++; return; }
+    if(s==='na' || s==='future' || s==='pending') return;
+    r.rReq++;
+    if(s==='ok') r.rOk++; else if(s==='late') r.rLate++; else r.rMiss++;
+  });
+  return r;
+}
+/* ---- handlers ---- */
+function toggleSeedDetail(m){ STATE.seedOpen = (STATE.seedOpen===m) ? null : m; refreshKeepScroll(); }
+function openSeedForm(m){ STATE.seedForm = m || (inSeedScope(STATE.member) ? STATE.member : (seedMembers()[0]||'')); STATE.exForm = false; STATE.seedSettings = false; refreshKeepScroll(); }
+function openExForm(){ STATE.exForm = !STATE.exForm; STATE.seedForm = null; STATE.seedSettings = false; refreshKeepScroll(); }
+function openSeedSettings(){ STATE.seedSettings = !STATE.seedSettings; STATE.seedForm = null; STATE.exForm = false; refreshKeepScroll(); }
+function closeSeedForms(){ STATE.seedForm = null; STATE.exForm = false; STATE.seedSettings = false; STATE.seedDraft = null; refreshKeepScroll(); }
+function seedMemberChanged(v){
+  STATE.seedForm = v;
+  const el = document.getElementById('sd_amount'), L = ledger(v);
+  if(el) el.value = L.balance>0 ? L.balance : '';
+}
+function saveSeed(){
+  const g = id => document.getElementById(id);
+  const m = nfc(g('sd_member').value), amount = Math.round(Number(g('sd_amount').value));
+  const date = g('sd_date').value, note = g('sd_note').value.trim(), proof = g('sd_proof').value.trim();
+  if(!m){ toast('Chọn người gieo hạt.'); return; }
+  if(!(amount>0)){ toast('Nhập số tiền đã gieo.'); g('sd_amount').focus(); return; }
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){ toast('Chọn ngày gieo.'); return; }
+  if(date > dayKey(nowMs())){ toast('Ngày gieo không được ở tương lai.'); return; }
+  if(!note){ toast('Ghi rõ đã gieo vào đâu / nội dung chuyển khoản.'); g('sd_note').focus(); return; }
+  const draft = {member:m, amount, date, note, proof};
+  createRecord('seeds', {id:uid(), member:m, amount, sownAt:'d'+date, note, proof, by:STATE.member,
+                         createdAt:new Date().toISOString(), updatedAt:new Date().toISOString()}, {
+    onOk: ()=>{ toast('✓ Đã lưu lịch sử: '+m+' gieo hạt '+money(amount)+'.'); },
+    onFail: ()=>{ STATE.seedForm = m; STATE.seedDraft = draft; toast('Chưa lưu được — nội dung vẫn giữ trong form, bấm lưu lại.'); refreshKeepScroll(); }
+  });
+  STATE.seedForm = null; STATE.seedDraft = null; STATE.seedOpen = m;
+  toast('Đang lưu...'); refreshKeepScroll();
+}
+function deleteSeed(id){
+  const s = (STATE.data.seeds||[]).find(x=>x.id===id); if(!s) return;
+  if(!(same(s.by, STATE.member) || same(STATE.member, 'Nhưỡng'))){ toast('Chỉ người đã ghi hoặc Nhưỡng được xoá dòng này.'); return; }
+  if(!confirm('Xoá dòng gieo hạt '+money(s.amount)+' của '+s.member+' ngày '+fmtDMs(keyToMs(dkOf(s.sownAt)))+'?')) return;
+  deleteRecord('seeds', id); refreshKeepScroll();
+}
+function saveExemption(){
+  const g = id => document.getElementById(id);
+  const m = nfc(g('ex_member').value), from = g('ex_date').value, to = g('ex_date_to').value || from;
+  const kind = g('ex_kind').value, reason = g('ex_reason').value.trim();
+  if(!m){ toast('Chọn thành viên.'); return; }
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(from)){ toast('Chọn ngày miễn.'); return; }
+  if(to < from){ toast('"Đến ngày" phải sau "Từ ngày".'); return; }
+  if(!reason){ toast('Ghi lý do miễn.'); g('ex_reason').focus(); return; }
+  const keys = []; for(let t = keyToMs(from); t <= keyToMs(to) && keys.length<62; t += DAY_MS) keys.push(dayKey(t));
+  const useKeys = kind==='recog' ? keys.filter(k=>vnDow(keyToMs(k))===4) : keys;
+  if(!useKeys.length){ toast('Khoảng ngày này không có thứ Năm nào để miễn ghi nhận.'); return; }
+  useKeys.forEach(k=>{
+    if(exemptionOf(m, k, kind==='all' ? 'journal' : kind) && kind!=='all') return;
+    createRecord('exemptions', {id:uid(), member:m, dateKey:'d'+k, kind, reason, createdBy:STATE.member,
+                                createdAt:new Date().toISOString(), updatedAt:new Date().toISOString()});
+  });
+  toast('✓ Đã thêm '+useKeys.length+' ngày miễn cho '+m+'.');
+  STATE.exForm = true; refreshKeepScroll();
+}
+function deleteExemption(id){
+  const e = (STATE.data.exemptions||[]).find(x=>x.id===id); if(!e) return;
+  if(!confirm('Bỏ ngày miễn '+fmtDMs(keyToMs(dkOf(e.dateKey)))+' của '+e.member+'?')) return;
+  deleteRecord('exemptions', id); refreshKeepScroll();
+}
+function saveSeedSettings(){
+  const g = id => document.getElementById(id);
+  const vals = {
+    SEED_JOURNAL: String(Math.max(0, Math.round(Number(g('st_j').value)||0))),
+    SEED_RECOG: String(Math.max(0, Math.round(Number(g('st_r').value)||0))),
+    CHARITY_NAME: g('st_name').value.trim(),
+    CHARITY_ACCOUNT: g('st_acc').value.trim(),
+    SEED_OFF_DAYS: [0,1,2,3,4,5,6].filter(i=>{ const c = g('st_off_'+i); return c && c.checked; }).join(',')
+  };
+  const curOf = k => (k in SEED_DEFAULTS) ? String(seedRate(k)) : cfg(k);   // compare with what is in effect
+  const changed = Object.keys(vals).filter(k=>vals[k] !== curOf(k));
+  if(!changed.length){ toast('Không có thay đổi.'); return; }
+  const rateChanged = changed.includes('SEED_JOURNAL') || changed.includes('SEED_RECOG') || changed.includes('SEED_OFF_DAYS');
+  if(rateChanged && !confirm('Đổi mức tiền hoặc ngày nghỉ sẽ tính lại toàn bộ số tiền phát sinh từ đầu. Tiếp tục?')) return;
+  changed.forEach(k=>{
+    const prev = cfg(k);
+    STATE.data.config = Object.assign({}, STATE.data.config, {[k]: vals[k]});
+    queuedPost({type:'config', op:'setConfig', key:k, value:vals[k]}).then(res=>{
+      if(res && res.ok) return;
+      STATE.data.config = Object.assign({}, STATE.data.config, {[k]: prev});
+      saveCache(); toast('Chưa lưu được cài đặt — đã hoàn tác.'); refreshKeepScroll();
+    });
+  });
+  saveCache(); STATE.seedSettings = false;
+  toast('✓ Đã lưu cài đặt gieo hạt.'); refreshKeepScroll();
+}
+function goSeeds(){
+  STATE.report.showDetail = true; STATE.seedOpen = STATE.member;
+  setTab('report');
+  setTimeout(()=>{ const el = document.getElementById('rp-seeds'); if(el) el.scrollIntoView({behavior:'smooth', block:'start'}); }, 60);
+}
+/* ---- weekly closing report (copy into the group chat) ---- */
+function lastWeekRange(){ const now = nowMs(), mon = addDays(sod(now), -((vnDow(now)+6)%7)); return {s: addDays(mon,-7).getTime(), e: mon.getTime()}; }
+function weeklyReportText(){
+  const ev = buildEvents(), W = lastWeekRange(), days = [];
+  for(let t = W.s; t < W.e; t += DAY_MS) days.push(t);
+  const ring = seedMembers(), sK = dayKey(W.s), eK = dayKey(W.e), L = [];
+  L.push('📋 CHỐT SỔ TUẦN '+fmtDM(W.s)+' – '+fmtDMY(W.e-DAY_MS)+' · LÀM CHỦ SỰ HỌC');
+  if(!ring.length){ L.push('Chưa thiết lập vòng thành viên.'); return L.join('\n'); }
+  const top = ring.map(m=>({m, s:memberStreak(m, ev)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,3);
+  if(top.length) L.push('🔥 Top chuỗi: '+top.map(x=>x.m+' '+x.s+' ngày').join(' · '));
+  let req = 0, ok = 0; const lines = [];
+  ring.forEach(m=>{
+    const d = periodDiscipline(m, {s:W.s, e:W.e}, days, ev); req += d.req; ok += d.ok;
+    const map = dayStatusMap(nfc(m), ev), miss = [], late = [];
+    days.forEach(t=>{ const k = dayKey(t); if(isJournalNeutral(m,k)) return; const x = map[k]; if(x && x.st==='ok') return; (x ? late : miss).push(fmtDMs(t)); });
+    const parts = [];
+    if(miss.length) parts.push('thiếu '+miss.length+' ngày ('+miss.join(', ')+')');
+    if(late.length) parts.push('ghi muộn '+late.length+' ngày ('+late.join(', ')+')');
+    if(parts.length) lines.push('• '+m+': '+parts.join(', '));
+  });
+  L.push(''); L.push('📒 Nhật ký trước 18:00: '+ok+'/'+req+' ngày ('+(req ? Math.round(ok/req*100) : 0)+'%)');
+  L.push(...(lines.length ? lines : ['• Cả nhóm ghi đủ, đúng giờ 👏']));
+  const thu = days.find(t=>vnDow(t)===4);
+  if(thu){
+    const k = dayKey(thu), st = ring.map(m=>({m, s:recogStatus(m,k)})).filter(x=>!['na','future'].includes(x.s));
+    if(st.length){
+      const counted = st.filter(x=>x.s!=='exempt');
+      L.push(''); L.push('💬 Ghi nhận thứ Năm '+fmtDMs(thu)+': '+counted.filter(x=>x.s==='ok').length+'/'+counted.length+' đúng hạn');
+      st.filter(x=>x.s==='miss' || x.s==='late').forEach(x=>L.push('• '+x.m+': '+(x.s==='late' ? 'nộp muộn' : 'không ghi nhận')));
+    }
+  }
+  const led = ring.map(m=>({m, L:ledger(m, ev)}));
+  const arising = led.map(x=>({m:x.m, v:x.L.items.filter(i=>i.k>=sK && i.k<eK).reduce((a,i)=>a+i.amount,0)})).filter(x=>x.v>0);
+  const sownW = led.map(x=>({m:x.m, v:x.L.seeds.filter(z=>{ const k = dkOf(z.sownAt); return k>=sK && k<eK; }).reduce((a,z)=>a+(Number(z.amount)||0),0)})).filter(x=>x.v>0);
+  const owing = led.filter(x=>x.L.balance>0).sort((a,b)=>b.L.balance-a.L.balance);
+  L.push('');
+  L.push('🌱 Gieo hạt phát sinh trong tuần: '+(arising.length ? arising.map(x=>x.m+' '+money(x.v)).join(' · ') : 'không có'));
+  L.push('✅ Đã gieo trong tuần: '+(sownW.length ? sownW.map(x=>x.m+' '+money(x.v)).join(' · ') : 'chưa có'));
+  L.push('💰 Tổng còn nợ: '+(owing.length ? owing.map(x=>x.m+' '+money(x.L.balance)).join(' · ') : 'không ai còn nợ 🎉'));
+  const fund = [cfg('CHARITY_NAME'), cfg('CHARITY_ACCOUNT')].filter(Boolean).join(' – ');
+  if(fund) L.push('🏦 Gieo hạt vào: '+fund);
+  return L.join('\n');
+}
+function copyWeeklyReport(){
+  const text = weeklyReportText();
+  const done = ()=>toast('✓ Đã sao chép báo cáo tuần — dán vào nhóm Zalo.');
+  const fallback = ()=>{
+    const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); } catch(e){ toast('Không sao chép được — mở "Xem trước" và copy tay.'); }
+    ta.remove();
+  };
+  try { if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback); else fallback(); }
+  catch(e){ fallback(); }
+}
+/* ---- report sections ---- */
+function memberOptions(sel){ return seedMembers().map(n=>`<option value="${esc(n)}" ${same(n,sel)?'selected':''}>${esc(n)}</option>`).join(''); }
+function renderSeedForm(){
+  const m = STATE.seedForm, dr = STATE.seedDraft || {}, L = ledger(m);
+  const amount = dr.amount!==undefined ? dr.amount : (L.balance>0 ? L.balance : '');
+  return `<div class="sd-form">
+    <div class="sd-form-t">🌱 Cập nhật đã gieo hạt</div>
+    <div class="sd-grid">
+      <label>Người gieo hạt<select id="sd_member" onchange="seedMemberChanged(this.value)">${memberOptions(m)}</select></label>
+      <label>Số tiền đã gieo (đ)<input id="sd_amount" type="number" min="1000" step="1000" value="${esc(amount)}" placeholder="VD: 40000"/></label>
+      <label>Ngày gieo<input id="sd_date" type="date" value="${esc(dr.date || dayKey(nowMs()))}"/></label>
+      <label class="sd-wide">Đã gieo vào đâu / nội dung<input id="sd_note" type="text" value="${esc(dr.note||'')}" placeholder="VD: Chuyển khoản quỹ …, nội dung: GIEO HAT ${esc(String(m||'').toUpperCase())} T${vnD(nowMs()).getUTCMonth()+1}"/></label>
+      <label class="sd-wide">Link minh chứng (tuỳ chọn)<input id="sd_proof" type="text" value="${esc(dr.proof||'')}" placeholder="Link ảnh chụp giao dịch…"/></label>
+    </div>
+    <div class="sd-actions"><button class="btn btn-ghost btn-sm" onclick="closeSeedForms()">Huỷ</button><button class="btn btn-gold btn-sm" onclick="saveSeed()">💾 Lưu lịch sử</button></div>
+  </div>`;
+}
+function renderExForm(){
+  const list = (STATE.data.exemptions||[]).slice().sort((a,b)=>dkOf(b.dateKey).localeCompare(dkOf(a.dateKey))).slice(0,12);
+  const kindTxt = {all:'nhật ký + ghi nhận', journal:'nhật ký', recog:'ghi nhận'};
+  return `<div class="sd-form ex">
+    <div class="sd-form-t">🛡 Ngày miễn (ốm, công tác, việc gia đình…)</div>
+    <div class="sd-grid">
+      <label>Thành viên<select id="ex_member">${memberOptions(STATE.member)}</select></label>
+      <label>Miễn cho<select id="ex_kind"><option value="all">Nhật ký + ghi nhận</option><option value="journal">Chỉ nhật ký</option><option value="recog">Chỉ ghi nhận (thứ Năm)</option></select></label>
+      <label>Từ ngày<input id="ex_date" type="date" value="${dayKey(nowMs())}"/></label>
+      <label>Đến ngày (tuỳ chọn)<input id="ex_date_to" type="date"/></label>
+      <label class="sd-wide">Lý do<input id="ex_reason" type="text" placeholder="VD: Ốm sốt, đi viện"/></label>
+    </div>
+    <div class="sd-actions"><button class="btn btn-ghost btn-sm" onclick="closeSeedForms()">Đóng</button><button class="btn btn-teal btn-sm" onclick="saveExemption()">🛡 Lưu ngày miễn</button></div>
+    ${list.length ? `<div class="sd-sub">Ngày miễn gần đây</div>${list.map(e=>`<div class="sd-li">${memberBadge(e.member)}<span>${fmtDMs(keyToMs(dkOf(e.dateKey)))} · miễn ${kindTxt[e.kind]||e.kind} · ${esc(e.reason||'')}</span><span class="rp-muted">ghi bởi ${esc(e.createdBy||'?')}</span><button class="step-del" title="Bỏ ngày miễn" onclick="deleteExemption('${jsq(e.id)}')">✕</button></div>`).join('')}` : ''}
+  </div>`;
+}
+function renderSeedSettings(){
+  const off = offDays(), names = ['CN','T2','T3','T4','T5','T6','T7'];
+  return `<div class="sd-form">
+    <div class="sd-form-t">⚙️ Cài đặt gieo hạt</div>
+    <div class="sd-grid">
+      <label>📒 Mỗi ngày thiếu / ghi muộn (đ)<input id="st_j" type="number" min="0" step="1000" value="${seedRate('SEED_JOURNAL')}"/></label>
+      <label>💬 Mỗi lần nghỉ ghi nhận (đ)<input id="st_r" type="number" min="0" step="1000" value="${seedRate('SEED_RECOG')}"/></label>
+      <label>Tên quỹ / tổ chức từ thiện<input id="st_name" type="text" value="${esc(cfg('CHARITY_NAME'))}" placeholder="VD: Quỹ Bảo trợ trẻ em…"/></label>
+      <label>Số tài khoản – ngân hàng<input id="st_acc" type="text" value="${esc(cfg('CHARITY_ACCOUNT'))}" placeholder="VD: 0123456789 – Vietcombank"/></label>
+    </div>
+    <div class="sd-sub">Ngày cố định không tính nhật ký (không phát sinh, không làm đứt chuỗi)</div>
+    <div class="sd-days">${names.map((n,i)=>`<label class="sd-day"><input id="st_off_${i}" type="checkbox" ${off.includes(i)?'checked':''}/> ${n}</label>`).join('')}</div>
+    <div class="hint">Sổ gieo hạt bắt đầu tính từ ${seedFrom()==='9999-12-31' ? 'khi cập nhật backend' : fmtDMY(keyToMs(seedFrom()))}. Lần nghỉ ghi nhận đầu tiên mỗi tháng luôn được miễn. Đổi mức tiền sẽ tính lại toàn bộ khoản phát sinh.</div>
+    <div class="sd-actions"><button class="btn btn-ghost btn-sm" onclick="closeSeedForms()">Huỷ</button><button class="btn btn-gold btn-sm" onclick="saveSeedSettings()">💾 Lưu cài đặt</button></div>
+  </div>`;
+}
+function renderSeedDetail(row){
+  const L = row.L, kindIcon = {journal:'📒', recog:'💬'};
+  const items = L.items.slice().reverse(), shown = items.slice(0,40);
+  const itemsHtml = shown.length ? shown.map(it=>`<div class="sd-li ${it.paid?'paid':''}">
+      <span class="sd-d">${WEEKDAY_VI[vnDow(keyToMs(it.k))]} ${fmtDMs(keyToMs(it.k))}</span>
+      <span>${kindIcon[it.type]} ${esc(it.reason)}</span>
+      <span class="sd-amt">${it.free ? 'miễn' : money(it.amount)}</span>
+      ${it.free ? '' : `<span class="sd-tag ${it.paid?'ok':'due'}">${it.paid?'đã gieo':'chưa gieo'}</span>`}
+    </div>`).join('') + (items.length>shown.length ? `<div class="hint">+${items.length-shown.length} khoản cũ hơn</div>` : '')
+    : '<div class="empty-note">Chưa có khoản nào phát sinh 👏</div>';
+  const seedsHtml = L.seeds.length ? L.seeds.map(s=>{
+      const proof = /^https?:\/\//i.test(String(s.proof||'')) ? ` · <a href="${esc(s.proof)}" target="_blank" rel="noopener">minh chứng</a>` : (s.proof ? ' · '+esc(s.proof) : '');
+      const canDel = same(s.by, STATE.member) || same(STATE.member,'Nhưỡng');
+      return `<div class="sd-li"><span class="sd-d">${fmtDMs(keyToMs(dkOf(s.sownAt)))}</span><span>${esc(s.note||'')}${proof}<span class="rp-muted"> · ghi bởi ${esc(s.by||'?')}</span></span><span class="sd-amt ok">+${money(s.amount)}</span>${canDel?`<button class="step-del" title="Xoá dòng này" onclick="deleteSeed('${jsq(s.id)}')">✕</button>`:''}</div>`;
+    }).join('') : '<div class="empty-note">Chưa có lần gieo hạt nào.</div>';
+  return `<div class="sd-detail-in">
+    <div class="sd-sum">Từ ${fmtDMY(keyToMs(journalSeedFrom()==='9999-12-31' ? dayKey(nowMs()) : journalSeedFrom()))}: phát sinh <strong>${money(L.owed)}</strong> · đã gieo <strong class="rp-ok">${money(L.sown)}</strong> · còn nợ <strong class="${L.balance>0?'rp-bad':'rp-ok'}">${money(Math.max(0,L.balance))}</strong>${L.balance<0?` (dư ${money(-L.balance)})`:''}${L.oldest?` · khoản chưa gieo cũ nhất ${fmtDMs(keyToMs(L.oldest))} (${L.age} ngày)`:''}</div>
+    <div class="sd-cols">
+      <div><div class="sd-sub">📌 Các khoản phát sinh</div>${itemsHtml}</div>
+      <div><div class="sd-sub">🌱 Lịch sử gieo hạt</div>${seedsHtml}
+        <button class="btn btn-teal btn-sm" style="margin-top:8px" onclick="openSeedForm('${jsq(row.m)}')">🌱 Cập nhật gieo hạt cho ${esc(row.m)}</button></div>
+    </div>
+  </div>`;
+}
+function renderReportSeeds(P, days, events){
+  const ring = seedMembers();
+  if(!ring.length) return rpSection('1','⚖️ Kỷ luật & gieo hạt','', '<div class="empty-note">Chưa thiết lập vòng thành viên — vào tab 💬 Ghi nhận để cài đặt.</div>', 'rp-seeds');
+  const sK = dayKey(P.s), eK = dayKey(P.e), inP = k => k>=sK && k<eK;
+  const rows = ring.map(m=>{
+    const L = ledger(m, events), d = periodDiscipline(m, P, days, events);
+    return {m, L, d,
+      owedP: L.items.filter(x=>inP(x.k)).reduce((a,x)=>a+x.amount,0),
+      sownP: L.seeds.filter(s=>inP(dkOf(s.sownAt))).reduce((a,s)=>a+(Number(s.amount)||0),0)};
+  }).sort((a,b)=> b.L.balance-a.L.balance || a.m.localeCompare(b.m));
+  const T = rows.reduce((t,r)=>{ ['req','ok','late','miss','rReq','rOk','rLate','rMiss'].forEach(k=>t[k]+=r.d[k]); t.owedP+=r.owedP; t.sownP+=r.sownP; t.bal+=Math.max(0,r.L.balance); return t; },
+    {req:0,ok:0,late:0,miss:0,rReq:0,rOk:0,rLate:0,rMiss:0,owedP:0,sownP:0,bal:0});
+  const jCell = d => d.req ? `<strong>${d.ok}</strong>/${d.req}${d.late?` · <span class="rp-warn">⏰${d.late}</span>`:''}${d.miss?` · <span class="rp-bad">✕${d.miss}</span>`:''}` : '<span class="rp-muted">—</span>';
+  const rCell = d => d.rReq ? `<strong>${d.rOk}</strong>/${d.rReq}${d.rLate?` · <span class="rp-warn">⏰${d.rLate}</span>`:''}${d.rMiss?` · <span class="rp-bad">✕${d.rMiss}</span>`:''}` : '<span class="rp-muted">—</span>';
+  const balCell = L => {
+    const tip = L.level==='red' ? 'Có khoản chưa gieo quá '+SEED_STALE_DAYS+' ngày' : (L.level==='yellow' ? 'Còn nợ' : 'Đã gieo đủ');
+    return `<span class="sd-bal ${L.level}" title="${tip}">${L.level==='red'?'🔴':L.level==='yellow'?'🟡':'🟢'} ${money(Math.max(0,L.balance))}</span>`;
+  };
+  const body = rows.map(r=>`<tr class="sd-row ${STATE.seedOpen && same(STATE.seedOpen,r.m)?'open':''}" onclick="toggleSeedDetail('${jsq(r.m)}')">
+      <td>${memberBadge(r.m)}</td><td>${jCell(r.d)}</td><td>${rCell(r.d)}</td>
+      <td>${r.owedP ? money(r.owedP) : '<span class="rp-muted">0đ</span>'}</td>
+      <td>${r.sownP ? `<span class="rp-ok">${money(r.sownP)}</span>` : '<span class="rp-muted">0đ</span>'}</td>
+      <td>${balCell(r.L)}</td><td class="sd-chev">${STATE.seedOpen && same(STATE.seedOpen,r.m)?'▲':'▼'}</td>
+    </tr>`).join('');
+  // detail card sits under the table (full width, so it also reads well on phones)
+  const openRow = STATE.seedOpen ? rows.find(r=>same(r.m, STATE.seedOpen)) : null;
+  const detail = openRow ? `<div class="sd-detail-card">
+      <div class="sd-detail-h">${memberBadge(openRow.m)}<span class="sd-dt">Chi tiết kỷ luật & gieo hạt</span><button class="step-del" title="Đóng" onclick="toggleSeedDetail('${jsq(openRow.m)}')">✕</button></div>
+      ${renderSeedDetail(openRow)}</div>` : '';
+  const fund = [cfg('CHARITY_NAME'), cfg('CHARITY_ACCOUNT')].filter(Boolean);
+  const info = `<div class="sd-info">
+      <div>🏦 ${fund.length ? `Gieo hạt vào: <strong>${esc(fund.join(' – '))}</strong>` : '<span class="rp-warn">Chưa có thông tin quỹ từ thiện — điền ở ⚙️ Cài đặt.</span>'}</div>
+      <div class="rp-muted">📒 Thiếu/ghi muộn nhật ký: <strong>${money(seedRate('SEED_JOURNAL'))}</strong>/ngày · 💬 Nghỉ ghi nhận: <strong>${money(seedRate('SEED_RECOG'))}</strong>/lần (lần đầu mỗi tháng miễn)${offDays().length?` · Không tính ngày: ${offDays().map(i=>['CN','T2','T3','T4','T5','T6','T7'][i]).join(', ')}`:''}</div>
+    </div>`;
+  const bar = `<div class="sd-bar">
+      <button class="btn btn-gold btn-sm" onclick="openSeedForm()">🌱 Cập nhật đã gieo hạt</button>
+      <button class="btn btn-ghost btn-sm" onclick="openExForm()">🛡 Ngày miễn</button>
+      <button class="btn btn-ghost btn-sm" onclick="copyWeeklyReport()">📋 Sao chép báo cáo tuần</button>
+      <button class="btn btn-ghost btn-sm" onclick="openSeedSettings()">⚙️ Cài đặt</button>
+    </div>`;
+  const forms = (STATE.seedForm ? renderSeedForm() : '') + (STATE.exForm ? renderExForm() : '') + (STATE.seedSettings ? renderSeedSettings() : '');
+  const table = `<div class="rp-scroll"><table class="rp-table sd-table">
+      <thead><tr><th>Thành viên</th><th>📒 Nhật ký<br><small>đúng giờ/phải ghi · ⏰muộn · ✕thiếu</small></th><th>💬 Ghi nhận<br><small>đúng hạn/phải · ⏰ · ✕</small></th><th>Phát sinh<br><small>trong kỳ</small></th><th>Đã gieo<br><small>trong kỳ</small></th><th>Tổng còn nợ<br><small>cộng dồn</small></th><th></th></tr></thead>
+      <tbody>${body}</tbody>
+      <tfoot><tr><td><strong>Cả nhóm</strong></td><td>${jCell(T)}</td><td>${rCell(T)}</td><td><strong>${money(T.owedP)}</strong></td><td><strong class="rp-ok">${money(T.sownP)}</strong></td><td><strong>${money(T.bal)}</strong></td><td></td></tr></tfoot>
+    </table></div>${detail}
+    <div class="hint">Bấm một dòng để xem từng khoản phát sinh và lịch sử gieo hạt. 🔴 = có khoản chưa gieo quá ${SEED_STALE_DAYS} ngày.</div>`;
+  const preview = `<details class="rp-formula"><summary>Xem trước báo cáo tuần</summary><pre class="sd-pre">${esc(weeklyReportText())}</pre></details>`;
+  return rpSection('1','⚖️ Kỷ luật & gieo hạt','Ai thiếu bao nhiêu, phải gieo hạt bao nhiêu, đã gieo chưa — tiền gieo hạt góp vào quỹ từ thiện.', info + bar + forms + table + preview, 'rp-seeds');
+}
+const BEHAVIORS = [
+  {k:'j', icon:'📒', name:'Nhật ký trước 18:00',      norm:'Mỗi ngày',          seed:true},
+  {k:'r', icon:'💬', name:'Ghi nhận đồng đội',        norm:'Mỗi thứ Năm',       seed:true},
+  {k:'c', icon:'❓', name:'Trả lời câu hỏi chéo',     norm:'Trong 3 ngày',      seed:false},
+  {k:'a', icon:'⏱', name:'Hành động xong đúng hạn',  norm:'Theo hạn đã đặt',   seed:false}
+];
+function behaviorStats(m, P, days, events){
+  const d = periodDiscipline(m, P, days, events), now = nowMs(), endT = Math.min(P.e, now);
+  const inP = t => t!==null && t!==undefined && t>=P.s && t<endT;
+  let cDue = 0, cOk = 0;
+  (STATE.data.questions||[]).filter(q=>isCrossQ(q) && same(q.member,m) && inP(toMs(q.createdAt))).forEach(q=>{
+    const c = toMs(q.createdAt), dl = c + 3*DAY_MS, a = answeredTs(q), answered = a!==null && !!(q.answer && String(q.answer).trim());
+    if(answered && a<=dl){ cDue++; cOk++; } else if(now > dl){ cDue++; }
+  });
+  let aDue = 0, aOk = 0;
+  (STATE.data.actions||[]).filter(a=>same(a.member,m) && a.deadline).forEach(a=>{
+    const dl = deadlineTs(a.deadline);
+    if(isNaN(dl) || !inP(dl)) return;
+    const t = doneTs(a);
+    if(t!==null && t<=dl){ aDue++; aOk++; } else { aDue++; }
+  });
+  return {j:[d.ok, d.req], r:[d.rOk, d.rReq], c:[cOk, cDue], a:[aOk, aDue]};
+}
+function renderBehaviorMatrix(P, days, events){
+  const ring = seedMembers(); if(!ring.length) return '';
+  const stats = ring.map(m=>({m, s:behaviorStats(m, P, days, events)}));
+  const cell = (x, y) => {
+    if(!y) return '<span class="rp-muted">—</span>';
+    const p = Math.round(x/y*100), cls = p>=90 ? 'good' : (p>=70 ? 'mid' : 'bad');
+    return `<span class="bm-c ${cls}" title="${x}/${y}">${p}%</span><small class="bm-n">${x}/${y}</small>`;
+  };
+  const head = `<thead><tr><th>Hành vi</th><th>Định mức</th><th>Gieo hạt</th>${ring.map(m=>`<th>${esc(m)}</th>`).join('')}<th>Cả nhóm</th></tr></thead>`;
+  const rows = BEHAVIORS.map(b=>{
+    const tot = stats.reduce((t,x)=>[t[0]+x.s[b.k][0], t[1]+x.s[b.k][1]],[0,0]);
+    return `<tr><td class="bm-name">${b.icon} ${b.name}</td><td class="rp-muted">${b.norm}</td><td>${b.seed?'<span class="sd-tag due">có</span>':'<span class="rp-muted">chỉ đo</span>'}</td>${stats.map(x=>`<td>${cell(x.s[b.k][0], x.s[b.k][1])}</td>`).join('')}<td>${cell(tot[0], tot[1])}</td></tr>`;
+  }).join('');
+  return rpSection('2','📏 Bảng cam kết hành vi','Mỗi việc đã giao đều có định mức và tỷ lệ đạt trong kỳ. Muốn giao thêm hành vi mới, chỉ cần thêm một dòng vào bảng này.',
+    `<div class="rp-scroll"><table class="rp-table bm-table rp-me-table">${head}<tbody>${rows}</tbody></table></div>
+     <div class="rp-legend">≥ 90% đạt · 70–89% cần cố gắng · &lt; 70% cần hỗ trợ · số nhỏ = đạt/phải làm</div>`);
+}
+function weeklyCompliance(events){
+  const ring = seedMembers(), now = nowMs(), todayK = dayKey(now), mon = addDays(sod(now), -((vnDow(now)+6)%7)), weeks = [];
+  const maps = ring.map(m=>{ const map = dayStatusMap(nfc(m), events); return {m, map, from:journalReqFrom(map)}; });
+  for(let i=7;i>=0;i--){
+    const s = addDays(mon,-7*i).getTime(); let jR=0, jO=0, rR=0, rO=0;
+    for(let t=s; t<s+7*DAY_MS && t<=sod(now).getTime(); t+=DAY_MS){
+      const k = dayKey(t);
+      maps.forEach(({m,map,from})=>{
+        if(k>=from && !isJournalNeutral(m,k)){
+          const x = map[k];
+          if(!(k===todayK && !(x && x.st==='ok') && vnHour(now)<CUTOFF_HOUR)){ jR++; if(x && x.st==='ok') jO++; }
+        }
+        if(vnDow(t)===4){ const st = recogStatus(m,k); if(!['na','future','pending','exempt'].includes(st)){ rR++; if(st==='ok') rO++; } }
+      });
+    }
+    weeks.push({s, label:fmtDMs(s), cur:i===0, jO, jR, rO, rR, j: jR?Math.round(jO/jR*100):null, r: rR?Math.round(rO/rR*100):null});
+  }
+  return weeks;
+}
+function renderComplianceTrend(events){
+  if(!seedMembers().length) return '';
+  const W = weeklyCompliance(events), pc = v => v===null ? '—' : v+'%';
+  const bh = v => v===null ? 0 : Math.max(v, 1.5);   // 0% still shows a hairline so it never looks like "no data"
+  const chart = `<div class="tr-legend"><span><i style="background:${TREND_COLORS.j}"></i>Nhật ký đúng giờ</span><span><i style="background:${TREND_COLORS.r}"></i>Ghi nhận đúng hạn</span></div>
+    <div class="tr-chart">
+      <div class="tr-axis"><span>100%</span><span>50%</span><span>0%</span></div>
+      <div class="tr-plot">
+        <div class="tr-grid"><i></i><i></i><i></i></div>
+        ${W.map(w=>`<div class="tr-w" title="Tuần từ ${w.label}${w.cur?' (tuần này)':''}: nhật ký ${pc(w.j)} (${w.jO}/${w.jR}) · ghi nhận ${pc(w.r)} (${w.rO}/${w.rR})">
+          <div class="tr-bars"><div class="tr-b" style="height:${bh(w.j)}%;background:${TREND_COLORS.j}"></div><div class="tr-b" style="height:${bh(w.r)}%;background:${TREND_COLORS.r}"></div></div>
+          <div class="tr-l">${w.cur ? 'tuần này' : w.label}</div>${w.j===null && w.r===null ? '<div class="tr-na">chưa áp dụng</div>' : ''}</div>`).join('')}
+      </div>
+    </div>`;
+  const table = `<details class="rp-formula"><summary>Xem dạng bảng</summary><table class="rp-table rp-me-table" style="margin-top:6px"><thead><tr><th>Tuần từ</th><th>📒 Nhật ký đúng giờ</th><th>💬 Ghi nhận đúng hạn</th></tr></thead><tbody>${W.map(w=>`<tr><td>${w.label}${w.cur?' (tuần này)':''}</td><td>${pc(w.j)} <span class="rp-muted">${w.jO}/${w.jR}</span></td><td>${pc(w.r)} <span class="rp-muted">${w.rO}/${w.rR}</span></td></tr>`).join('')}</tbody></table></details>`;
+  return rpSection('3','📈 Xu hướng tuân thủ 8 tuần','Kỷ luật của cả nhóm đang lên hay xuống — rê chuột / chạm vào cột để xem số.', chart + table);
+}
+function seedBannerHtml(){
+  const me = STATE.member; if(!me || !inSeedScope(me)) return '';
+  const L = ledger(me); if(L.balance<=0) return '';
+  const sig = dayKey(nowMs())+'|'+L.balance;
+  try { if(localStorage.getItem('lcsh_seed_hide_'+me)===sig) return ''; } catch(e){}
+  const due = L.items.filter(i=>!i.paid && i.amount>0).length;
+  return `<div class="rc-banner seed ${L.level}"><span>🌱 Bạn còn <strong>${money(L.balance)}</strong> chưa gieo hạt (${due} khoản${L.level==='red'?`, khoản cũ nhất ${L.age} ngày`:''}). Đã gieo thì cập nhật để lưu lịch sử.</span><span class="rc-banner-act"><button class="btn btn-gold btn-sm" onclick="goSeeds()">🌱 Xem & cập nhật</button><button class="step-del" title="Ẩn đến mai" onclick="hideSeedBanner('${jsq(sig)}')">✕</button></span></div>`;
+}
+function hideSeedBanner(sig){ try { localStorage.setItem('lcsh_seed_hide_'+STATE.member, sig); } catch(e){} renderRecogBanner(); }
+function seedStatsSpan(m){
+  if(!inSeedScope(m)) return '';
+  const L = ledger(m);
+  return `<span>🌱 Còn nợ <strong class="${L.balance>0?'rp-bad':'rp-ok'}">${money(Math.max(0,L.balance))}</strong></span>`;
+}
+
+
+/* ================================================================
+   NHỊP VẬN HÀNH — tài liệu nội bộ của đội
+   • Nội dung nằm riêng ở content/nhip-van-hanh.md: thay file là trang tự cập nhật
+   • Chỉ hiển thị sau khi đã Mở khoá (tab nằm trong app, không có ở màn hình khoá)
+   • Markdown (GFM: bảng, xuống dòng) → marked → DOMPurify (giữ <details>/<summary>/<a id>)
+   • Trang được dựng một lần rồi giữ nguyên, nên đồng bộ nền không làm đóng các mục đang mở
+   ================================================================ */
+const NHIP_URL = 'content/nhip-van-hanh.md';
+const NHIP_CACHE = 'lcsh_nhip_md';
+const MD_LIBS = [
+  { ready: ()=>!!(window.marked && window.marked.parse),
+    sri: 'sha384-2vpGtuKqJvFlwJqYnf/wUMuzUfhUnYBt9oay0e2yaFcq0Dh6/aEbQ8YAOeKGzlYo',
+    urls: ['https://cdn.jsdelivr.net/npm/marked@18.0.14/lib/marked.umd.js', 'https://unpkg.com/marked@18.0.14/lib/marked.umd.js'] },
+  { ready: ()=>!!(window.DOMPurify && window.DOMPurify.sanitize),
+    sri: 'sha384-a7SzOxErzJ3ZpQz0zJ32d67dSitNzPcbfybc/ykU9KJhMgZkwqfSxlhhdJRS+XGL',
+    urls: ['https://cdn.jsdelivr.net/npm/dompurify@3.4.16/dist/purify.min.js', 'https://unpkg.com/dompurify@3.4.16/dist/purify.min.js'] }
+];
+const NHIP = { md: null, node: null, fetched: false, loading: null, error: '' };
+
+function loadScriptOnce(url, sri){
+  return new Promise((resolve, reject)=>{
+    const s = document.createElement('script');
+    s.src = url; s.async = true;
+    if(sri){ s.integrity = sri; s.crossOrigin = 'anonymous'; }
+    s.onload = resolve;
+    s.onerror = ()=>{ s.remove(); reject(new Error('load '+url)); };
+    document.head.appendChild(s);
+  });
+}
+async function ensureMdLibs(){
+  for(const lib of MD_LIBS){
+    if(lib.ready()) continue;
+    for(const u of lib.urls){ try { await loadScriptOnce(u, lib.sri); } catch(e){} if(lib.ready()) break; }
+    if(!lib.ready()) throw new Error('md_libs');
+  }
+}
+// Markdown → safe DOM. Content is shown exactly as written; only presentation is added.
+function nhipBuild(md){
+  const html = window.marked.parse(md, {gfm:true, breaks:true});
+  const clean = window.DOMPurify.sanitize(html, {
+    ADD_TAGS: ['details', 'summary'],
+    FORBID_TAGS: ['style', 'form', 'input', 'button', 'textarea', 'select', 'iframe'],
+    FORBID_ATTR: ['style', 'open']                       // every <details> starts closed
+  });
+  const doc = document.createElement('article');
+  doc.className = 'md-doc';
+  doc.innerHTML = clean;
+  // tables scroll sideways inside their own frame, never the whole page
+  doc.querySelectorAll('table').forEach(t=>{
+    const w = document.createElement('div'); w.className = 'md-table';
+    t.parentNode.insertBefore(w, t); w.appendChild(t);
+    t.querySelectorAll('td').forEach(td=>{ if(td.textContent.trim().length <= 14) td.classList.add('md-nw'); });  // short cells stay on one line
+  });
+  doc.querySelectorAll('a[href]').forEach(a=>{
+    const h = a.getAttribute('href') || '';
+    if(/^(https?:|mailto:|tel:)/i.test(h)){ a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+  });
+  // <a id="..."></a> sits alone in a paragraph: keep it as a zero-height jump target
+  doc.querySelectorAll('p').forEach(p=>{
+    const a = p.firstElementChild;
+    if(p.children.length===1 && a.tagName==='A' && a.id && !p.textContent.trim()) p.classList.add('md-anchor');
+  });
+  doc.querySelectorAll('blockquote').forEach(q=>{
+    const f = q.firstElementChild;
+    if(f && /^H[1-4]$/.test(f.tagName)) q.classList.add('md-hero');   // the OKR box
+    if(q.parentElement && q.parentElement.closest('details')){         // message templates
+      q.classList.add('md-msg');
+      const wrap = document.createElement('div'); wrap.className = 'md-msg-wrap';
+      q.parentNode.insertBefore(wrap, q); wrap.appendChild(q);
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'md-copy'; b.textContent = '📋 Sao chép mẫu tin';
+      wrap.appendChild(b);
+    }
+  });
+  doc.addEventListener('click', nhipClick);
+  const page = document.createElement('div');
+  page.className = 'md-page';
+  page.appendChild(doc);
+  return page;
+}
+function nhipHeaderOffset(){
+  let h = 0;   // height of anything pinned to the top of the screen (none today; future-proof)
+  document.querySelectorAll('header, .tabs, .topbar, .app-header').forEach(el=>{
+    const cs = getComputedStyle(el);
+    if(cs.position==='fixed'){ const r = el.getBoundingClientRect(); if(r.top<=1 && r.bottom>0) h = Math.max(h, r.bottom); }
+    else if(cs.position==='sticky') h = Math.max(h, (parseFloat(cs.top)||0) + el.offsetHeight);
+  });
+  return h;
+}
+function nhipScrollTo(id){
+  const t = id && document.getElementById(id);
+  if(!t || !t.closest('.md-doc')) return false;
+  for(let d = t.closest('details'); d; d = d.parentElement ? d.parentElement.closest('details') : null) d.open = true;
+  const page = t.closest('.md-page'); if(page) page.style.paddingBottom = '';
+  const y = t.getBoundingClientRect().top + window.scrollY - nhipHeaderOffset() - 12;
+  // the last section is short: add just enough room below so its title can reach the top
+  const maxY = document.documentElement.scrollHeight - window.innerHeight;
+  if(page && y > maxY) page.style.paddingBottom = Math.ceil(y - maxY) + 'px';
+  const smooth = !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  window.scrollTo({top: Math.max(0, y), behavior: smooth ? 'smooth' : 'auto'});
+  return true;
+}
+function nhipClick(e){
+  const btn = e.target.closest('.md-copy');
+  if(btn){ nhipCopy(btn); return; }
+  const a = e.target.closest('a[href^="#"]');
+  if(!a) return;
+  let id = a.getAttribute('href').slice(1);
+  try { id = decodeURIComponent(id); } catch(err){}
+  if(nhipScrollTo(id)) e.preventDefault();
+}
+// Plain text of a message box, keeping its line breaks and list numbers (for pasting into Zalo)
+function mdPlainText(root){
+  const lines = []; let cur = '';
+  const flush = ()=>{ const t = cur.replace(/\s+$/,''); if(t.trim()) lines.push(t); cur = ''; };
+  const walk = n=>{
+    if(n.nodeType===3){ let t = n.nodeValue.replace(/\s+/g,' '); if(!cur) t = t.replace(/^ /,''); cur += t; return; }
+    if(n.nodeType!==1) return;
+    const tag = n.tagName;
+    if(tag==='BR'){ flush(); return; }
+    if(tag==='LI'){
+      flush();
+      const list = n.parentElement, ordered = list && list.tagName==='OL';
+      cur = ordered ? ((parseInt(list.getAttribute('start'),10)||1) + Array.prototype.indexOf.call(list.children, n)) + '. ' : '- ';
+      n.childNodes.forEach(walk); flush(); return;
+    }
+    const block = /^(P|DIV|BLOCKQUOTE|UL|OL|H[1-6]|TABLE|TR|PRE)$/.test(tag);
+    if(block) flush();
+    n.childNodes.forEach(walk);
+    if(block) flush();
+  };
+  walk(root); flush();
+  return lines.join('\n');
+}
+function nhipCopy(btn){
+  const q = btn.parentElement.querySelector('blockquote');
+  if(!q) return;
+  const text = mdPlainText(q);
+  const done = ()=>{
+    toast('✓ Đã sao chép mẫu tin — dán vào Zalo.');
+    btn.textContent = '✓ Đã sao chép'; btn.classList.add('done');
+    clearTimeout(btn._t); btn._t = setTimeout(()=>{ btn.textContent = '📋 Sao chép mẫu tin'; btn.classList.remove('done'); }, 2000);
+  };
+  const fallback = ()=>{
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.top = '0'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, text.length);
+    let ok = false; try { ok = document.execCommand('copy'); } catch(e){}
+    ta.remove();
+    if(ok) done(); else toast('Không tự sao chép được — giữ ngón tay lên khung để bôi đen và copy.');
+  };
+  try {
+    if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
+    else fallback();
+  } catch(e){ fallback(); }
+}
+function nhipStatusHtml(){
+  if(NHIP.error==='libs') return `<div class="empty-note">Không tải được bộ hiển thị tài liệu (cần kết nối mạng).<br><button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="nhipRetry()">⟳ Thử lại</button></div>`;
+  if(NHIP.error) return `<div class="empty-note">Chưa tải được tài liệu Nhịp vận hành${NHIP.error==='missing' ? ' (không tìm thấy file content/nhip-van-hanh.md)' : ' — kiểm tra kết nối mạng'}.<br><button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="nhipRetry()">⟳ Thử lại</button></div>`;
+  return '<div class="empty-note">Đang tải tài liệu Nhịp vận hành…</div>';
+}
+function nhipMount(el){
+  if(!el) return;
+  if(NHIP.node){ if(el.firstChild!==NHIP.node || el.childNodes.length!==1) el.replaceChildren(NHIP.node); }
+  else el.innerHTML = nhipStatusHtml();
+}
+function nhipRemount(){
+  if(!(STATE.tab==='nhip' && STATE.pwd)) return;
+  const el = document.getElementById('content');
+  nhipMount(el);
+  // opened from the menu before the page was ready: bring it into view once it arrives
+  if(NHIP.node && NHIP.scrollOnMount){ NHIP.scrollOnMount = false; el.scrollIntoView({behavior:'smooth', block:'start'}); }
+}
+function renderNhipTab(el){
+  if(!STATE.pwd){ el.innerHTML = '<div class="empty-note">Cần Mở khoá để xem tài liệu này.</div>'; return; }
+  if(NHIP.md===null){ try { NHIP.md = localStorage.getItem(NHIP_CACHE); } catch(e){} }
+  if(!NHIP.node) NHIP.scrollOnMount = Date.now() - (STATE._tabAt||0) < 1500;
+  nhipMount(el);
+  nhipLoad();
+}
+function nhipLoad(){
+  if(NHIP.loading || (NHIP.fetched && NHIP.node)) return NHIP.loading;
+  NHIP.loading = (async()=>{
+    try { await ensureMdLibs(); }
+    catch(e){ NHIP.error = 'libs'; nhipRemount(); return; }
+    if(NHIP.md && !NHIP.node){ NHIP.error = ''; NHIP.node = nhipBuild(NHIP.md); nhipRemount(); }   // last copy first, instantly
+    if(NHIP.fetched) return;
+    try {
+      const r = await fetch(NHIP_URL, {cache:'no-cache'});           // revalidate: a replaced file shows up on next open
+      if(!r.ok) throw new Error(r.status===404 ? 'missing' : 'fetch');
+      const text = await r.text();
+      if(/^\s*<(!doctype|html)/i.test(text)) throw new Error('missing'); // host answered with a web page, not the file
+      NHIP.fetched = true; NHIP.error = '';
+      if(text!==NHIP.md || !NHIP.node){
+        NHIP.md = text; NHIP.node = nhipBuild(text);
+        try { localStorage.setItem(NHIP_CACHE, text); } catch(e){}
+      }
+    } catch(e){
+      if(!NHIP.node) NHIP.error = e.message==='missing' ? 'missing' : 'fetch';
+    }
+    nhipRemount();
+  })().finally(()=>{ NHIP.loading = null; });
+  return NHIP.loading;
+}
+function nhipRetry(){ NHIP.error = ''; NHIP.fetched = false; nhipRemount(); nhipLoad(); }
 
 /* ---------------- export backup ---------------- */
 function exportBackup(){

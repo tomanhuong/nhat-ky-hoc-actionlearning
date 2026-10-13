@@ -602,6 +602,35 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .md-copy{display:inline-flex;align-items:center;min-height:40px;padding:8px 14px;border-radius:999px;border:1px solid rgba(0,167,157,.45);background:var(--teal-bg);color:var(--teal);font-size:12.5px;font-weight:700;}
 .md-copy.done{border-color:rgba(52,211,153,.5);color:#34d399;background:rgba(52,211,153,.12);}
 @media (prefers-reduced-motion: reduce){ .md-doc details > summary::before{transition:none;} }
+/* ---- Nhịp vận hành: dòng phiên bản, cài đặt tài liệu ---- */
+.nv-page{max-width:760px;margin:0 auto;}
+.nv-meta{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 12px;font-family:'Space Mono',monospace;font-size:11.5px;line-height:1.5;color:var(--ink-faint);margin:0 0 14px;}
+.nv-meta:empty{display:none;}
+.nv-link{color:var(--teal);font-size:11.5px;text-decoration:underline;text-underline-offset:3px;padding:8px 0;}
+.nv-set{margin-top:28px;}
+.nv-set > summary{display:flex;align-items:center;gap:8px;min-height:44px;}
+.nv-set > summary::before{content:'▶';font-size:10px;color:var(--teal);transition:transform .18s ease;}
+.nv-set[open] > summary::before{transform:rotate(90deg);}
+.nv-chip{color:var(--ink-dim);background:rgba(255,255,255,.08);}
+.nv-cur{font-size:15px;line-height:1.55;margin:10px 0 12px;overflow-wrap:anywhere;}
+.nv-file{position:relative;overflow:hidden;font-family:'Space Mono',monospace;}
+.nv-file input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0;padding:0;border:0;}
+.nv-paste{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin:4px 0 14px;}
+.nv-paste textarea{min-height:200px;font-family:'Space Mono',monospace;font-size:13px;line-height:1.5;}
+.nv-draft{border:1px solid rgba(255,212,0,.35);border-radius:var(--radius-sm);background:rgba(0,0,0,.16);padding:12px;margin:6px 0 14px;}
+.nv-draft-h{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:var(--gold);margin-bottom:8px;overflow-wrap:anywhere;}
+.nv-checks{list-style:none;padding:0;margin:0 0 12px;display:flex;flex-direction:column;gap:6px;font-size:15px;line-height:1.5;overflow-wrap:anywhere;}
+.nv-checks .bad{color:#ffb4b0;} .nv-checks .warn{color:var(--amber);} .nv-checks .info{color:var(--ink-dim);}
+.nv-note{display:flex;flex-direction:column;gap:5px;font-size:11px;font-family:'Space Mono',monospace;color:var(--ink-dim);margin-bottom:12px;}
+.nv-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;}
+.nv-actions .btn{white-space:nowrap;min-height:40px;}
+.nv-preview{margin-top:14px;border:1px dashed rgba(255,212,0,.55);border-radius:var(--radius-sm);padding:12px 10px;}
+.nv-preview-h{font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.02em;color:var(--gold);margin-bottom:12px;line-height:1.5;}
+.nv-preview > .nv-actions{margin-top:14px;}
+.nv-hist{display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--border-soft);font-size:14.5px;line-height:1.45;}
+.nv-hv{font-family:'Space Mono',monospace;font-weight:700;color:var(--gold);min-width:34px;}
+.nv-hm{flex:1;min-width:150px;color:var(--ink-dim);overflow-wrap:anywhere;}
+.rc-banner.nv{background:rgba(0,167,157,.12);border:1px solid rgba(0,167,157,.45);}
 </style>
 </head>
 <body>
@@ -655,7 +684,7 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 <div id="app" class="hidden">
   <div class="shell">
     <header class="app-header">
-      <h1>LÀM CHỦ SỰ HỌC <span style="font-size:11px;color:var(--ink-faint);font-family:'Space Mono',monospace;font-weight:400">v2.7.1</span></h1>
+      <h1>LÀM CHỦ SỰ HỌC <span style="font-size:11px;color:var(--ink-faint);font-family:'Space Mono',monospace;font-weight:400">v2.8</span></h1>
       <p>Không gian để bạn tự quản lý việc ứng dụng học tập, giải quyết vấn đề thực tế, tạo ra kết quả đột phá.</p>
       <div class="who-row">
         <span id="whoLabel"></span>
@@ -742,7 +771,7 @@ let STATE = {
   shownCount: 30,
   recogWeeks: 3, ringDraft: null, ringOpen: false,
   seedOpen: null, seedForm: null, seedDraft: null, exForm: false, seedSettings: false,
-  data: { problems:[], questions:[], actions:[], learnings:[], bestPractices:[], bpSuggestions:[], recognitions:[], seeds:[], exemptions:[], config:{}, presetNames:[] }
+  data: { problems:[], questions:[], actions:[], learnings:[], bestPractices:[], bpSuggestions:[], recognitions:[], seeds:[], exemptions:[], docs:{}, config:{}, presetNames:[] }
 };
 
 let pollTimer = null;
@@ -837,7 +866,7 @@ function stampPatch(type, prev, patch){
    3) While writes are pending, background reloads wait, so a server snapshot
       can't overwrite fresh local changes. */
 let _writeChain = Promise.resolve();
-const FATAL_ERRORS = ['unauthorized','unknown_type','unknown_op','forbidden_key'];
+const FATAL_ERRORS = ['unauthorized','unknown_type','unknown_op','forbidden_key','forbidden','unknown_doc','empty','too_long'];
 async function postWithRetry(payload){
   const delays = [0, 1000, 2500, 5000];
   let last = {ok:false, error:'network'};
@@ -1242,7 +1271,7 @@ function renderTabs(){
   const unseen = unseenCrossQuestions().length;
   const recogN = recogBadgeCount();
   document.getElementById('tabsBar').innerHTML = tabs.map(t=>{
-    const n = t.id==='questions' ? unseen : (t.id==='recog' ? recogN : 0);
+    const n = t.id==='questions' ? unseen : (t.id==='recog' ? recogN : (t.id==='nhip' && nhipUnseen() ? 1 : 0));
     const badge = n>0 ? `<span class="tab-notif">${n}</span>` : '';
     return `<button class="tab-btn ${STATE.tab===t.id?'active':''}" onclick="setTab('${t.id}')">${t.label}${badge}</button>`;
   }).join('');
@@ -2995,11 +3024,14 @@ function renderRecogBanner(){
     html = `<div class="rc-banner open"><span>💬 Hôm nay là ngày <strong>Ghi nhận đồng đội</strong> — bạn ghi nhận cho ${memberBadge(t.buddy)} · còn ${fmtLeft(sod(now).getTime()+DAY_MS-now)}</span><button class="btn btn-gold btn-sm" onclick="setTab('recog')">Ghi nhận ngay</button></div>`;
   } else if(t.mode==='late'){
     html = `<div class="rc-banner late"><span>⏰ Bạn chưa ghi nhận cho ${memberBadge(t.buddy)} (thứ Năm ${fmtDMs(keyToMs(t.wk))}) — vẫn nộp được, nhưng tuần đó tính là nghỉ.</span><button class="btn btn-ghost btn-sm" onclick="setTab('recog')">Nộp ngay</button></div>`;
+  } else if(nhipBannerHtml()){
+    html = nhipBannerHtml();
   } else {
     const u = unseenRecogs();
     if(!u.length) html = seedBannerHtml();
     else html = `<div class="rc-banner recv"><span>🎁 Bạn nhận được <strong>${u.length}</strong> ghi nhận mới từ ${memberBadge(u[0].giver)}</span><button class="btn btn-ghost btn-sm" onclick="setTab('recog')">Đọc ngay</button></div>`;
   }
+  if(t.mode==='open' || t.mode==='late') html += nhipBannerHtml();   // a new team document is news too
   el.innerHTML = html;
 }
 /* ---- buddy's week, gathered for the reader ---- */
@@ -3706,11 +3738,21 @@ function seedStatsSpan(m){
 
 /* ================================================================
    NHỊP VẬN HÀNH — tài liệu nội bộ của đội
-   • Nội dung nằm ngay trong file này, ở cuối trang: khối id="nhipMd" (tìm "NỘI DUNG NHỊP VẬN HÀNH")
-   • Chỉ hiển thị sau khi đã Mở khoá (tab nằm trong app, không có ở màn hình khoá)
+   • Nội dung lưu trong Google Sheet (tab Docs), tải về cùng dữ liệu sau khi Mở khoá
+     → không còn nằm trong mã nguồn trang
+   • Nhưỡng đăng bản mới ngay trong app: ⚙️ Cài đặt tài liệu → chọn file .md / dán →
+     xem trước + kiểm tra → Đăng. Mỗi lần đăng là 1 phiên bản, khôi phục được.
    • Markdown (GFM: bảng, xuống dòng) → marked → DOMPurify (giữ <details>/<summary>/<a id>)
-   • Trang được dựng một lần rồi giữ nguyên, nên đồng bộ nền không làm đóng các mục đang mở
+   • Trang được dựng một lần cho mỗi phiên bản, nên đồng bộ nền không làm đóng các mục đang mở
    ================================================================ */
+const NHIP_KEY = 'nhip';
+const NHIP_MAX = 150000;
+const DOC_EDITORS = ['Nhưỡng'];
+const NHIP = { node: null, builtId: null, page: null, loading: null, error: '', draft: null,
+               paste: false, pasteText: '', busy: false, settingsOpen: null, rev: 0, setSig: '' };
+function isDocEditor(m){ return !!m && DOC_EDITORS.some(x=>same(x, m)); }
+function nhipDoc(){ const d = ((STATE.data||{}).docs||{})[NHIP_KEY]; return (d && d.content) ? d : null; }
+function fmtDocTime(v){ const t = toMs(v); return t ? fmtDMs(t)+' '+fmtHM(t) : ''; }
 const MD_LIBS = [
   { ready: ()=>!!(window.marked && window.marked.parse),
     sri: 'sha384-2vpGtuKqJvFlwJqYnf/wUMuzUfhUnYBt9oay0e2yaFcq0Dh6/aEbQ8YAOeKGzlYo',
@@ -3719,7 +3761,6 @@ const MD_LIBS = [
     sri: 'sha384-a7SzOxErzJ3ZpQz0zJ32d67dSitNzPcbfybc/ykU9KJhMgZkwqfSxlhhdJRS+XGL',
     urls: ['https://cdn.jsdelivr.net/npm/dompurify@3.4.16/dist/purify.min.js', 'https://unpkg.com/dompurify@3.4.16/dist/purify.min.js'] }
 ];
-const NHIP = { md: null, node: null, loading: null, error: '' };
 
 function loadScriptOnce(url, sri){
   return new Promise((resolve, reject)=>{
@@ -3739,7 +3780,8 @@ async function ensureMdLibs(){
   }
 }
 // Markdown → safe DOM. Content is shown exactly as written; only presentation is added.
-function nhipBuild(md){
+function nhipBuild(md, opts){
+  opts = opts || {};
   const html = window.marked.parse(md, {gfm:true, breaks:true});
   const clean = window.DOMPurify.sanitize(html, {
     ADD_TAGS: ['details', 'summary'],
@@ -3776,6 +3818,10 @@ function nhipBuild(md){
       wrap.appendChild(b);
     }
   });
+  if(opts.idPrefix){
+    doc.querySelectorAll('[id]').forEach(el=>{ el.id = opts.idPrefix + el.id; });
+    doc.querySelectorAll('a[href^="#"]').forEach(a=>{ a.setAttribute('href', '#' + opts.idPrefix + a.getAttribute('href').slice(1)); });
+  }
   doc.addEventListener('click', nhipClick);
   const page = document.createElement('div');
   page.className = 'md-page';
@@ -3858,44 +3904,247 @@ function nhipCopy(btn){
     else fallback();
   } catch(e){ fallback(); }
 }
-function nhipStatusHtml(){
+
+/* ---- page: header line · document · settings (editors only) ---- */
+function nhipLibsReady(){ return MD_LIBS.every(l=>l.ready()); }
+function nhipLoadLibs(){
+  if(NHIP.loading) return NHIP.loading;
+  NHIP.loading = ensureMdLibs()
+    .then(()=>{ NHIP.error = ''; })
+    .catch(()=>{ NHIP.error = 'libs'; })
+    .finally(()=>{ NHIP.loading = null; nhipRefresh(); if(NHIP.draft && NHIP.draft.pending) nhipBuildPreview(); });
+  return NHIP.loading;
+}
+function nhipEnsurePage(){
+  if(NHIP.page) return NHIP.page;
+  const p = document.createElement('div');
+  p.className = 'nv-page';
+  p.innerHTML = '<div class="nv-meta"></div><div class="nv-body"></div><div class="nv-settings"></div>';
+  NHIP.page = p;
+  return p;
+}
+function nhipStatusHtml(doc){
   if(NHIP.error==='libs') return `<div class="empty-note">Không tải được bộ hiển thị tài liệu (cần kết nối mạng).<br><button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="nhipRetry()">⟳ Thử lại</button></div>`;
-  if(NHIP.error) return '<div class="empty-note">Chưa có nội dung Nhịp vận hành — kiểm tra khối "NỘI DUNG NHỊP VẬN HÀNH" ở cuối file index.html.</div>';
-  return '<div class="empty-note">Đang tải tài liệu Nhịp vận hành…</div>';
+  if(doc || !STATE.dataLoaded) return '<div class="empty-note">Đang tải tài liệu Nhịp vận hành…</div>';
+  return isDocEditor(STATE.member)
+    ? '<div class="empty-note">Chưa có nội dung. Mở <strong>⚙️ Cài đặt tài liệu</strong> bên dưới để tải file .md lên.</div>'
+    : '<div class="empty-note">Chưa có nội dung Nhịp vận hành — Nhưỡng sẽ đăng sớm.</div>';
 }
-function nhipMount(el){
-  if(!el) return;
-  if(NHIP.node){ if(el.firstChild!==NHIP.node || el.childNodes.length!==1) el.replaceChildren(NHIP.node); }
-  else el.innerHTML = nhipStatusHtml();
-}
-function nhipRemount(){
+function nhipRefresh(){
   if(!(STATE.tab==='nhip' && STATE.pwd)) return;
-  const el = document.getElementById('content');
-  nhipMount(el);
-  // opened from the menu before the page was ready: bring it into view once it arrives
-  if(NHIP.node && NHIP.scrollOnMount){ NHIP.scrollOnMount = false; el.scrollIntoView({behavior:'smooth', block:'start'}); }
+  const el = document.getElementById('content'); if(!el) return;
+  const page = nhipEnsurePage();
+  if(el.firstChild!==page || el.childNodes.length!==1) el.replaceChildren(page);
+  const doc = nhipDoc(), editor = isDocEditor(STATE.member);
+  if(doc && NHIP.builtId!==doc.id && nhipLibsReady()){ NHIP.node = nhipBuild(doc.content); NHIP.builtId = doc.id; }
+  const meta = page.querySelector('.nv-meta');
+  meta.innerHTML = doc ? `<span>📄 Bản v${doc.version} · cập nhật ${esc(fmtDocTime(doc.createdAt))} · ${esc(doc.by||'')}</span>${editor?'<button class="nv-link" onclick="nhipOpenSettings()">⚙️ Cài đặt tài liệu</button>':''}` : '';
+  const body = page.querySelector('.nv-body');
+  if(doc && NHIP.node && NHIP.builtId===doc.id){ if(body.firstChild!==NHIP.node || body.childNodes.length!==1) body.replaceChildren(NHIP.node); }
+  else body.innerHTML = nhipStatusHtml(doc);
+  if(!nhipLibsReady() && !NHIP.error) nhipLoadLibs();
+  nhipSettingsRender();
 }
 function renderNhipTab(el){
   if(!STATE.pwd){ el.innerHTML = '<div class="empty-note">Cần Mở khoá để xem tài liệu này.</div>'; return; }
-  if(!NHIP.node) NHIP.scrollOnMount = Date.now() - (STATE._tabAt||0) < 1500;
-  nhipMount(el);
-  nhipLoad();
+  const page = nhipEnsurePage();
+  if(el.firstChild!==page || el.childNodes.length!==1) el.replaceChildren(page);
+  if(nhipUnseen()){ markNhipSeen(); setTimeout(()=>{ renderTabs(); }, 0); }
+  nhipRefresh();
 }
-// the document text lives in the text/markdown block id="nhipMd" near the end of this file
-function nhipSource(){ const el = document.getElementById('nhipMd'); return el ? el.textContent.replace(/^\r?\n/, '').replace(/\r?\n$/, '') : ''; }
-function nhipLoad(){
-  if(NHIP.loading || NHIP.node) return NHIP.loading;
-  NHIP.loading = (async()=>{
-    try { await ensureMdLibs(); }
-    catch(e){ NHIP.error = 'libs'; nhipRemount(); return; }
-    NHIP.md = nhipSource();
-    if(!NHIP.md.trim()){ NHIP.error = 'empty'; nhipRemount(); return; }
-    NHIP.error = ''; NHIP.node = nhipBuild(NHIP.md);
-    nhipRemount();
-  })().finally(()=>{ NHIP.loading = null; });
-  return NHIP.loading;
+function nhipRetry(){ NHIP.error = ''; nhipRefresh(); }
+
+/* ---- settings: pick / paste → check → preview → publish; history & restore ---- */
+function nhipOpenSettings(){
+  NHIP.settingsOpen = true; NHIP.setSig = ''; nhipSettingsRender();
+  const s = NHIP.page && NHIP.page.querySelector('.nv-set');
+  if(s) s.scrollIntoView({behavior:'smooth', block:'start'});
 }
-function nhipRetry(){ NHIP.error = ''; nhipRemount(); nhipLoad(); }
+function nhipBump(){ NHIP.rev++; nhipSettingsRender(); }
+function nhipSettingsRender(){
+  if(!NHIP.page) return;
+  const holder = NHIP.page.querySelector('.nv-settings');
+  if(!isDocEditor(STATE.member)){ if(holder.innerHTML) holder.innerHTML = ''; NHIP.setSig = ''; return; }
+  const doc = nhipDoc();
+  const sig = (doc ? doc.id : '-') + '|' + NHIP.rev + '|' + STATE.member + '|' + (nhipLibsReady()?1:0);
+  if(sig===NHIP.setSig) return;                        // nothing changed: keep what is being typed
+  NHIP.setSig = sig;
+  if(NHIP.settingsOpen===null) NHIP.settingsOpen = !doc;
+  const d = NHIP.draft;
+  const cur = doc
+    ? `Bản đang dùng: <strong>v${doc.version}</strong> · ${esc(fmtDocTime(doc.createdAt))} · ${esc(doc.by||'')}${doc.note?` · “${esc(doc.note)}”`:''}`
+    : 'Chưa có nội dung — chọn file .md hoặc dán nội dung để đăng bản đầu tiên.';
+  const bar = `<div class="sd-bar">
+      <label class="btn btn-gold btn-sm nv-file">📁 Chọn file .md<input type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" onchange="nhipPickFile(this)"></label>
+      <button class="btn btn-ghost btn-sm" onclick="nhipTogglePaste()">${NHIP.paste ? '✕ Đóng ô dán' : '📋 Dán nội dung'}</button>
+      ${doc ? '<button class="btn btn-ghost btn-sm" onclick="nhipDownload()">⬇ Tải bản đang dùng</button>' : ''}
+    </div>`;
+  const paste = NHIP.paste ? `<div class="nv-paste">
+      <textarea id="nvPaste" rows="9" placeholder="Dán toàn bộ nội dung Markdown vào đây…" oninput="NHIP.pasteText=this.value">${esc(NHIP.pasteText)}</textarea>
+      <button class="btn btn-teal btn-sm" onclick="nhipUsePaste()">👁 Xem trước</button>
+    </div>` : '';
+  let draft = '';
+  if(d){
+    const c = d.checks, ok = !c.blocks.length;
+    const li = (cls, arr) => arr.map(x=>`<li class="${cls}">${esc(x)}</li>`).join('');
+    const actions = ok ? `<div class="nv-actions">
+        <button class="btn btn-ghost btn-sm" onclick="nhipCancelDraft()" ${NHIP.busy?'disabled':''}>Huỷ</button>
+        <button class="btn btn-gold btn-sm" onclick="nhipPublish()" ${NHIP.busy||d.pending?'disabled':''}>${NHIP.busy ? '⏳ Đang đăng…' : '🚀 Đăng cho cả đội'}</button>
+      </div>` : `<div class="nv-actions"><button class="btn btn-ghost btn-sm" onclick="nhipCancelDraft()">Bỏ file này</button></div>`;
+    draft = `<div class="nv-draft">
+      <div class="nv-draft-h">Bản mới: ${esc(d.source)}</div>
+      <ul class="nv-checks">${li('bad', c.blocks.map(x=>'⛔ '+x))}${li('warn', c.warns.map(x=>'⚠️ '+x))}${ok ? li('info', c.infos.map(x=>'✓ '+x)) : ''}</ul>
+      ${ok ? `<label class="nv-note">Ghi chú cho lần đăng này (cả đội sẽ thấy)<input id="nvNote" type="text" maxlength="200" value="${esc(d.note||'')}" oninput="NHIP.draft && (NHIP.draft.note=this.value)" placeholder="VD: Sửa lịch Lead tháng 11"/></label>` : ''}
+      ${actions}
+      ${ok ? `<div class="nv-preview"><div class="nv-preview-h">👁 XEM TRƯỚC — cả đội sẽ thấy đúng như dưới đây (chưa đăng)</div><div class="nv-preview-body">${d.pending ? '<div class="empty-note">Đang dựng bản xem trước…</div>' : ''}</div>${actions}</div>` : ''}
+    </div>`;
+  }
+  const hist = doc && (doc.history||[]).length ? `<div class="sd-sub">🕘 Lịch sử (10 bản gần nhất)</div>
+      ${(doc.history||[]).map(h=>`<div class="nv-hist ${h.id===doc.id?'cur':''}">
+        <span class="nv-hv">v${h.version}</span>
+        <span class="nv-hm">${esc(fmtDocTime(h.createdAt))} · ${esc(h.by||'')}${h.note?` · ${esc(h.note)}`:''}</span>
+        ${h.id===doc.id ? '<span class="sd-tag ok">đang dùng</span>' : `<button class="btn btn-ghost btn-sm" onclick="nhipRestore(${Number(h.version)})" ${NHIP.busy?'disabled':''}>↩ Khôi phục</button>`}
+      </div>`).join('')}` : '';
+  holder.innerHTML = `<details class="rp-section rc-settings nv-set" ${NHIP.settingsOpen?'open':''} ontoggle="NHIP.settingsOpen=this.open">
+      <summary class="rp-sec-title">⚙️ Cài đặt tài liệu <span class="rc-chip">chỉ Nhưỡng</span></summary>
+      <div class="nv-cur">${cur}</div>
+      ${bar}${paste}${draft}${hist}
+      <div class="hint">File Markdown (.md) soạn sẵn, tối đa 150.000 ký tự. Đăng xong, cả đội thấy bản mới ở lần mở app tiếp theo.</div>
+    </details>`;
+  const pv = holder.querySelector('.nv-preview-body');
+  if(pv && d && d.node) pv.replaceChildren(d.node);
+}
+function nhipTogglePaste(){ NHIP.paste = !NHIP.paste; nhipBump(); if(NHIP.paste) setTimeout(()=>{ const t = document.getElementById('nvPaste'); if(t) t.focus(); }, 30); }
+function nhipCancelDraft(){ NHIP.draft = null; nhipBump(); }
+function nhipUsePaste(){
+  const t = document.getElementById('nvPaste'); if(t) NHIP.pasteText = t.value;
+  if(!NHIP.pasteText.trim()){ toast('Ô dán đang trống.'); return; }
+  NHIP.paste = false;
+  nhipSetDraft(NHIP.pasteText, 'nội dung dán');
+}
+function nhipPickFile(input){
+  const f = input.files && input.files[0];
+  input.value = '';                                    // picking the same file again still works
+  if(!f) return;
+  if(f.size > 1024*1024){ nhipSetDraft(null, f.name, ['File quá lớn ('+Math.round(f.size/1024)+' KB). Tài liệu chữ thường chỉ vài chục KB.']); return; }
+  const rd = new FileReader();
+  rd.onerror = ()=>toast('Không đọc được file này.');
+  rd.onload = ()=>{
+    const bytes = new Uint8Array(rd.result), head = String.fromCharCode.apply(null, bytes.slice(0, 5));
+    if(head.startsWith('PK') || head.startsWith('%PDF') || bytes.slice(0, 4096).includes(0)){
+      nhipSetDraft(null, f.name, ['Đây không phải file chữ (có thể là file Word/PDF). Hãy lưu nội dung thành file .md rồi chọn lại.']);
+      return;
+    }
+    nhipSetDraft(new TextDecoder('utf-8').decode(bytes), f.name);
+  };
+  rd.readAsArrayBuffer(f);
+}
+function nhipSetDraft(text, source, blocks){
+  if(text!==null) text = text.replace(/^﻿/, '').replace(/\r\n?/g, '\n');
+  const checks = blocks ? {blocks, warns:[], infos:[]} : nhipCheck(text, (nhipDoc()||{}).content || '');
+  NHIP.draft = {text, source, checks, note:'', node:null, pending: !checks.blocks.length};
+  NHIP.settingsOpen = true;
+  nhipBump();
+  if(NHIP.draft.pending) nhipBuildPreview();
+  setTimeout(()=>{ const x = NHIP.page && NHIP.page.querySelector('.nv-draft'); if(x) x.scrollIntoView({behavior:'smooth', block:'start'}); }, 60);
+}
+function nhipBuildPreview(){
+  const d = NHIP.draft; if(!d || !d.pending) return;
+  if(!nhipLibsReady()){ nhipLoadLibs(); return; }
+  d.node = nhipBuild(d.text, {idPrefix:'pv-'}); d.pending = false;
+  nhipBump();
+}
+// What would break or look wrong — blocks stop publishing, warnings only ask for a second look
+function nhipCheck(text, prev){
+  const blocks = [], warns = [], infos = [];
+  if(!text.trim()) blocks.push('Nội dung trống.');
+  if(text.length > NHIP_MAX) blocks.push('Quá dài: '+text.length.toLocaleString('vi-VN')+' ký tự (tối đa 150.000).');
+  if(blocks.length) return {blocks, warns, infos};
+  const cnt = re => (text.match(re)||[]).length;
+  const dOpen = cnt(/<details\b/gi), dClose = cnt(/<\/details\s*>/gi), sOpen = cnt(/<summary\b/gi), sClose = cnt(/<\/summary\s*>/gi);
+  if(dOpen!==dClose) warns.push('Thẻ <details> mở '+dOpen+' lần nhưng đóng '+dClose+' lần — các mục sổ ra có thể lồng sai.');
+  if(sOpen!==sClose) warns.push('Thẻ <summary> mở '+sOpen+' lần nhưng đóng '+sClose+' lần — tên mục sổ ra có thể hiện sai.');
+  const ids = new Set(Array.from(text.matchAll(/\bid\s*=\s*["']([^"']+)["']/gi), m=>m[1]));
+  const links = Array.from(text.matchAll(/\]\(#([^)\s]+)\)|href\s*=\s*["']#([^"']+)["']/gi), m=>m[1]||m[2]);
+  const missing = [...new Set(links.filter(l=>{ let k = l; try { k = decodeURIComponent(l); } catch(e){} return !ids.has(k); }))];
+  if(missing.length) warns.push('Link trong trang trỏ tới mục không tồn tại: '+missing.map(x=>'#'+x).join(', '));
+  if(text.includes('�')) warns.push('Có ký tự lỗi (�) — có thể file không được lưu dạng UTF-8, chữ tiếng Việt sẽ hiện sai.');
+  if(prev && text===prev) warns.push('Nội dung giống hệt bản đang dùng.');
+  const tables = cnt(/^\s*\|(\s*:?-{3,}:?\s*\|)+\s*$/gm);
+  infos.push(dOpen+' mục sổ ra · '+tables+' bảng · '+links.length+' link trong trang · '+text.length.toLocaleString('vi-VN')+' ký tự');
+  if(prev && text!==prev){
+    const count = arr => { const m = new Map(); arr.forEach(l=>m.set(l, (m.get(l)||0)+1)); return m; };
+    const a = count(prev.split('\n')), b = count(text.split('\n'));
+    let add = 0, del = 0;
+    b.forEach((n, l)=>{ add += Math.max(0, n-(a.get(l)||0)); });
+    a.forEach((n, l)=>{ del += Math.max(0, n-(b.get(l)||0)); });
+    infos.push('So với bản đang dùng: '+add+' dòng mới / sửa, '+del+' dòng bỏ / thay');
+  }
+  return {blocks, warns, infos};
+}
+function nhipErrText(r){
+  const e = r && r.error;
+  if(e==='unknown_type') return 'Backend chưa cập nhật — cần dán file .gs mới và Deploy bản mới trước.';
+  if(e==='forbidden') return 'Chỉ Nhưỡng được đăng nội dung.';
+  if(e==='too_long') return 'Nội dung quá dài (tối đa 150.000 ký tự).';
+  if(e==='empty') return 'Nội dung trống.';
+  if(e==='not_found') return 'Không tìm thấy phiên bản này.';
+  return 'Chưa đăng được (mất kết nối?) — bản nháp vẫn giữ nguyên, bấm Đăng lại.';
+}
+function nhipApplyDoc(doc){
+  STATE.data.docs = Object.assign({}, STATE.data.docs, {[NHIP_KEY]: doc});
+  saveCache(); markNhipSeen();
+}
+async function nhipPublish(){
+  const d = NHIP.draft;
+  if(!d || !d.text || d.checks.blocks.length || NHIP.busy || d.pending) return;
+  const noteEl = document.getElementById('nvNote'); if(noteEl) d.note = noteEl.value;
+  const w = d.checks.warns.length;
+  if(!confirm((w ? 'Bản mới còn '+w+' cảnh báo.\n' : '')+'Đăng bản mới cho cả đội?')) return;
+  NHIP.busy = true; nhipBump();
+  const r = await queuedPost({type:'doc', op:'publish', key:NHIP_KEY, id:uid(), content:d.text, note:(d.note||'').trim(), by:STATE.member});
+  NHIP.busy = false;
+  if(r && r.ok && r.doc){
+    nhipApplyDoc(r.doc); NHIP.draft = null; NHIP.pasteText = '';
+    toast('✓ Đã đăng bản v'+r.doc.version+' cho cả đội.');
+    nhipBump(); nhipRefresh();
+    const top = NHIP.page && NHIP.page.querySelector('.nv-meta'); if(top) top.scrollIntoView({behavior:'smooth', block:'start'});
+  } else { toast(nhipErrText(r)); nhipBump(); }
+}
+async function nhipRestore(version){
+  const doc = nhipDoc(); if(!doc || NHIP.busy) return;
+  if(!confirm('Khôi phục bản v'+version+'? Bản này sẽ được đăng lại thành bản mới nhất cho cả đội (lịch sử vẫn giữ đủ).')) return;
+  NHIP.busy = true; nhipBump();
+  const r = await queuedPost({type:'doc', op:'restore', key:NHIP_KEY, id:uid(), version, by:STATE.member});
+  NHIP.busy = false;
+  if(r && r.ok && r.doc){ nhipApplyDoc(r.doc); toast('✓ Đã khôi phục — bản v'+r.doc.version+' đang dùng.'); nhipBump(); nhipRefresh(); }
+  else { toast(nhipErrText(r)); nhipBump(); }
+}
+function nhipDownload(){
+  const doc = nhipDoc(); if(!doc) return;
+  const blob = new Blob([doc.content], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = 'nhip-van-hanh-v'+doc.version+'.md';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+}
+
+/* ---- "có bản mới" for everyone else (once per person, within 7 days) ---- */
+function nhipSeenKey(){ return 'lcsh_nhip_seen_'+(STATE.member||''); }
+function nhipUnseen(){
+  const d = nhipDoc();
+  if(!d || !STATE.member || same(d.by, STATE.member)) return null;
+  let seen = ''; try { seen = localStorage.getItem(nhipSeenKey()) || ''; } catch(e){}
+  if(seen===d.id) return null;
+  const t = toMs(d.createdAt);
+  if(t && nowMs() - t > 7*DAY_MS) return null;
+  return d;
+}
+function markNhipSeen(){ const d = nhipDoc(); if(d) try { localStorage.setItem(nhipSeenKey(), d.id); } catch(e){} }
+function nhipBannerHtml(){
+  const d = nhipUnseen(); if(!d || STATE.tab==='nhip') return '';
+  return `<div class="rc-banner nv"><span>📢 <strong>Nhịp vận hành</strong> vừa cập nhật (v${d.version})${d.note?': '+esc(d.note):''}</span><button class="btn btn-gold btn-sm" onclick="setTab('nhip')">Đọc ngay</button></div>`;
+}
 
 /* ---------------- export backup ---------------- */
 function exportBackup(){
@@ -3927,388 +4176,5 @@ async function repairData(){
 }
 </script>
 
-<!-- =====================================================================
-     NỘI DUNG NHỊP VẬN HÀNH (tab 🔄 NHỊP VẬN HÀNH)
-     • Viết bằng Markdown. Sửa trực tiếp phần chữ ngay bên dưới, từ dòng
-       "# 🌱 NHỊP ĐIỆU..." đến hết, trước dòng đóng khối.
-     • Được dùng: bảng, **đậm**, *nghiêng*, > trích dẫn, danh sách, link, emoji,
-       và các thẻ details / summary / a id="..." như đang có.
-     • Không được gõ dấu "<" liền ngay trước chữ "/script" (sẽ làm hỏng trang).
-     ===================================================================== -->
-<script type="text/markdown" id="nhipMd">
-# 🌱 NHỊP ĐIỆU VẬN HÀNH CỦA ACTION LEARNING TEAM
-
-> **TỔNG QUAN**
-> 1. 🎯 [Mục tiêu (OKR)](#okr)
-> 2. 🔄 [Nhịp vận hành](#nhip)
-> 3. 👥 [Vai trò & nhiệm vụ](#vai-tro)
-> 4. 📚 [Tài liệu](#tai-lieu)
-
----
-
-<a id="okr"></a>
-
-## 🎯 1. MỤC TIÊU (OKR)
-
-> ### O · KIẾN TẠO ACTION LEARNING THÀNH LỐI SỐNG ĐỘT PHÁ
-> 14/09 → 30/12/2026
->
-> 📝 **KR1** · 90 nhật ký AL
->
-> 🤝 **KR2** · 15 phiên sáng thứ 3
->
-> ⭐ **KR3** · Điểm hiệu quả đội ≥ 8/10
->
-> 🧠 Ai cũng phải thuộc. Sáng thứ 3, Lead có thể gọi bất kỳ ai nhắc lại.
-
-<details>
-<summary>Cách đo</summary>
-
-- KR1: số nhật ký trên web nhật ký
-- KR2: số phiên sáng thứ 3 đã tham gia
-- KR3: trung bình điểm "hiệu quả đội" trong form Kaizen
-
-</details>
-
----
-
-<a id="nhip"></a>
-
-## 🔄 2. NHỊP VẬN HÀNH
-
-### Mỗi tuần
-
-| Khi nào | Việc |
-|---|---|
-| Hàng ngày, **trước 18h** | Viết nhật ký AL, gửi ảnh lên Zalo, tag đệ nhị thân |
-| Hàng ngày, **12h–13h** | Nhắc đệ nhị thân |
-| Thứ 2, **trước 24h** | Nộp form Kaizen |
-| Thứ 3, **5h–6h** | Sinh hoạt trên Zoom (có mặt **4h55**) |
-| Thứ 5 | Ghi nhận đồng đội trên web |
-
-### Mỗi tháng (sáng thứ 3)
-
-| Tuần | Phiên |
-|---|---|
-| 1 | 🌍 AL mở cho người ngoài · **4h30–6h** |
-| 2 | 🔧 Sinh hoạt vận hành |
-| 3 | 💡 AL nội bộ |
-| 4 (và 5) | 🔧 Sinh hoạt vận hành |
-
-AL nội bộ mở thêm được vào bất kỳ tuần nào khi có người đề xuất.
-
-<details>
-<summary>📅 Ai làm Lead tuần nào? (đến 30/12)</summary>
-
-🎓 = Coach kiêm Lead. Thư ký = Lead tuần trước.
-
-| Thứ 3 | Phiên | Lead | Thư ký |
-|---|---|---|---|
-| 20/10 | 💡 | 🎓 Huy | Nhưỡng |
-| 27/10 | 🔧 | Dịu | Huy |
-| 03/11 | 🌍 | 🎓 Loan | Dịu |
-| 10/11 | 🔧 | Hào | Loan |
-| 17/11 | 💡 | 🎓 Nhưỡng | Hào |
-| 24/11 | 🔧 | Ngân | Nhưỡng |
-| 01/12 | 🌍 | 🎓 Huy | Ngân |
-| 08/12 | 🔧 | Dịu | Huy |
-| 15/12 | 💡 | 🎓 Loan | Dịu |
-| 22/12 | 🔧 | Hào | Loan |
-| 29/12 | 🔧 về đích | 🎓 Nhưỡng | Hào |
-
-</details>
-
-<details>
-<summary>🔧 Kịch bản phiên sinh hoạt vận hành</summary>
-
-Lead tuần điều phối.
-
-- **4h50** · Gửi link Zoom lên nhóm
-- **4h55** · Cả đội có mặt, mở nhạc
-- **5h00** · Khởi động theo video
-- **5h05** · Gọi 1 người nhắc lại OKR, giới thiệu Thư ký
-- **5h10** · Mỗi người ~4 phút: 1 bài học trong tuần + 1 lời ghi nhận đồng đội
-- **5h35** · Kaizen: mở sheet Kaizen, đi lần lượt từng câu, chọn cải tiến
-- **5h52** · Chốt hành động (Thư ký ghi), bàn giao Lead tuần tới
-- **5h57** · Chụp ảnh, gửi lên Zalo
-
-</details>
-
-<details>
-<summary>💡 Kịch bản phiên AL nội bộ</summary>
-
-Coach điều phối.
-
-- **4h50** · Gửi link Zoom · **4h55** · có mặt
-- **5h00** · Khởi động theo video
-- **5h05** · Nhắc lại OKR, giới thiệu Thư ký, người đưa vấn đề, 2 quy tắc vàng
-- **5h50** · Chốt hành động, bàn giao Lead tuần tới
-- **5h57** · Chụp ảnh, gửi lên Zalo
-
-</details>
-
-<details>
-<summary>🌍 Kịch bản phiên AL mở</summary>
-
-Coach điều phối, Thư ký hỗ trợ đón khách.
-
-- **4h20** · Gửi link Zoom cho đội và khách · **4h25** · có mặt
-- **4h30** · Khởi động theo video
-- **4h35** · Giới thiệu đội, OKR, Action Learning, 2 quy tắc vàng
-- **6h25** · Chụp ảnh, gửi lên Zalo
-
-Hành động và bàn giao Lead: gửi lên Zalo sau phiên.
-
-</details>
-
-<details>
-<summary>⚖️ Luật chơi</summary>
-
-- Mỗi tuần được **1 ngày OFF** nhật ký.
-- Quá 1 buổi trên tuần gieo hạt **100K/lỗi**.
-- 1 tháng được thiếu 1 lần ghi nhận, từ lần 2 gieo hạt **100K/lần**.
-
-</details>
-
----
-
-<a id="vai-tro"></a>
-
-## 👥 3. VAI TRÒ & NHIỆM VỤ
-
-| Vai trò | Ai | Việc chính |
-|---|---|---|
-| 🧭 Lead tuần | 6 người thay nhau | Giữ nhịp cả tuần, điều phối sáng thứ 3 |
-| 🎓 Coach tuần | Huy · Loan · Nhưỡng | Việc của Lead + điều phối phiên AL |
-| ✍️ Thư ký & Phó Lead | Lead tuần trước | Ghi hành động, hỗ trợ Lead |
-| 🙋 Thành viên | Cả 6 người | Nhật ký · Kaizen · phiên thứ 3 · ghi nhận |
-
-<details>
-<summary>🧭 Tôi là Lead tuần</summary>
-
-**Phụ trách:** nhịp vận hành của đội
-
-**Kết quả cần đạt**
-- 6/6 viết nhật ký trước 18h
-- 6/6 nộp Kaizen trước 24h thứ 2
-- 6/6 có mặt trên Zoom lúc 4h55 thứ 3
-- 6/6 ghi nhận đồng đội thứ 5
-
-**Hành vi then chốt**
-- Nhắc lịch lên Zalo theo các mốc bên dưới
-- Gửi ảnh tiến độ nhật ký, nhắc 2 lần/ngày (12h–13h, 17h–18h)
-- Điều phối phiên sáng thứ 3
-- Cuối phiên: chốt hành động, bàn giao Lead tuần tới
-
-**Ghi chú:** hết nhiệm kỳ thì làm Thư ký & Phó Lead cho tuần sau.
-
-**Lịch nhắc Zalo** (bấm để lấy mẫu tin)
-
-<details>
-<summary>Thứ 3, sau khi nhận bàn giao · Mở tuần</summary>
-
-> ☀️ Tuần này [tên] là Lead tuần · Thư ký & Phó Lead: [tên]
-> 📅 Nhật ký trước 18h · Thứ 5 ghi nhận đồng đội · Thứ 2 Kaizen trước 24h · Thứ 3 [5h–6h] [loại phiên]
-> 🎯 OKR: Kiến tạo Action Learning thành lối sống đột phá · 90 nhật ký · 15 phiên · hiệu quả đội ≥ 8/10 💪
-
-</details>
-
-<details>
-<summary>Thứ 5, sáng · Ghi nhận đồng đội</summary>
-
-> 💛 Thứ 5 rồi, cả nhà vào web ghi nhận đồng đội nhé 👉 https://nhatkyhochanh.tomanhuong.com/
-> Công thức: Tên + hành động cụ thể + tác động.
-
-</details>
-
-<details>
-<summary>Hàng ngày, 12h–13h và 17h–18h · Nhắc nhật ký</summary>
-
-> 📊 Nhật ký hôm nay: …/6 ✅ [ảnh tiến độ]
-> Ai chưa viết thì còn [x] tiếng đến hạn 18h nhé. Hôm nay vấn đề của mọi người là gì? 🌱
-
-</details>
-
-<details>
-<summary>Thứ 2, sáng · Nhắc Kaizen</summary>
-
-> 📝 Thứ 2 rồi, cả nhà nộp form Kaizen trước 24h nhé 👉 https://forms.gle/s73Fn4q1GsJkD9F27
-
-</details>
-
-<details>
-<summary>Thứ 2, chiều · Nhắc sinh hoạt</summary>
-
-> 📌 Sáng mai [5h–6h] sinh hoạt trên Zoom: [loại phiên]. Có mặt lúc 4h55 nhé!
-> Chuẩn bị: 1 bài học + 1 người muốn ghi nhận + thuộc OKR 😉
-> Kaizen đã nộp: …/6.
-
-</details>
-
-<details>
-<summary>Thứ 3, trước 4h50 · Gửi link Zoom</summary>
-
-> 🔔 Link Zoom 👉 https://us06web.zoom.us/j/2636933268?pwd=vuJ7kRUsJbdGcW7sKsBidJSHxHrTg9.1
-> Vào trước 4h55 nhé, 5h00 mình khởi động! 🏃
-
-</details>
-
-<details>
-<summary>Thứ 3, cuối phiên · Lan tỏa và bàn giao</summary>
-
-> 📸 [ảnh Zoom] Cảm ơn cả nhà sáng nay!
-> 💡 Bài học nổi bật: …
-> 👉 Lead tuần mới: [tên] · Thư ký & Phó Lead: [tên]
-
-</details>
-
-<details>
-<summary>Mẹo nhắc không gây áp lực</summary>
-
-- Nhắn riêng trước, nhắc trên nhóm sau.
-- Hỏi thay vì phán xét: *"Hôm nay vấn đề của anh/chị là gì? Em hỗ trợ được gì không?"*
-- Ai chậm 2 ngày liền thì báo Phó Lead.
-
-</details>
-
-</details>
-
-<details>
-<summary>🎓 Tôi là Coach tuần</summary>
-
-**Phụ trách:** nhịp vận hành + phiên Action Learning
-
-**Kết quả cần đạt**
-- Như Lead tuần
-- Phiên AL ra được hành động cho người đưa vấn đề và bài học cho cả nhóm
-
-**Hành vi then chốt**
-- Làm toàn bộ việc của Lead tuần
-- Điều phối phiên Action Learning giải quyết vấn đề
-
-**Ghi chú:** nếu AL nội bộ mở thêm vào tuần Lead là thành viên, Phó Lead (Coach tuần trước) điều phối phần AL.
-
-<details>
-<summary>Chuẩn bị phiên AL</summary>
-
-- Trước thứ 2: chốt người đưa vấn đề (phiên AL mở thì chốt cả khách mời)
-- Thứ 2 chiều: ghi tên người đưa vấn đề vào tin nhắc sinh hoạt
-- Sáng thứ 3: điều phối theo kịch bản 💡 hoặc 🌍
-
-</details>
-
-<details>
-<summary>2 quy tắc vàng</summary>
-
-1. Chỉ phát biểu khi trả lời một câu hỏi.
-2. Coach được dừng phiên bất cứ lúc nào để cả nhóm học.
-
-</details>
-
-<details>
-<summary>Bộ câu hỏi Coach</summary>
-
-- "Mỗi người viết lại: vấn đề thực sự là gì?"
-- "Câu hỏi nào vừa rồi mở ra điều mới?"
-- "Nhóm đang làm tốt gì? Có thể tốt hơn ở đâu?"
-- "Hành động đầu tiên trong 24h tới là gì?"
-- "Bạn học được gì từ phiên này?"
-
-</details>
-
-</details>
-
-<details>
-<summary>✍️ Tôi là Thư ký & Phó Lead</summary>
-
-**Phụ trách:** ghi nhận hành động, hỗ trợ Lead
-
-**Kết quả cần đạt**
-- Danh sách hành động lên Zalo trong ngày sau phiên
-- Lead tuần hoàn thành nhiệm vụ
-
-**Hành vi then chốt**
-- Mở sheet Thư ký từ đầu phiên, ghi hành động: việc gì, ai làm, hạn
-- Gửi danh sách lên Zalo
-- Hỗ trợ Lead, thay Lead khi Lead vắng
-
-<details>
-<summary>Mẫu tin sau phiên</summary>
-
-> ✍️ Hành động sau phiên [ngày]
-> 1. [Hành động] – [Người] – [Hạn]
-> 2. …
-> 🔗 https://docs.google.com/spreadsheets/d/1RySlogTrhBAr08pnapSq6AfZfl24uqKaOfJRp_DXZZ8/edit?gid=1118992432#gid=1118992432
-
-</details>
-
-</details>
-
-<details>
-<summary>🙋 Tôi là Thành viên</summary>
-
-**Phụ trách:** mục tiêu đội nhóm
-
-**Kết quả cần đạt**
-- Thuộc và nhắc lại được bộ OKR
-- 100% nhật ký, Kaizen, phiên thứ 3, ghi nhận đồng đội
-- Đệ nhị thân cũng hoàn thành 100%
-
-**Hành vi then chốt**
-- Viết nhật ký trước 18h, gửi ảnh lên Zalo, tag đệ nhị thân
-- Nhắc đệ nhị thân lúc 12h–13h
-- Thứ 2 nộp Kaizen · Thứ 3 dự phiên · Thứ 5 ghi nhận đồng đội
-
-<details>
-<summary>Viết nhật ký AL chất lượng</summary>
-
-1. Viết vào đầu ngày.
-2. Đổ não ra giấy, chọn 1 vấn đề thật đang xảy ra.
-3. Tự đặt ≥ 3 câu hỏi đào sâu.
-4. Chốt 1 hành động: làm gì, khi nào.
-5. Trước 18h: cập nhật kết quả, ghi 1 bài học.
-
-</details>
-
-<details>
-<summary>Điền form Kaizen</summary>
-
-Ngắn gọn, có số liệu (ví dụ: 6/7 ngày). Hỏi "vì sao" nhiều lần để tìm nguyên nhân gốc rễ. Đề xuất cho đội phải cụ thể.
-
-</details>
-
-<details>
-<summary>Ghi nhận đồng đội</summary>
-
-Tên + hành động cụ thể + tác động.
-*"Ghi nhận chị Loan đã hỏi thăm sức khỏe em Hào hôm thứ 3. Nhờ vậy cả nhóm thấy gắn kết hơn."*
-
-</details>
-
-<details>
-<summary>Đệ nhị thân</summary>
-
-3 cặp, nhắc nhau lúc 12h–13h mỗi ngày. Gợi ý: Nhưỡng – Dịu · Huy – Ngân · Loan – Hào.
-
-</details>
-
-</details>
-
----
-
-<a id="tai-lieu"></a>
-
-## 📚 4. TÀI LIỆU
-
-| Tài liệu | Dùng khi |
-|---|---|
-| [Web nhật ký AL](https://nhatkyhochanh.tomanhuong.com/) · mật khẩu `hoc&hanhdong` | Viết nhật ký, ghi nhận đồng đội |
-| [Video hướng dẫn rèn luyện, báo cáo](https://youtu.be/L830uwzLdjM) | Mới vào, chưa biết cách viết |
-| [Form Kaizen](https://forms.gle/s73Fn4q1GsJkD9F27) | Thứ 2 |
-| [Sheet Kaizen + Thư ký](https://docs.google.com/spreadsheets/d/1RySlogTrhBAr08pnapSq6AfZfl24uqKaOfJRp_DXZZ8/edit?gid=1118992432#gid=1118992432) | Kaizen phiên, ghi hành động |
-| [Zoom sinh hoạt](https://us06web.zoom.us/j/2636933268?pwd=vuJ7kRUsJbdGcW7sKsBidJSHxHrTg9.1) | Sáng thứ 3 |
-| [Video khởi động](https://youtu.be/osa_bd_dGrg?si=7g4wgAqRMLXXP3tb) | 5h00 sáng thứ 3 |
-</script>
-<!-- ===================== HẾT NỘI DUNG NHỊP VẬN HÀNH ===================== -->
 </body>
 </html>

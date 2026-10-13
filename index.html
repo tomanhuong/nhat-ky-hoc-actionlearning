@@ -631,6 +631,125 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .nv-hv{font-family:'Space Mono',monospace;font-weight:700;color:var(--gold);min-width:34px;}
 .nv-hm{flex:1;min-width:150px;color:var(--ink-dim);overflow-wrap:anywhere;}
 .rc-banner.nv{background:rgba(0,167,157,.12);border:1px solid rgba(0,167,157,.45);}
+/* ---- v2.9: compact header ---- */
+.app-top{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.app-brand{flex:1;min-width:0;font-size:19px;font-weight:600;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.app-brand .ver{font-size:11px;color:var(--ink-faint);font-family:'Space Mono',monospace;font-weight:400;}
+.me-wrap{position:relative;flex-shrink:0;}
+@media(max-width:520px){ .app-brand{font-size:16px;} .app-brand .ver{display:none;} .app-top{gap:6px;} .app-top .sync-indicator{font-size:10px;} }
+.me-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 6px;border-radius:999px;color:var(--ink-dim);}
+.me-btn:hover{background:var(--panel-hover);}
+.me-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:60;background:#1a1850;border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px;min-width:220px;box-shadow:0 10px 30px rgba(0,0,0,.45);display:flex;flex-direction:column;}
+.me-menu button{text-align:left;padding:11px 12px;border-radius:8px;font-size:13px;}
+.me-menu button:hover{background:var(--panel-hover);}
+.tab-cnt{font-family:'Space Mono',monospace;font-size:11px;margin-left:6px;opacity:.85;}
+.tab-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);margin-left:4px;vertical-align:middle;}
+.shell.wide{max-width:1200px;}
+mark{background:rgba(255,212,0,.38);color:inherit;border-radius:3px;padding:0 1px;}
+
+/* ---- v2.9: timeline list ---- */
+.lv-head{display:flex;align-items:center;gap:6px;margin-bottom:10px;}
+.lv-title{flex:1;min-width:0;font-size:21px;font-weight:600;}
+.lv-icon{width:40px;height:40px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;border:1px solid transparent;}
+.lv-icon:hover,.lv-icon.on{background:var(--panel-hover);border-color:var(--border);}
+.lv-sort{font-family:'Crimson Text',Georgia,serif;font-size:16px;color:var(--ink-dim);padding:8px 10px;border-radius:999px;white-space:nowrap;}
+.lv-sort:hover{background:var(--panel-hover);color:var(--ink);}
+.lv-search{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;margin-bottom:10px;display:flex;flex-direction:column;gap:8px;}
+.lv-range{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;}
+.lv-range label{flex:1;min-width:130px;font-size:11px;font-family:'Space Mono',monospace;color:var(--ink-dim);display:flex;flex-direction:column;gap:4px;}
+.lv-range input{padding:8px 10px;font-size:14px;}
+.lv-chips{margin-bottom:8px;}
+.lv-chips .chip{font-size:12.5px;padding:7px 14px;}
+.lv-names .chip{font-size:11.5px;padding:4px 10px;}
+.lv-info{margin:0 0 10px;font-size:13.5px;color:var(--ink-dim);background:var(--panel);border:1px solid var(--border-soft);border-radius:var(--radius-sm);padding:4px 12px;}
+.lv-info summary{cursor:pointer;padding:6px 0;font-family:'Space Mono',monospace;font-size:12px;color:var(--teal);}
+.lv-group{margin-bottom:4px;}
+.lv-gh{display:flex;justify-content:space-between;align-items:center;width:100%;padding:16px 4px 6px;font-family:'Crimson Text',Georgia,serif;font-size:18px;font-weight:600;color:var(--ink);text-align:left;border-bottom:1px solid var(--border-soft);}
+.lv-gh.over{color:#ff8a83;}
+.lv-gh.pend{color:var(--gold);}
+.lv-gn{font-family:'Space Mono',monospace;font-size:13px;color:var(--ink-faint);font-weight:400;}
+.lv-done{margin-top:12px;border-top:1px solid var(--border);}
+.lv-gh-btn{cursor:pointer;border-bottom:none;}
+.lv-chev{font-size:18px;color:var(--ink-dim);}
+.lv-allclear{padding:14px 4px;color:var(--ink-dim);font-style:italic;font-size:15px;}
+.lv-row{display:flex;gap:12px;align-items:flex-start;padding:11px 6px;border-bottom:1px solid var(--border-soft);cursor:pointer;border-radius:8px;}
+.lv-row:hover{background:var(--panel-hover);}
+.lv-row.sel{background:rgba(255,212,0,.08);box-shadow:inset 3px 0 0 var(--gold);}
+.lv-row.cross{box-shadow:inset 3px 0 0 #a78bfa;}
+.lv-row.cross.sel{box-shadow:inset 3px 0 0 var(--gold);}
+.lv-row.pending{cursor:default;background:rgba(255,212,0,.05);}
+.lv-ck{flex-shrink:0;width:26px;height:26px;margin-top:1px;border-radius:50%;border:2px solid rgba(237,239,251,.55);display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:transparent;transition:border-color .15s,color .15s;}
+.lv-ck:hover{border-color:var(--teal);color:rgba(0,167,157,.7);}
+.lv-ck.half{border-color:var(--amber);background:linear-gradient(90deg,var(--amber) 50%,transparent 50%);}
+.lv-ck.half:hover{color:#241D00;}
+.lv-ck.on{border-color:#6ea8ff;color:#6ea8ff;}
+.lv-src{flex-shrink:0;width:26px;text-align:center;font-size:18px;line-height:26px;}
+.lv-main{flex:1;min-width:0;}
+.lv-ttl{font-size:17px;line-height:1.4;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.lv-row.done .lv-ttl{text-decoration:line-through;text-decoration-color:rgba(237,239,251,.45);color:var(--ink-dim);}
+.lv-star{color:var(--gold);}
+.lv-ans{font-size:14px;color:var(--teal);margin-top:4px;line-height:1.45;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.lv-sub{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;margin-top:5px;font-size:14px;color:var(--ink-dim);line-height:1.4;}
+.lv-due{font-family:'Space Mono',monospace;font-size:11.5px;padding:2px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.28);color:var(--ink);white-space:nowrap;}
+.lv-due.over{border-color:rgba(248,81,73,.65);color:#ff8a83;}
+.lv-hot{color:var(--gold);font-family:'Space Mono',monospace;font-size:12px;}
+.lv-link{color:var(--ink-dim);text-decoration:none;cursor:pointer;}
+.lv-link:hover{color:var(--teal);text-decoration:underline;}
+.lv-ok{color:var(--teal);} .lv-late{color:var(--amber);}
+.lv-more{flex-shrink:0;width:34px;height:34px;margin-top:-4px;border-radius:50%;color:var(--ink-faint);font-size:18px;font-weight:700;}
+.lv-more:hover{background:var(--panel-hover);color:var(--ink);}
+.lv-menu{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;cursor:default;}
+.lv-menu button{font-size:12px;padding:8px 12px;border-radius:999px;background:var(--panel);border:1px solid var(--border);}
+.lv-menu button:hover{background:var(--panel-hover);}
+.lv-menu button.danger{color:var(--red);border-color:rgba(248,81,73,.45);}
+.lv-pend-acts{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap;}
+
+/* ---- v2.9: detail card ---- */
+.lv-detail{background:#1f1d55;border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 20px;}
+.lv-dh{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.lv-dh .t{flex:1;font-size:21px;font-weight:600;}
+.lv-x{width:36px;height:36px;border-radius:50%;font-size:16px;color:var(--ink-dim);}
+.lv-x:hover{background:var(--panel-hover);color:var(--ink);}
+.lv-f{margin-bottom:13px;}
+.lv-fl{font-size:14px;color:var(--ink-dim);margin-bottom:5px;}
+.lv-seg{display:flex;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
+.lv-seg button{flex:1;padding:10px 6px;font-family:'Crimson Text',Georgia,serif;font-size:15.5px;border-right:1px solid var(--border-soft);}
+.lv-seg button:last-child{border-right:none;}
+.lv-seg button:not(.on):hover{background:var(--panel-hover);}
+.lv-seg button.on{background:#f3d9a4;color:#3a2a00;font-weight:600;}
+.lv-seg button.on.done{background:var(--teal);color:#052e2b;}
+.lv-seg button[disabled]{cursor:default;}
+.lv-detail textarea{min-height:46px;}
+.lv-detail select{margin-top:6px;font-size:14px;padding:8px 10px;}
+.lv-chk{display:flex;align-items:center;gap:8px;font-size:15.5px;margin:-2px 0 13px;cursor:pointer;}
+.lv-chk input{width:18px;height:18px;accent-color:var(--teal);}
+.lv-open-p{display:block;width:100%;text-align:left;font-family:'Crimson Text',Georgia,serif;font-size:16px;color:#8ab4ff;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;}
+.lv-open-p:hover{border-color:#8ab4ff;}
+.lv-hist{font-size:15px;color:var(--ink);}
+.lv-err{color:#ff8a83;font-size:14px;margin:4px 0 8px;}
+.lv-foot{display:flex;gap:10px;margin-top:18px;}
+.lv-foot .btn{padding:12px 18px;font-size:13.5px;}
+.lv-foot .btn-gold{flex:1;}
+.lv-del{color:#ff8a83;border:1px solid rgba(248,81,73,.5);background:transparent;}
+.lv-del:hover{background:var(--red-bg);}
+.lv-ro{font-size:14px;color:var(--amber);background:var(--amber-bg);border-radius:var(--radius-sm);padding:10px 12px;margin-top:14px;}
+.lv-backdrop{display:none;}
+@media(min-width:900px){
+  .lv-layout.has-detail{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start;}
+  .lv-detail{position:sticky;top:14px;max-height:calc(100vh - 28px);overflow-y:auto;}
+}
+@media(max-width:899px){
+  .lv-backdrop{display:block;position:fixed;inset:0;background:rgba(10,9,30,.62);z-index:89;}
+  .lv-detail{position:fixed;left:0;right:0;bottom:0;z-index:90;max-height:88vh;overflow-y:auto;border-radius:20px 20px 0 0;padding-bottom:calc(22px + var(--sib));box-shadow:0 -10px 30px rgba(0,0,0,.45);}
+}
+
+/* ---- v2.9: undo bar, read-only problem ---- */
+.undo-bar{position:fixed;left:50%;bottom:calc(24px + var(--sib));transform:translateX(-50%) translateY(20px);display:flex;align-items:center;gap:12px;max-width:calc(100% - 110px);background:#0e0c2e;border:1px solid var(--teal);padding:6px 6px 6px 16px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:all .25s;z-index:210;white-space:nowrap;}
+.undo-bar.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
+.undo-bar span{overflow:hidden;text-overflow:ellipsis;}
+.undo-bar button{color:var(--gold);font-weight:700;padding:8px 12px;border-radius:999px;flex-shrink:0;}
+.undo-bar button:hover{background:rgba(255,212,0,.12);}
+.ro .edit-only{display:none !important;}
 </style>
 </head>
 <body>
@@ -683,44 +802,22 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 <!-- MAIN APP -->
 <div id="app" class="hidden">
   <div class="shell">
-    <header class="app-header">
-      <h1>LÀM CHỦ SỰ HỌC <span style="font-size:11px;color:var(--ink-faint);font-family:'Space Mono',monospace;font-weight:400">v2.8</span></h1>
-      <p>Không gian để bạn tự quản lý việc ứng dụng học tập, giải quyết vấn đề thực tế, tạo ra kết quả đột phá.</p>
-      <div class="who-row">
-        <span id="whoLabel"></span>
-        <span id="syncStatus" class="sync-indicator">⏳</span>
-        <button onclick="changeMember()">Đổi người dùng</button>
-        <span>·</span>
-        <button onclick="repairData()">Sửa dữ liệu tên</button>
-        <span>·</span>
-        <button onclick="exportBackup()">Xuất dữ liệu</button>
-        <span>·</span>
-        <button onclick="doLogout()">Đăng xuất</button>
+    <header class="app-top">
+      <div class="app-brand">🧭 LÀM CHỦ SỰ HỌC <span class="ver">v2.9</span></div>
+      <span id="syncStatus" class="sync-indicator">⏳</span>
+      <div class="me-wrap">
+        <button class="me-btn" onclick="toggleMeMenu(event)" title="Tài khoản" aria-haspopup="menu"><span id="whoLabel"></span> ▾</button>
+        <div id="meMenu" class="me-menu hidden" role="menu">
+          <button onclick="toggleMeMenu();loadAll(false)">⟳ Làm mới dữ liệu</button>
+          <button onclick="toggleMeMenu();changeMember()">👤 Đổi người dùng</button>
+          <button onclick="toggleMeMenu();exportBackup()">⬇ Xuất dữ liệu</button>
+          <button onclick="toggleMeMenu();repairData()">🛠 Sửa dữ liệu tên</button>
+          <button onclick="toggleMeMenu();doLogout()">⎋ Đăng xuất</button>
+        </div>
       </div>
     </header>
 
     <div id="recogBanner"></div>
-    <div class="stats-grid" id="statsGrid"></div>
-
-    <div id="globalFilters">
-    <div class="toolbar">
-      <input id="searchInput" type="text" placeholder="Tìm kiếm nội dung..." oninput="onSearchInput()"/>
-      <select id="personFilterSel" onchange="onPersonFilterChange()"></select>
-      <button class="icon-btn" title="Làm mới" onclick="loadAll(false)">⟳</button>
-    </div>
-    <div class="toolbar" style="align-items:flex-end">
-      <div style="flex:1;min-width:130px">
-        <label style="display:block;font-size:11px;font-family:'Space Mono',monospace;color:var(--ink-dim);margin-bottom:4px">Từ ngày</label>
-        <input id="dateFromInput" type="date" value="" onchange="onDateFilterChange()"/>
-      </div>
-      <div style="flex:1;min-width:130px">
-        <label style="display:block;font-size:11px;font-family:'Space Mono',monospace;color:var(--ink-dim);margin-bottom:4px">Đến ngày</label>
-        <input id="dateToInput" type="date" value="" onchange="onDateFilterChange()"/>
-      </div>
-      <button id="clearDateBtn" class="btn btn-ghost btn-sm hidden" onclick="clearDateFilter()">✕ Xoá lọc ngày</button>
-    </div>
-    <div class="hint" style="margin-bottom:12px">Lọc theo ngày tạo — áp dụng cho mọi tab, kết hợp cùng lúc với tìm kiếm, người và trạng thái.</div>
-    </div>
 
     <div class="tabs" id="tabsBar"></div>
 
@@ -734,6 +831,7 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 </div>
 
 <div id="toast" class="toast"></div>
+<div id="undoBar" class="undo-bar" role="status"><span id="undoMsg"></span><button onclick="doUndo()">Hoàn tác</button></div>
 
 <script>
 /* ============================================================
@@ -770,6 +868,7 @@ let STATE = {
   pageSize: 30,
   shownCount: 30,
   recogWeeks: 3, ringDraft: null, ringOpen: false,
+  sheet: null, menuFor: null, searchOpen: false, doneShown: 30,
   seedOpen: null, seedForm: null, seedDraft: null, exForm: false, seedSettings: false,
   data: { problems:[], questions:[], actions:[], learnings:[], bestPractices:[], bpSuggestions:[], recognitions:[], seeds:[], exemptions:[], docs:{}, config:{}, presetNames:[] }
 };
@@ -850,11 +949,11 @@ function stampPatch(type, prev, patch){
   const p = Object.assign({}, patch, {updatedAt: now});
   if(p.status !== undefined && (!prev || p.status !== prev.status)){
     if(type==='actions' || type==='problems'){
-      p.doneAt = p.status==='done' ? now : '';
+      if(!('doneAt' in patch)) p.doneAt = p.status==='done' ? now : '';
     } else if(type==='questions'){
-      p.answeredAt = p.status==='answered' ? ((prev && prev.answeredAt) || now) : '';
+      if(!('answeredAt' in patch)) p.answeredAt = p.status==='answered' ? ((prev && prev.answeredAt) || now) : '';
     } else if(type==='learnings'){
-      p.appliedAt = p.status==='applied' ? now : '';
+      if(!('appliedAt' in patch)) p.appliedAt = p.status==='applied' ? now : '';
     }
   }
   return p;
@@ -897,6 +996,7 @@ function queuedPost(payload){
 }
 // Optimistic create: appears instantly; synced in the background (queued + retried).
 function createRecord(type, record, opts={}){
+  if(CREATED_BY_TYPES.includes(type) && !opts.restore && !record.createdBy) record.createdBy = STATE.member;
   if((type==='actions'||type==='problems') && record.status==='done' && !record.doneAt) record.doneAt = new Date().toISOString();
   STATE.data[type].push(record);
   saveCache();
@@ -1188,6 +1288,7 @@ async function loadAll(silent){
 }
 function renderPersonFilterOptions(){
   const sel = document.getElementById('personFilterSel');
+  if(!sel) return;
   const members = new Set(STATE.data.presetNames||[]);
   ['problems','questions','actions','learnings'].forEach(t=>{
     (STATE.data[t]||[]).forEach(x=>{ if(x.member) members.add(x.member); });
@@ -1259,25 +1360,36 @@ function markCrossSeen(){
 }
 function renderTabs(){
   const tabs = [
-    {id:'problems', label:'VẤN ĐỀ'},
-    {id:'questions', label:'CÂU HỎI'},
-    {id:'actions', label:'HÀNH ĐỘNG'},
-    {id:'learnings', label:'BÀI HỌC'},
-    {id:'bestPractices', label:'THỰC HÀNH HIỆU QUẢ'},
-    {id:'nhip', label:'🔄 NHỊP VẬN HÀNH'},
-    {id:'recog', label:'💬 GHI NHẬN'},
-    {id:'report', label:'📊 BÁO CÁO'}
+    {id:'problems', label:'Vấn đề'},
+    {id:'questions', label:'Câu hỏi'},
+    {id:'actions', label:'Hành động'},
+    {id:'learnings', label:'Bài học'},
+    {id:'bestPractices', label:'Thực hành hiệu quả'},
+    {id:'nhip', label:'🔄 Nhịp vận hành'},
+    {id:'recog', label:'💬 Ghi nhận'},
+    {id:'report', label:'📊 Báo cáo'}
   ];
   const unseen = unseenCrossQuestions().length;
   const recogN = recogBadgeCount();
   document.getElementById('tabsBar').innerHTML = tabs.map(t=>{
+    let cnt = '';
+    if(LIST_TABS.includes(t.id) && STATE.member && STATE.dataLoaded){
+      const c = lvCounts(t.id);
+      if(c.n>0) cnt = `<span class="tab-cnt">${c.n}</span>`;
+      if(c.over) cnt += '<span class="tab-dot" title="Có mục quá hạn"></span>';
+    }
     const n = t.id==='questions' ? unseen : (t.id==='recog' ? recogN : (t.id==='nhip' && nhipUnseen() ? 1 : 0));
     const badge = n>0 ? `<span class="tab-notif">${n}</span>` : '';
-    return `<button class="tab-btn ${STATE.tab===t.id?'active':''}" onclick="setTab('${t.id}')">${t.label}${badge}</button>`;
+    return `<button class="tab-btn ${STATE.tab===t.id?'active':''}" onclick="setTab('${t.id}')">${t.label}${cnt}${badge}</button>`;
   }).join('');
   renderRecogBanner();
 }
 function setTab(tab){
+  if(STATE.sheet && tab!==STATE.tab){
+    if(sheetDirty() && !confirm('Thẻ đang mở có thay đổi chưa lưu. Bỏ các thay đổi đó?')) return;
+    STATE.sheet = null;
+  }
+  STATE.menuFor = null; STATE.doneShown = STATE.pageSize;
   STATE.tab = tab; STATE.shownCount = STATE.pageSize; localStorage.setItem('lcsh_tab', tab); STATE._tabAt = Date.now();
   if(tab==='questions') markCrossSeen();
   if(tab==='recog') markRecogSeen();
@@ -1291,6 +1403,7 @@ function renderAll(){ renderTabs(); renderStats(); renderContent(); }
 function refreshKeepScroll(){
   const y = window.scrollY;
   renderStats();
+  renderTabs();
   renderContent();
   window.scrollTo(0, y);
 }
@@ -1298,46 +1411,7 @@ function refreshKeepScroll(){
 /* ---------------- dashboard stats ---------------- */
 function filteredByPerson(type){ return (STATE.data[type]||[]).filter(matchesPerson); }
 
-function renderStats(){
-  const problems = filteredByPerson('problems');
-  const questions = filteredByPerson('questions');
-  const actions = filteredByPerson('actions');
-  const learnings = filteredByPerson('learnings');
-  const bps = filteredByPerson('bestPractices');
-
-  const pNew = problems.filter(p=>p.status==='new').length;
-  const pProg = problems.filter(p=>p.status==='inprogress').length;
-  const pDone = problems.filter(p=>p.status==='done').length;
-
-  const qClar = questions.filter(q=>q.status!=='answered').length;
-  const qAns = questions.filter(q=>q.status==='answered').length;
-
-  const aNew = actions.filter(a=>a.status==='new').length;
-  const aProg = actions.filter(a=>a.status==='inprogress').length;
-  const aDone = actions.filter(a=>a.status==='done').length;
-
-  const lAvail = learnings.filter(l=>l.status!=='applied').length;
-  const lApplied = learnings.filter(l=>l.status==='applied').length;
-
-  const bpP = bps.filter(b=>b.source==='problem').length;
-  const bpL = bps.filter(b=>b.source==='learning').length;
-  const bpA = bps.filter(b=>b.source==='action').length;
-
-  const cards = [
-    {id:'problems', label:'PROBLEMS', total:problems.length, sub:`${pNew} Mới tạo · ${pProg} Đang tiến hành · ${pDone} Hoàn thành`},
-    {id:'questions', label:'QUESTIONS', total:questions.length, sub:`${questions.length} Đã hỏi · ${qClar} Đang làm rõ · ${qAns} Đã trả lời`},
-    {id:'learnings', label:'KEY LEARNINGS', total:learnings.length, sub:`${lAvail} Bài học đang có · ${lApplied} Đã áp dụng`},
-    {id:'actions', label:'ACTIONS', total:actions.length, sub:`${aNew} Mới tạo · ${aProg} Đang tiến hành · ${aDone} Hoàn thành`},
-    {id:'bestPractices', label:'BEST PRACTICES', total:bps.length, sub:`${bpP} Giải quyết vấn đề · ${bpL} Áp dụng bài học · ${bpA} Hành động đột phá`}
-  ];
-  document.getElementById('statsGrid').innerHTML = cards.map(c=>
-    `<button class="stat-card ${STATE.tab===c.id?'active':''}" onclick="setTab('${c.id}')">
-       <div class="stat-label">${c.label}</div>
-       <div class="stat-num">${c.total}</div>
-       <div class="stat-sub">${c.sub}</div>
-     </button>`
-  ).join('');
-}
+function renderStats(){ /* v2.9: số đếm nằm trên tab, không còn ô thống kê */ }
 
 /* ---------------- content router ---------------- */
 function renderContent(){
@@ -1346,13 +1420,9 @@ function renderContent(){
   const gf = document.getElementById('globalFilters');
   if(gf) gf.classList.toggle('hidden', STATE.tab==='report' || STATE.tab==='recog' || STATE.tab==='nhip');
   const fab = document.querySelector('.fab');
-  if(fab) fab.classList.toggle('hidden', STATE.tab==='nhip');
+  if(fab) fab.classList.toggle('hidden', STATE.tab==='nhip' || STATE.tab==='bestPractices');
   try {
-    if(STATE.tab==='problems') el.innerHTML = renderProblemsTab();
-    else if(STATE.tab==='questions') el.innerHTML = renderQuestionsTab();
-    else if(STATE.tab==='actions') el.innerHTML = renderActionsTab();
-    else if(STATE.tab==='learnings') el.innerHTML = renderLearningsTab();
-    else if(STATE.tab==='bestPractices') el.innerHTML = renderBestPracticesTab();
+    if(LIST_TABS.includes(STATE.tab)) el.innerHTML = renderListView(STATE.tab);
     else if(STATE.tab==='report') el.innerHTML = renderReportTab();
     else if(STATE.tab==='recog') el.innerHTML = renderRecogTab();
     else if(STATE.tab==='nhip') renderNhipTab(el);
@@ -1361,6 +1431,8 @@ function renderContent(){
     el.innerHTML = '<div class="empty-note">Có lỗi khi hiển thị. Thử bấm ⟳ làm mới hoặc tải lại trang.</div>';
   }
   restoreFocus(_focus);
+  const shell = document.querySelector('#app .shell');
+  if(shell) shell.classList.toggle('wide', LIST_TABS.includes(STATE.tab) && !!STATE.sheet);
 }
 // Normalize a tags value that may arrive as a comma-separated string from the Sheet
 function tagsArray(t){
@@ -1384,119 +1456,44 @@ function safeScore(p){
   return 0;
 }
 
-/* ---------------- PROBLEMS ---------------- */
-function renderProblemsTab(){
-  const sub = STATE.problemSubTab;
-
-  // Base set: person + search + date range combined
-  let base = filteredByPerson('problems')
-    .filter(p=>matchesSearch(p.title+' '+p.desc+' '+tagsArray(p.tags).join(' ')))
-    .filter(p=>matchesDateRange(p.createdAt));
-
-  const counts = {
-    all: base.length,
-    new: base.filter(p=>p.status==='new').length,
-    inprogress: base.filter(p=>p.status==='inprogress').length,
-    done: base.filter(p=>p.status==='done').length
-  };
-
-  // Now also apply the status filter — priority + list both reflect all 3 combined
-  let filtered = sub==='all' ? base : base.filter(p=>p.status===sub);
-  const pRank = {new:0, inprogress:1, done:2};
-  const shown = filtered.slice().sort((a,b)=>
-    (pRank[a.status]??9) - (pRank[b.status]??9)
-    || new Date(b.createdAt||0) - new Date(a.createdAt||0)
-  );
-  const priority = filtered.filter(p=>safeScore(p)>=PRIORITY_THRESHOLD).sort((a,b)=>safeScore(b)-safeScore(a));
-
-  const chipRow = `<div class="chip-row">
-    <button class="chip ${sub==='all'?'active':''}" onclick="setProblemSub('all')">Tất cả ${counts.all}</button>
-    <button class="chip ${sub==='new'?'active':''}" onclick="setProblemSub('new')">Mới tạo ${counts.new}</button>
-    <button class="chip ${sub==='inprogress'?'active':''}" onclick="setProblemSub('inprogress')">Đang tiến hành ${counts.inprogress}</button>
-    <button class="chip ${sub==='done'?'active':''}" onclick="setProblemSub('done')">Hoàn thành ${counts.done}</button>
-  </div>`;
-
-  const priBlock = `<div class="section-title">Vấn đề ưu tiên (≥ ${PRIORITY_THRESHOLD} điểm)</div>` +
-    (priority.length ? priority.map(problemCard).join('') :
-      `<div class="empty-note">${emptyMsg('Chưa có vấn đề nào đạt ≥ ' + PRIORITY_THRESHOLD + ' điểm khớp bộ lọc hiện tại.')}</div>`);
-
-  // Pagination: only build DOM for the first N cards, "load more" for the rest
-  const pageItems = shown.slice(0, STATE.shownCount);
-  const moreCount = shown.length - pageItems.length;
-  let listBody;
-  if(shown.length){
-    listBody = pageItems.map(problemCard).join('') +
-      (moreCount>0 ? `<button class="btn btn-ghost btn-block" style="margin-top:6px" onclick="loadMore()">Tải thêm ${Math.min(moreCount, STATE.pageSize)} / còn ${moreCount} vấn đề</button>` : '');
-  } else if(!STATE.dataLoaded){
-    listBody = `<div class="empty-note">Đang tải dữ liệu...</div>`;
-  } else {
-    // actionable empty state
-    const filtering = STATE.search || STATE.dateFrom || STATE.dateTo || sub!=='all' || STATE.personFilter!=='all';
-    listBody = filtering
-      ? `<div class="empty-note">Không có vấn đề nào khớp bộ lọc hiện tại.</div>`
-      : `<div class="empty-note">Chưa có vấn đề nào.<br><button class="btn btn-gold btn-sm" style="margin-top:12px" onclick="openProblemModal(null)">+ Tạo vấn đề đầu tiên</button></div>`;
-  }
-  const listBlock = `<div class="section-title">Vấn đề đang giải quyết</div>` + listBody;
-
-  return chipRow + priBlock + listBlock;
-}
-function loadMore(){ STATE.shownCount += STATE.pageSize; refreshKeepScroll(); }
-function setProblemSub(s){ STATE.problemSubTab = s; STATE.shownCount = STATE.pageSize; renderContent(); }
-
-function problemCard(p){
-  const st = PROBLEM_STATUS[p.status]||p.status;
-  const stClass = 'st-'+p.status;
-  const cardClass = p.status==='done' ? 'ok' : (safeScore(p)>=PRIORITY_THRESHOLD ? 'pri' : '');
-  return `<div class="card ${cardClass} ${p.status==='done'?'row-done':''}">
-    <div class="card-top">
-      <div style="flex:1">
-        <div class="card-title">${esc(p.title)}</div>
-        <div class="card-desc">${esc(p.desc)}</div>
-        <div class="card-meta">
-          <span class="badge ${stClass}">${st}</span>
-          <span class="badge">${esc(LEVELS[p.level]||p.level||'')}</span>
-          ${p.member?memberBadge(p.member):''}
-          ${tagsArray(p.tags).map(t=>`<span class="badge">#${esc(t)}</span>`).join('')}
-        </div>
-        ${p.keywords?`<div class="card-keywords">🔑 ${esc(p.keywords)}</div>`:''}
-      </div>
-      <div class="card-score">
-        <div class="n">${safeScore(p)}</div>
-        <div class="l">/1000</div>
-      </div>
-    </div>
-    <div class="card-actions">
-      <span class="card-date" style="flex:1">${p.plannedDate?('Dự kiến: '+fmtDate(p.plannedDate)):''}</span>
-      <button onclick="cycleProblemStatus('${p.id}')">⟳ Trạng thái</button>
-      <button onclick="openProblemModal('${p.id}')">✏️ Mở / Bổ sung</button>
-      <button onclick="deleteProblem('${p.id}')">🗑️ Xoá</button>
-    </div>
-    <div class="hint" style="margin-top:8px">Bấm "Mở / Bổ sung" để thêm câu hỏi, hành động, kết quả hoặc bài học bất cứ lúc nào.</div>
-  </div>`;
-}
-function cycleProblemStatus(id){
-  const p = STATE.data.problems.find(x=>x.id===id);
-  if(!p) return;
-  const order = ['new','inprogress','done'];
-  const next = order[(order.indexOf(p.status)+1)%order.length];
-  updateRecord('problems', id, {status: next});
-  maybeSuggestFromProblem(STATE.data.problems.find(x=>x.id===id));
-  refreshKeepScroll();
-}
+/* ---------------- PROBLEMS: xoá (danh sách nằm ở phần DANH SÁCH THEO DÒNG THỜI GIAN) ---------------- */
 function deleteProblem(id){
+  const p = STATE.data.problems.find(x=>x.id===id); if(!p) return;
+  if(!guardEdit('problems', p)) return;
   const childQ = STATE.data.questions.filter(q=>q.problemId===id).length;
   const childA = STATE.data.actions.filter(a=>a.problemId===id).length;
   const childL = STATE.data.learnings.filter(l=>l.problemId===id).length;
-  const total = childQ + childA + childL;
-  let msg = 'Xoá vấn đề này?';
-  if(total>0) msg += `\n\nKèm theo ${childQ} câu hỏi, ${childA} hành động, ${childL} bài học liên quan cũng sẽ bị xoá.`;
-  if(!confirm(msg)) return;
-  // remove children first so nothing is orphaned
-  STATE.data.questions.filter(q=>q.problemId===id).forEach(q=>deleteRecord('questions', q.id));
-  STATE.data.actions.filter(a=>a.problemId===id).forEach(a=>deleteRecord('actions', a.id));
-  STATE.data.learnings.filter(l=>l.problemId===id).forEach(l=>deleteRecord('learnings', l.id));
-  deleteRecord('problems', id);
+  STATE.menuFor = null;
+  if(childQ + childA + childL > 0){
+    const msg = 'Xoá vấn đề "'+clip(p.title,60)+'"?\n\nKèm theo '+childQ+' câu hỏi, '+childA+' hành động, '+childL+' bài học liên quan cũng sẽ bị xoá và không hoàn tác được.';
+    if(!confirm(msg)) return;
+    // remove children first so nothing is orphaned
+    STATE.data.questions.filter(q=>q.problemId===id).forEach(q=>deleteRecord('questions', q.id));
+    STATE.data.actions.filter(a=>a.problemId===id).forEach(a=>deleteRecord('actions', a.id));
+    STATE.data.learnings.filter(l=>l.problemId===id).forEach(l=>deleteRecord('learnings', l.id));
+    deleteRecord('problems', id);
+    toast('Đã xoá vấn đề.');
+  } else {
+    const copy = Object.assign({}, p);
+    deleteRecord('problems', id);
+    showUndo('Đã xoá vấn đề', ()=>{ if(!STATE.data.problems.some(x=>x.id===id)) createRecord('problems', copy, {restore:true}); });
+  }
   renderAll();
+}
+function deleteProblemFromModal(){
+  const p = MODAL.problem; if(!p || !p.id) return;
+  STATE.modalDirty = false;
+  closeModal(true);
+  deleteProblem(p.id);
+}
+// Problem window opened by someone who may only read it: lock the fields, keep cross-questions open
+function applyProblemPerm(){
+  const box = document.getElementById('modalBox'); if(!box) return;
+  const ro = MODAL.mode==='edit' && !canEdit('problems', MODAL.problem);
+  box.classList.toggle('ro', ro);
+  if(!ro) return;
+  ['f_title','f_desc','f_keywords','f_tagInput','f_planned','f_actual','f_status','f_result'].forEach(id=>{ const el = document.getElementById(id); if(el) el.disabled = true; });
+  box.querySelectorAll('input[type=range], .level-btn, .tag button').forEach(el=>{ el.disabled = true; });
 }
 
 /* ---- Problem modal ---- */
@@ -1569,6 +1566,7 @@ function renderProgressSteps(p, isEdit, questions, actions, learnings){
 }
 
 function renderModal(){
+  document.getElementById('modalBox').classList.remove('ro');
   if(MODAL.mode==='quick'){ renderQuickAddModal(); return; }
   const p = MODAL.problem;
   const isEdit = MODAL.mode==='edit';
@@ -1582,6 +1580,7 @@ function renderModal(){
   document.getElementById('modalBox').innerHTML = `
     <div class="modal-title">${isEdit?'Chỉnh sửa':'Thêm mới'} — VẤN ĐỀ &amp; THỬ THÁCH</div>
     <div class="modal-sub">Điền thông tin chi tiết bên dưới</div>
+    ${isEdit && !canEdit('problems', p) ? `<div class="lock-note">🔒 ${esc(editorsNote('problems', p))} Bạn vẫn đặt được câu hỏi làm rõ.</div>` : ''}
     ${renderProgressSteps(p, isEdit, questions, actions, learnings)}
 
     <div class="field">
@@ -1673,11 +1672,13 @@ function renderModal(){
       `<div class="hint">Lưu vấn đề để mở khoá câu hỏi làm rõ, hành động, kết quả và bài học.</div>`}
 
     <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal()">Huỷ</button>
-      <button class="btn btn-gold" onclick="saveProblemTop()">${isEdit?'Cập nhật':'Lưu vấn đề'}</button>
+      ${isEdit && canEdit('problems', p) ? `<button class="btn lv-del" style="flex:0 0 auto" onclick="deleteProblemFromModal()">🗑 Xoá</button>` : ''}
+      <button class="btn btn-ghost" onclick="closeModal()">${isEdit && !canEdit('problems', p) ? 'Đóng' : 'Huỷ'}</button>
+      ${!isEdit || canEdit('problems', p) ? `<button class="btn btn-gold" onclick="saveProblemTop()">${isEdit?'Cập nhật':'Lưu vấn đề'}</button>` : ''}
     </div>
   `;
   initStepSortable();
+  applyProblemPerm();
 }
 function renderTagChips(){
   return (MODAL.tags||[]).map((t,i)=>`<span class="tag">${esc(t)}<button onclick="removeModalTag(${i})">✕</button></span>`).join('');
@@ -1772,7 +1773,7 @@ function renderProblemDetailSections(p, questions, actions, learnings){
     <div class="section-title">Phát biểu hành động để giải quyết</div>
     <div class="hint" style="margin:-4px 0 10px">Chia thành từng bước: <strong>làm gì → tạo kết quả gì → khi nào</strong>. Kéo <span class="step-handle-demo">⋮⋮</span> hoặc bấm ↑↓ để đổi thứ tự.</div>
     <div id="modalActions">${renderModalActions(actions)}</div>
-    <div class="action-add-form">
+    <div class="action-add-form edit-only">
       <div class="step-new-title">➕ <span id="stepNewNo">BƯỚC ${actions.length+1}</span></div>
       <label class="step-field"><span>Làm gì?</span>
         <input id="newActionText" type="text" placeholder="Việc cụ thể cần làm ở bước này..." value="${esc(getDraft('stept_'+p.id)||'')}" oninput="setDraft('stept_${p.id}', this.value)" onkeydown="if(event.key==='Enter' && !event.isComposing && event.keyCode!==229){event.preventDefault();document.getElementById('newActionOutcome').focus();}"/></label>
@@ -1796,7 +1797,7 @@ function renderProblemDetailSections(p, questions, actions, learnings){
 
     <div class="section-title">Bài học từ vấn đề</div>
     <div id="modalLearnings">${renderModalLearnings(learnings)}</div>
-    <div class="mini-add">
+    <div class="mini-add edit-only">
       <input id="newLearningText" type="text" placeholder="Gõ bài học bạn đúc kết được..." onkeydown="if(event.key==='Enter' && !event.isComposing && event.keyCode!==229){event.preventDefault();addProblemLearning();}"/>
       <button class="btn btn-teal btn-sm" onclick="addProblemLearning()">Lưu</button>
     </div>
@@ -1812,13 +1813,11 @@ function renderModalQuestions(list){
     <div class="list-row" style="margin-bottom:6px">
       <button class="star-btn ${q.star?'on':''}" onclick="toggleQuestionStar('${q.id}')">★</button>
       <div class="txt">${esc(q.text)}${crossBadge}<span class="src">${QUESTION_STATUS[q.status]||q.status}</span></div>
-      <div class="acts">
-        <button onclick="removeInModal('questions','${q.id}')">✕</button>
-      </div>
+      <div class="acts">${canEdit('questions', q) ? `<button onclick="removeInModal('questions','${q.id}')">✕</button>` : ''}</div>
     </div>
     <div class="qa-answer">
       ${q.answer ? `<div class="qa-answer-text">💬 ${esc(q.answer)}</div>` : ''}
-      ${draftFlag(q)}<div class="qa-answer-edit">
+      ${canEdit('questions', q) ? draftFlag(q) : ''}<div class="qa-answer-edit ${canEdit('questions', q) ? '' : 'hidden'}">
         <textarea id="ans_${q.id}" rows="2" placeholder="${q.answer?'Sửa câu trả lời...':'Trả lời câu hỏi này... (Enter để xuống dòng)'}" oninput="markDirty();setDraft('ans_${q.id}', this.value)">${esc(ansValue(q))}</textarea>
         <button class="btn btn-teal btn-sm" onclick="saveQuestionAnswer('${q.id}')">${q.answer?'Cập nhật':'Lưu'}</button>
       </div>
@@ -1833,14 +1832,14 @@ function renderModalActions(list){
     const overdue = a.status!=='done' && isOverdue(a.deadline);
     return `<div class="step-card ${a.status==='done'?'row-done':''}" data-id="${a.id}">
       <div class="step-head">
-        <span class="step-handle" title="Giữ và kéo để đổi thứ tự">⋮⋮</span>
+        <span class="step-handle edit-only" title="Giữ và kéo để đổi thứ tự">⋮⋮</span>
         <span class="step-no">BƯỚC ${i+1}</span>
-        <span class="step-move">
+        <span class="step-move edit-only">
           <button title="Lên" onclick="moveStep('${a.id}',-1)" ${i===0?'disabled':''}>↑</button>
           <button title="Xuống" onclick="moveStep('${a.id}',1)" ${i===steps.length-1?'disabled':''}>↓</button>
         </span>
         <button class="status-pill ${a.status}" onclick="cycleActionStatus('${a.id}')">${ACTION_STATUS[a.status]||a.status}</button>
-        <button class="step-del" title="Xoá bước" onclick="removeInModal('actions','${a.id}')">✕</button>
+        <button class="step-del edit-only" title="Xoá bước" onclick="removeInModal('actions','${a.id}')">✕</button>
       </div>
       <div class="step-body">
         <div class="step-line"><span class="step-k">Làm gì</span><span class="step-v">${esc(a.text)}</span></div>
@@ -1854,7 +1853,7 @@ function renderModalLearnings(list){
   if(!list.length) return '<div class="hint">Chưa có bài học nào.</div>';
   return list.map((l,i)=>`<div class="list-row">
       <div class="txt">${esc(l.text)}<span class="src">${LEARNING_STATUS[l.status]||l.status}</span></div>
-      <div class="acts">
+      <div class="acts edit-only">
         ${i>0?`<button onclick="moveLearning('${l.id}',-1)">↑</button>`:''}
         ${i<list.length-1?`<button onclick="moveLearning('${l.id}',1)">↓</button>`:''}
         ${l.status!=='applied'?`<button onclick="markLearningApplied('${l.id}')">✓ Đã áp dụng</button>`:''}
@@ -1864,6 +1863,7 @@ function renderModalLearnings(list){
 }
 
 function saveProblemTop(){
+  if(MODAL.mode==='edit' && !guardEdit('problems', MODAL.problem)) return;
   const p = MODAL.problem;
   const title = document.getElementById('f_title').value.trim();
   const desc = document.getElementById('f_desc').value.trim();
@@ -1987,6 +1987,7 @@ function persistStepOrder(ordered){
 }
 function moveStep(id, dir){
   if(!MODAL.problem) return;
+  if(!guardEdit('problems', MODAL.problem)) return;
   const steps = problemSteps(MODAL.problem.id);
   const i = steps.findIndex(a=>a.id===id), j = i+dir;
   if(i<0 || j<0 || j>=steps.length) return;
@@ -2031,6 +2032,7 @@ async function addProblemQuestion(){
   rerenderModalQuestions();
 }
 async function addProblemAction(){
+  if(MODAL.problem && MODAL.problem.id && !guardEdit('problems', MODAL.problem)) return;
   if(!MODAL.problem.id){ toast('Lưu vấn đề trước đã.'); return; }
   const input = document.getElementById('newActionText');
   const text = input.value.trim();
@@ -2054,6 +2056,7 @@ async function addProblemAction(){
   input.focus();
 }
 async function addProblemLearning(){
+  if(MODAL.problem && MODAL.problem.id && !guardEdit('problems', MODAL.problem)) return;
   if(!MODAL.problem.id){ toast('Lưu vấn đề trước đã.'); return; }
   const input = document.getElementById('newLearningText');
   const text = input.value.trim();
@@ -2066,6 +2069,7 @@ async function addProblemLearning(){
   toast('Đã lưu bài học — đã xuất hiện ở Key Learnings.');
 }
 async function removeInModal(type, id){
+  { const _r = (STATE.data[type]||[]).find(x=>x.id===id); if(_r && !guardEdit(type, _r)) return; }
   if(!confirm('Xoá mục này?')) return;
   await deleteRecord(type, id);
   if(type==='questions') rerenderModalQuestions();
@@ -2074,10 +2078,12 @@ async function removeInModal(type, id){
 }
 async function toggleQuestionStar(id){
   const q = STATE.data.questions.find(x=>x.id===id);
+  if(!q || !guardEdit('questions', q)) return;
   await updateRecord('questions', id, {star: !q.star});
   rerenderModalQuestions();
 }
 function saveQuestionAnswer(id){
+  { const _q = STATE.data.questions.find(x=>x.id===id); if(_q && !guardEdit('questions', _q)) return; }
   const input = document.getElementById('ans_'+id);
   if(!input) return;
   const raw = input.value, answer = raw.trim(), key = 'ans_'+id;
@@ -2097,6 +2103,7 @@ async function cycleQuestionStatus(id){
 }
 async function cycleActionStatus(id){
   const a = STATE.data.actions.find(x=>x.id===id);
+  if(!a || !guardEdit('actions', a)) return;
   const order = ['new','inprogress','done'];
   const next = order[(order.indexOf(a.status)+1)%order.length];
   await updateRecord('actions', id, {status: next});
@@ -2105,6 +2112,7 @@ async function cycleActionStatus(id){
   if(MODAL.problem) rerenderSteps();
 }
 async function moveLearning(id, dir){
+  if(MODAL.problem && !guardEdit('problems', MODAL.problem)) return;
   const list = STATE.data.learnings.filter(l=>l.problemId===MODAL.problem.id).sort((a,b)=>(a.order||0)-(b.order||0));
   const idx = list.findIndex(l=>l.id===id);
   const swapIdx = idx+dir;
@@ -2115,6 +2123,7 @@ async function moveLearning(id, dir){
   document.getElementById('modalLearnings').innerHTML = renderModalLearnings(STATE.data.learnings.filter(l=>l.problemId===MODAL.problem.id).sort((x,y)=>(x.order||0)-(y.order||0)));
 }
 async function markLearningApplied(id){
+  { const _l = STATE.data.learnings.find(x=>x.id===id); if(_l && !guardEdit('learnings', _l)) return; }
   await updateRecord('learnings', id, {status:'applied'});
   const updated = STATE.data.learnings.find(l=>l.id===id);
   maybeSuggestFromLearning(updated);
@@ -2182,143 +2191,6 @@ function saveQuickAdd(){
   closeModal(true);
 }
 
-/* ---------------- shared list rendering (pagination + empty state) ---------------- */
-function renderListTab(title, list, rowFn, emptyText){
-  if(!list.length){
-    const body = !STATE.dataLoaded ? 'Đang tải dữ liệu...' : emptyText;
-    return `<div class="section-title">${title}</div><div class="empty-note">${body}</div>`;
-  }
-  const page = list.slice(0, STATE.shownCount);
-  const moreCount = list.length - page.length;
-  const moreBtn = moreCount>0
-    ? `<button class="btn btn-ghost btn-block" style="margin-top:6px" onclick="loadMore()">Tải thêm ${Math.min(moreCount, STATE.pageSize)} / còn ${moreCount}</button>`
-    : '';
-  return `<div class="section-title">${title}</div>` + page.map(rowFn).join('') + moreBtn;
-}
-
-/* ---------------- QUESTIONS TAB ---------------- */
-function renderQuestionsTab(){
-  let list = filteredByPerson('questions').filter(q=>matchesSearch(q.text)).filter(q=>matchesDateRange(q.createdAt));
-  const qRank = {clarifying:0, answered:1};
-  list = list.slice().sort((a,b)=>
-    (b.star?1:0)-(a.star?1:0)
-    || (qRank[a.status]??9) - (qRank[b.status]??9)
-    || new Date(b.createdAt||0)-new Date(a.createdAt||0)
-  );
-  const body = renderListTab('Tất cả câu hỏi', list, q=>{
-    const problem = STATE.data.problems.find(p=>p.id===q.problemId);
-    const cross = isCrossQ(q);
-    const crossBadge = cross ? `<span class="cross-badge">❓ ${esc(q.askedBy||'?')} hỏi → ${esc(q.member||'?')}</span>` : '';
-    return `<div class="qa-block ${cross?'qa-cross':''}">
-      <div class="list-row" style="margin-bottom:6px">
-        <button class="star-btn ${q.star?'on':''}" onclick="toggleStandaloneStar('${q.id}')">★</button>
-        <div class="txt">${esc(q.text)}${crossBadge?'<br>'+crossBadge:''}<span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'} · ${QUESTION_STATUS[q.status]||q.status}</span>${!cross&&q.member?' '+memberBadge(q.member):''}</div>
-        <div class="acts">
-          <button onclick="deleteStandalone('questions','${q.id}')">🗑️</button>
-        </div>
-      </div>
-      <div class="qa-answer">
-        ${q.answer ? `<div class="qa-answer-text">💬 ${esc(q.answer)}</div>` : ''}
-        ${draftFlag(q)}<div class="qa-answer-edit">
-          <textarea id="ans_${q.id}" rows="2" placeholder="${q.answer?'Sửa câu trả lời...':'Trả lời câu hỏi này... (Enter để xuống dòng)'}" oninput="setDraft('ans_${q.id}', this.value)">${esc(ansValue(q))}</textarea>
-          <button class="btn btn-teal btn-sm" onclick="saveQuestionAnswer('${q.id}')">${q.answer?'Cập nhật':'Lưu'}</button>
-        </div>
-      </div>
-    </div>`;
-  }, 'Chưa có câu hỏi nào.');
-  // Cross-question intro + unseen notice
-  const unseen = unseenCrossQuestions().length;
-  const notice = unseen>0 ? `<div class="cross-notice">🔔 Bạn có <strong>${unseen}</strong> câu hỏi mới từ người khác dành cho bạn.</div>` : '';
-  const intro = `<div class="cross-intro">💡 Ai cũng có thể đặt câu hỏi khai vấn cho vấn đề của người khác — mở vấn đề của họ và thêm câu hỏi. Câu hỏi chéo được tô nổi bật bên dưới.</div>`;
-  return notice + intro + body;
-}
-function toggleStandaloneStar(id){ const q=STATE.data.questions.find(x=>x.id===id); updateRecord('questions',id,{star:!q.star}); refreshKeepScroll(); }
-function cycleStandaloneQStatus(id){ const q=STATE.data.questions.find(x=>x.id===id); updateRecord('questions',id,{status:q.status==='clarifying'?'answered':'clarifying'}); refreshKeepScroll(); }
-function deleteStandalone(type,id){ if(!confirm('Xoá mục này?'))return; deleteRecord(type,id); refreshKeepScroll(); }
-
-/* ---------------- ACTIONS TAB ---------------- */
-function renderActionsTab(){
-  const sub = STATE.actionSubTab;
-  let base = filteredByPerson('actions').filter(a=>matchesSearch(a.text)).filter(a=>matchesDateRange(a.createdAt));
-
-  const counts = {
-    all: base.length,
-    new: base.filter(a=>a.status==='new').length,
-    inprogress: base.filter(a=>a.status==='inprogress').length,
-    done: base.filter(a=>a.status==='done').length
-  };
-
-  let list = sub==='all' ? base : base.filter(a=>a.status===sub);
-  // Priority order: Mới tạo → Đang tiến hành → Hoàn thành; within each, newest first
-  const rank = {new:0, inprogress:1, done:2};
-  list = list.slice().sort((a,b)=>
-    (rank[a.status]??9) - (rank[b.status]??9)
-    || new Date(b.createdAt||0) - new Date(a.createdAt||0)
-  );
-
-  const chipRow = `<div class="chip-row">
-    <button class="chip ${sub==='all'?'active':''}" onclick="setActionSub('all')">Tất cả ${counts.all}</button>
-    <button class="chip ${sub==='new'?'active':''}" onclick="setActionSub('new')">Mới tạo ${counts.new}</button>
-    <button class="chip ${sub==='inprogress'?'active':''}" onclick="setActionSub('inprogress')">Đang tiến hành ${counts.inprogress}</button>
-    <button class="chip ${sub==='done'?'active':''}" onclick="setActionSub('done')">Hoàn thành ${counts.done}</button>
-  </div>`;
-
-  const rowFn = a=>{
-    const problem = STATE.data.problems.find(p=>p.id===a.problemId);
-    const overdue = a.status!=='done' && isOverdue(a.deadline);
-    return `<div class="list-row ${a.status==='done'?'row-done':''}">
-      <div class="txt">${esc(a.text)}
-        ${a.outcome?`<span class="src">🎯 ${esc(a.outcome)}</span>`:''}
-        <span class="src">${problem?('Bước '+(problemSteps(problem.id).findIndex(x=>x.id===a.id)+1)+' · Từ vấn đề: '+esc(problem.title)):'Độc lập'}${a.deadline?` · <span class="${overdue?'overdue':''}">📅 ${fmtDeadline(a.deadline)}${overdue?' (quá hạn)':''}</span>`:''}${a.breakthrough?' · ⚡ Đột phá':''}</span>${a.member?' '+memberBadge(a.member):''}
-      </div>
-      <div class="acts">
-        <button class="status-pill ${a.status}" onclick="cycleStandaloneAStatus('${a.id}')">${ACTION_STATUS[a.status]||a.status}</button>
-        <button onclick="deleteStandalone('actions','${a.id}')">🗑️</button>
-      </div>
-    </div>`;
-  };
-
-  const body = list.length
-    ? renderListTab('Danh sách hành động', list, rowFn, '').replace('<div class="section-title">Danh sách hành động</div>','')
-    : `<div class="empty-note">${emptyMsg('Không có hành động nào khớp bộ lọc hiện tại.')}</div>`;
-
-  return '<div class="section-title">Tất cả hành động</div>' + chipRow + body;
-}
-function setActionSub(s){ STATE.actionSubTab = s; STATE.shownCount = STATE.pageSize; renderContent(); }
-function cycleStandaloneAStatus(id){
-  const a = STATE.data.actions.find(x=>x.id===id);
-  const order=['new','inprogress','done'];
-  const next = order[(order.indexOf(a.status)+1)%order.length];
-  updateRecord('actions', id, {status:next});
-  maybeSuggestFromAction(STATE.data.actions.find(x=>x.id===id));
-  refreshKeepScroll();
-}
-
-/* ---------------- LEARNINGS TAB ---------------- */
-function renderLearningsTab(){
-  let list = filteredByPerson('learnings').filter(l=>matchesSearch(l.text)).filter(l=>matchesDateRange(l.createdAt));
-  const lRank = {available:0, applied:1};
-  list = list.slice().sort((a,b)=>
-    (lRank[a.status]??9) - (lRank[b.status]??9)
-    || (a.order||0)-(b.order||0)
-  );
-  return renderListTab('Tất cả bài học', list, l=>{
-    const problem = STATE.data.problems.find(p=>p.id===l.problemId);
-    return `<div class="list-row ${l.status==='applied'?'row-done':''}">
-      <div class="txt">${esc(l.text)}<span class="src">${problem?('Từ vấn đề: '+esc(problem.title)):'Độc lập'} · ${LEARNING_STATUS[l.status]||l.status}</span>${l.member?' '+memberBadge(l.member):''}</div>
-      <div class="acts">
-        ${l.status!=='applied'?`<button onclick="markStandaloneApplied('${l.id}')">✓ Đã áp dụng</button>`:''}
-        <button onclick="deleteStandalone('learnings','${l.id}')">🗑️</button>
-      </div>
-    </div>`;
-  }, 'Chưa có bài học nào.');
-}
-function markStandaloneApplied(id){
-  updateRecord('learnings', id, {status:'applied'});
-  maybeSuggestFromLearning(STATE.data.learnings.find(l=>l.id===id));
-  refreshKeepScroll();
-}
-
 /* ---------------- BEST PRACTICES TAB + suggestion engine ---------------- */
 function bpKey(source, refId){ return source+':'+refId; }
 const _bpPending = new Set(); // guards against double-create within one session
@@ -2348,54 +2220,670 @@ function maybeSuggestFromAction(a){
   if(a.status==='done' && a.breakthrough){ ensureSuggestion('action', a.id, a.text, a.member); }
 }
 
-function renderBestPracticesTab(){
-  const pending = filteredByPerson('bpSuggestions');
-  const confirmed = filteredByPerson('bestPractices').filter(b=>matchesSearch(b.text));
-
-  let html = `<div class="bp-intro">
-    <div class="bp-intro-title">💎 Thực hành hiệu quả (Best Practices) là gì?</div>
-    <p>Là những cách làm đã được <strong>chứng minh mang lại kết quả tốt</strong> qua thực tế của bạn — đáng để lặp lại và nhân rộng cho lần sau hoặc cho người khác. Đây là "kho vàng" đúc kết từ trải nghiệm, không phải lý thuyết.</p>
-    <div class="bp-intro-title" style="margin-top:12px">Khi nào nên chuyển một mục sang đây?</div>
-    <ul class="bp-rules">
-      <li><strong>Từ Vấn đề:</strong> khi một vấn đề đã <em>Hoàn thành</em> và bạn tự chấm <em>Sự hiệu quả ≥ 8/10</em> → cách bạn giải quyết nó xứng đáng thành thực hành mẫu.</li>
-      <li><strong>Từ Bài học:</strong> khi một bài học đã được đánh dấu <em>Đã áp dụng</em> vào thực tế và cho kết quả tốt.</li>
-      <li><strong>Từ Hành động:</strong> khi một hành động được đánh dấu <em>⚡ Đột phá</em> và đã <em>Hoàn thành</em> — tức nó tạo ra thay đổi lớn.</li>
-    </ul>
-    <p style="margin-top:8px;color:var(--ink-faint)">Hệ thống tự động phát hiện các mục đạt điều kiện trên và đưa vào "Gợi ý chờ duyệt" bên dưới. Bạn xem lại rồi bấm ✓ để đưa vào kho, hoặc ✕ nếu chưa muốn.</p>
-  </div>`;
-
-  html += '<div class="section-title">Gợi ý chờ duyệt</div>';
-  html += pending.length ? pending.map(s=>`
-    <div class="pending-row">
-      <span class="src">Nguồn: ${BP_SOURCE[s.source]||s.source}</span>${s.member?' '+memberBadge(s.member):''}
-      <div class="txt">${esc(s.text)}</div>
-      <div class="pending-actions">
-        <button class="btn btn-teal btn-sm" onclick="confirmSuggestion('${s.id}')">✓ Thêm vào kho</button>
-        <button class="btn btn-ghost btn-sm" onclick="dismissSuggestion('${s.id}')">✕ Bỏ qua</button>
-      </div>
-    </div>`).join('') : '<div class="empty-note">'+emptyMsg('Chưa có gợi ý nào chờ duyệt.')+'</div>';
-
-  html += '<div class="section-title">Đã xác nhận</div>';
-  html += confirmed.length ? confirmed.slice().sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)).map(b=>`
-    <div class="list-row">
-      <div class="txt">${esc(b.text)}<span class="src">Nguồn: ${BP_SOURCE[b.source]||b.source}</span>${b.member?' '+memberBadge(b.member):''}</div>
-      <div class="acts"><button onclick="deleteStandalone('bestPractices','${b.id}')">🗑️</button></div>
-    </div>`).join('') : '<div class="empty-note">'+emptyMsg('Chưa có thực hành hiệu quả nào được xác nhận.')+'</div>';
-
-  return html;
-}
 function confirmSuggestion(id){
   const s = STATE.data.bpSuggestions.find(x=>x.id===id);
   if(!s) return;
+  if(!guardEdit('bestPractices', s)) return;
   createRecord('bestPractices', {id:uid(), source:s.source, refId:s.refId, text:s.text, member:s.member, createdAt:new Date().toISOString()});
   deleteRecord('bpSuggestions', id);
   toast('Đã thêm vào Best Practices.');
   refreshKeepScroll();
 }
 function dismissSuggestion(id){
+  const s = STATE.data.bpSuggestions.find(x=>x.id===id);
+  if(s && !guardEdit('bestPractices', s)) return;
   deleteRecord('bpSuggestions', id);
   refreshKeepScroll();
 }
+
+/* ================================================================
+   DANH SÁCH THEO DÒNG THỜI GIAN (v2.9)
+   5 tab Vấn đề · Câu hỏi · Hành động · Bài học · Thực hành hiệu quả dùng chung:
+   chip lọc (Của tôi · Cả nhóm · …) · ⇅ kiểu xếp · 🔍 tìm · nhóm theo hạn / ngày tạo ·
+   thẻ chi tiết (xem, sửa, đổi trạng thái, xoá) · Hoàn tác 5 giây · quyền sửa
+   ================================================================ */
+const LIST_TABS = ['problems','questions','actions','learnings','bestPractices'];
+const LV_TITLE = {problems:'Vấn đề', questions:'Câu hỏi', actions:'Hành động', learnings:'Bài học', bestPractices:'Thực hành hiệu quả'};
+const LV_NOUN = {problems:'vấn đề', questions:'câu hỏi', actions:'hành động', learnings:'bài học', bestPractices:'thực hành hiệu quả'};
+const LV_SORTS = {
+  problems:[['due','Theo hạn'],['new','Mới tạo'],['score','Theo điểm']],
+  actions:[['due','Theo hạn'],['new','Mới tạo']],
+  questions:[['new','Mới nhất'],['star','★ trước'],['old','Cũ nhất']],
+  learnings:[['new','Mới nhất'],['old','Cũ nhất']],
+  bestPractices:[['new','Mới nhất'],['old','Cũ nhất']]
+};
+const LV_CHIPS = {
+  problems:[{k:'pri', label:'🔥 Ưu tiên', test:p=>safeScore(p)>=PRIORITY_THRESHOLD}],
+  actions:[{k:'bt', label:'⚡ Đột phá', test:a=>isTrue(a.breakthrough)}],
+  questions:[{k:'star', label:'★ Ưu tiên', test:q=>isTrue(q.star)}, {k:'cross', label:'❓ Hỏi chéo', test:q=>isCrossQ(q)}],
+  learnings:[], bestPractices:[]
+};
+const DONE_ST   = {problems:'done', actions:'done', questions:'answered', learnings:'applied'};
+const REOPEN_ST = {problems:'inprogress', actions:'inprogress', questions:'clarifying', learnings:'available'};
+const TS_KEY    = {problems:'doneAt', actions:'doneAt', questions:'answeredAt', learnings:'appliedAt'};
+const DONE_LBL  = {problems:'Đã hoàn thành', actions:'Đã hoàn thành', questions:'Đã trả lời', learnings:'Đã áp dụng'};
+const DONE_VERB = {problems:'Hoàn thành', actions:'Hoàn thành', questions:'Trả lời', learnings:'Áp dụng'};
+const STATUS_LABEL = {problems:PROBLEM_STATUS, actions:ACTION_STATUS, questions:QUESTION_STATUS, learnings:LEARNING_STATUS};
+const BP_ICON = {problem:'🧩', learning:'💡', action:'⚡'};
+const DOW_FULL = ['Chủ nhật','Thứ 2','Thứ 3','Thứ 4','Thứ 5','Thứ 6','Thứ 7'];
+const DOW_SHORT = ['CN','T2','T3','T4','T5','T6','T7'];
+const ADMIN_NAMES = ['Nhưỡng'];
+const CREATED_BY_TYPES = ['problems','actions','learnings','bestPractices'];
+
+function isTrue(v){ return v===true || v===1 || v==='1' || String(v).toUpperCase()==='TRUE'; }
+function pad2(n){ return String(n).padStart(2,'0'); }
+function hasText(v){ return !!(v!==undefined && v!==null && String(v).trim()); }
+
+/* ---- per-tab view state (remembered on this device) ---- */
+let LV = (()=>{ try { return JSON.parse(localStorage.getItem('lcsh_lv')||'{}') || {}; } catch(e){ return {}; } })();
+function lvState(tab){
+  const s = LV[tab] || (LV[tab] = {});
+  if(!s.who) s.who = 'me';
+  if(!s.sort || !(LV_SORTS[tab]||[]).some(x=>x[0]===s.sort)) s.sort = LV_SORTS[tab][0][0];
+  if(s.chip && !(LV_CHIPS[tab]||[]).some(c=>c.k===s.chip)) s.chip = '';
+  return s;
+}
+function lvSave(){ try { localStorage.setItem('lcsh_lv', JSON.stringify(LV)); } catch(e){} }
+
+/* ---- record helpers ---- */
+function problemMap(){ const m = {}; (STATE.data.problems||[]).forEach(p=>{ m[p.id] = p; }); return m; }
+function isDoneRec(tab, r){
+  if(tab==='problems' || tab==='actions') return r.status==='done';
+  if(tab==='questions') return r.status==='answered';
+  if(tab==='learnings') return r.status==='applied';
+  return false;
+}
+function dueTsOf(tab, r){
+  const v = tab==='problems' ? r.plannedDate : (tab==='actions' ? r.deadline : null);
+  if(!hasText(v)) return null;
+  const t = deadlineTs(v);
+  return Number.isFinite(t) ? t : null;
+}
+function doneTime(tab, r){
+  if(tab==='problems' || tab==='actions') return doneTs(r);
+  if(tab==='questions') return answeredTs(r);
+  if(tab==='learnings') return appliedTs(r);
+  return null;
+}
+function hasClock(ts){ const v = vnD(ts); return !(v.getUTCHours()===23 && v.getUTCMinutes()===59); }
+
+/* ---- who may edit ---- */
+function lvOwners(tab, r){
+  const list = tab==='questions' ? [r.member, r.askedBy] : [r.member, r.createdBy];
+  const out = [];
+  list.forEach(n=>{ if(isValidMember(n) && !out.some(x=>same(x,n))) out.push(nfc(n)); });
+  return out;
+}
+function canEdit(tab, r){
+  if(!r) return false;
+  const me = STATE.member;
+  if(ADMIN_NAMES.some(a=>same(a, me))) return true;
+  const owners = lvOwners(tab, r);
+  return !owners.length || owners.some(o=>same(o, me));
+}
+function editorsNote(tab, r){
+  const names = lvOwners(tab, r).filter(n=>!ADMIN_NAMES.some(a=>same(a,n))).concat(ADMIN_NAMES);
+  const who = names.length>1 ? names.slice(0,-1).join(', ')+' hoặc '+names[names.length-1] : names[0];
+  return 'Chỉ '+who+' sửa được thẻ này.';
+}
+function guardEdit(tab, r){ if(canEdit(tab, r)) return true; toast(editorsNote(tab, r)); return false; }
+
+/* ---- filtering ---- */
+function lvWhoOk(tab, r, who){
+  if(who==='all') return true;
+  const m = who==='me' ? STATE.member : who;
+  if(tab==='questions') return same(r.member, m) || same(r.askedBy, m);
+  return same(r.member, m);
+}
+function lvSearchText(tab, r, pmap){
+  const p = r.problemId ? pmap[r.problemId] : null, pt = p ? ' '+p.title : '';
+  if(tab==='problems') return [r.title, r.desc, r.keywords, tagsArray(r.tags).join(' '), r.result].join(' ');
+  if(tab==='actions') return [r.text, r.outcome].join(' ') + pt;
+  if(tab==='questions') return [r.text, r.answer, r.askedBy].join(' ') + pt;
+  return String(r.text||'') + pt;
+}
+function lvCollect(tab, pmap){
+  const s = lvState(tab), q = norm(STATE.search).trim();
+  const chip = (LV_CHIPS[tab]||[]).find(c=>c.k===s.chip);
+  const range = !!(STATE.dateFrom || STATE.dateTo);
+  const fromT = STATE.dateFrom ? keyToMs(STATE.dateFrom) : -Infinity;
+  const toT = STATE.dateTo ? keyToMs(STATE.dateTo) + DAY_MS : Infinity;
+  const ok = r=>{
+    if(!r || !r.id) return false;
+    if(!lvWhoOk(tab, r, s.who)) return false;
+    if(chip && !chip.test(r)) return false;
+    if(q && !norm(lvSearchText(tab, r, pmap)).includes(q)) return false;
+    if(range){
+      const t = s.sort==='due' ? dueTsOf(tab, r) : toMs(r.createdAt);
+      if(t===null || t<fromT || t>=toT) return false;
+    }
+    return true;
+  };
+  const list = (STATE.data[tab]||[]).filter(ok);
+  const pending = tab==='bestPractices' ? (STATE.data.bpSuggestions||[]).filter(ok) : [];
+  return {open: list.filter(r=>!isDoneRec(tab, r)), done: list.filter(r=>isDoneRec(tab, r)), pending};
+}
+function lvCounts(tab){
+  const C = lvCollect(tab, problemMap()), searching = !!(String(STATE.search||'').trim() || STATE.dateFrom || STATE.dateTo);
+  const n = searching ? C.open.length + C.done.length + C.pending.length : (tab==='bestPractices' ? C.pending.length : C.open.length);
+  const now = nowMs();
+  const over = (tab==='problems' || tab==='actions') && C.open.some(r=>{ const t = dueTsOf(tab, r); return t!==null && t<now; });
+  return {n, over};
+}
+
+/* ---- grouping by time ---- */
+function dueBucket(ts, now){
+  if(ts===null) return ['none','Chưa đặt hạn'];
+  if(ts < now) return ['over','Quá hạn'];
+  const today = sod(now).getTime(), k = dayKey(ts);
+  if(k===dayKey(today)) return ['today','Hôm nay'];
+  if(k===dayKey(today + DAY_MS)) return ['tmr','Ngày mai'];
+  const nextMon = today + (7 - ((vnDow(now)+6)%7))*DAY_MS;
+  if(ts < nextMon) return ['week','Tuần này'];
+  if(ts < nextMon + 7*DAY_MS) return ['nweek','Tuần sau'];
+  return ['later','Sau này'];
+}
+function createdBucket(ts, now){
+  if(ts===null) return ['nodate','Chưa rõ ngày'];
+  const today = sod(now).getTime(), k = dayKey(ts);
+  if(k===dayKey(today)) return ['d0','Hôm nay'];
+  if(k===dayKey(today - DAY_MS)) return ['d1','Hôm qua'];
+  const mon = today - ((vnDow(now)+6)%7)*DAY_MS;
+  if(ts >= mon) return ['w0','Tuần này'];
+  if(ts >= mon - 7*DAY_MS) return ['w1','Tuần trước'];
+  const x = vnD(ts);
+  return ['m'+x.getUTCFullYear()+pad2(x.getUTCMonth()+1), 'Tháng '+(x.getUTCMonth()+1)+'/'+x.getUTCFullYear()];
+}
+function byCreated(asc){ return (a,b)=>{ const x = toMs(a.createdAt)||0, y = toMs(b.createdAt)||0; return asc ? x-y : y-x; }; }
+function lvGroups(tab, items, s, now){
+  const out = [];
+  const add = (key, label, r)=>{ let g = out.find(x=>x.key===key); if(!g){ g = {key, label, items:[]}; out.push(g); } g.items.push(r); };
+  let rest = items.slice();
+  if(tab==='questions'){
+    const lim = reportRules().crossDays * DAY_MS;
+    const need = rest.filter(q=>isCrossQ(q) && same(q.member, STATE.member) && !hasText(q.answer) && now - (toMs(q.createdAt)||now) > lim);
+    need.sort(byCreated(true)).forEach(q=>add('need','Cần trả lời', q));
+    rest = rest.filter(q=>!need.includes(q));
+    if(s.sort==='star'){
+      rest.filter(q=>isTrue(q.star)).sort(byCreated(false)).forEach(q=>add('star','★ Ưu tiên', q));
+      rest = rest.filter(q=>!isTrue(q.star));
+    }
+  }
+  if(s.sort==='score'){
+    rest.sort((a,b)=>safeScore(b)-safeScore(a)).forEach(r=>add('score','Theo điểm ưu tiên', r));
+    return out;
+  }
+  if(s.sort==='due'){
+    rest.sort((a,b)=>{
+      const x = dueTsOf(tab,a), y = dueTsOf(tab,b);
+      if(x===null && y===null) return (toMs(b.createdAt)||0) - (toMs(a.createdAt)||0);
+      if(x===null) return 1; if(y===null) return -1;
+      return x - y;
+    }).forEach(r=>{ const b = dueBucket(dueTsOf(tab, r), now); add(b[0], b[1], r); });
+    return out;
+  }
+  rest.sort(byCreated(s.sort==='old')).forEach(r=>{ const b = createdBucket(toMs(r.createdAt), now); add(b[0], b[1], r); });
+  return out;
+}
+
+/* ---- small renderers ---- */
+function hl(text){
+  const s = esc(text), q = String(STATE.search||'').trim();
+  if(!q) return s;
+  const qe = esc(q).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  try { return s.replace(new RegExp(qe, 'gi'), m=>'<mark>'+m+'</mark>'); } catch(e){ return s; }
+}
+function dueChip(ts, now, shortToday){
+  const k = dayKey(ts), today = sod(now).getTime(), clock = hasClock(ts);
+  let date = DOW_SHORT[vnDow(ts)]+', '+fmtDM(ts);
+  if(k===dayKey(today)) date = (shortToday && clock) ? '' : 'Hôm nay';
+  else if(k===dayKey(today + DAY_MS)) date = (shortToday && clock) ? '' : 'Ngày mai';
+  const txt = [date, clock ? fmtHM(ts) : ''].filter(Boolean).join(' · ');
+  return `<span class="lv-due ${ts<now?'over':''}" title="Hạn: ${fmtDMY(ts)}${clock?' '+fmtHM(ts):''}">${txt}</span>`;
+}
+function doneHtml(tab, r){
+  const t = doneTime(tab, r), verb = DONE_VERB[tab];
+  if(t===null) return `<span>${verb}</span>`;
+  let tail = '';
+  if(tab==='problems' || tab==='actions'){
+    const due = dueTsOf(tab, r);
+    if(due!==null){
+      if(t <= due) tail = ' · <span class="lv-ok">đúng hạn</span>';
+      else {
+        const days = Math.round((keyToMs(dayKey(t)) - keyToMs(dayKey(due)))/DAY_MS);
+        tail = ' · <span class="lv-late">trễ '+(days>=1 ? days+' ngày' : Math.max(1, Math.round((t-due)/3600000))+' giờ')+'</span>';
+      }
+    }
+  }
+  return `<span>${verb}: ${DOW_FULL[vnDow(t)]}, ${fmtDMs(t)}${tail}</span>`;
+}
+function problemLinkHtml(tab, r, pmap){
+  const p = r.problemId ? pmap[r.problemId] : null;
+  if(!p) return '<span>Độc lập</span>';
+  let pre = '';
+  if(tab==='actions'){ const i = problemSteps(p.id).findIndex(x=>x.id===r.id); if(i>=0) pre = 'Bước '+(i+1)+' · '; }
+  return `<a class="lv-link" onclick="event.stopPropagation();openProblemModal('${jsq(p.id)}')">${pre}${hl(clip(p.title,60))} ›</a>`;
+}
+function lvRow(tab, r, pmap, done){
+  const now = nowMs(), s = lvState(tab), id = jsq(r.id);
+  const sel = STATE.sheet && STATE.sheet.type===tab && STATE.sheet.id===r.id;
+  let lead;
+  if(tab==='bestPractices'){
+    lead = `<span class="lv-src" title="${esc(BP_SOURCE[r.source]||'')}">${BP_ICON[r.source]||'💎'}</span>`;
+  } else {
+    const st = done ? 'on' : ((tab==='problems' || tab==='actions') && r.status==='inprogress' ? 'half' : '');
+    const lbl = done ? 'Bỏ đánh dấu xong' : (tab==='questions' ? 'Đánh dấu đã trả lời' : (tab==='learnings' ? 'Đánh dấu đã áp dụng' : 'Đánh dấu hoàn thành'));
+    lead = `<button class="lv-ck ${st}" title="${lbl}" aria-label="${lbl}" onclick="event.stopPropagation();tapCircle('${tab}','${id}')">✓</button>`;
+  }
+  const sub = [];
+  if(done) sub.push(doneHtml(tab, r));
+  else if(tab==='problems' || tab==='actions'){ const ts = dueTsOf(tab, r); if(ts!==null) sub.push(dueChip(ts, now, s.sort==='due')); }
+  else { const c = toMs(r.createdAt); if(c!==null) sub.push(`<span class="lv-due">${DOW_SHORT[vnDow(c)]}, ${fmtDM(c)}</span>`); }
+  if(tab==='problems'){
+    if(safeScore(r)>=PRIORITY_THRESHOLD) sub.push(`<span class="lv-hot">🔥 ${safeScore(r)}</span>`);
+    const steps = problemSteps(r.id);
+    if(steps.length) sub.push(`<span>${steps.filter(a=>a.status==='done').length}/${steps.length} bước</span>`);
+  } else if(tab==='bestPractices'){
+    sub.push(`<span>Nguồn: ${esc(BP_SOURCE[r.source]||r.source||'')}</span>`);
+  } else {
+    sub.push(problemLinkHtml(tab, r, pmap));
+  }
+  if(tab==='actions' && isTrue(r.breakthrough)) sub.push('<span>⚡ Đột phá</span>');
+  if(tab==='questions' && isCrossQ(r)) sub.push(`<span class="cross-badge" style="margin:0">❓ ${esc(r.askedBy||'?')} hỏi → ${esc(r.member||'?')}</span>`);
+  else if(s.who!=='me' && isValidMember(r.member)) sub.push(`<span>👤 ${esc(r.member)}</span>`);
+  const title = tab==='problems' ? r.title : r.text;
+  const star = tab==='questions' && isTrue(r.star) ? '<span class="lv-star">★</span> ' : '';
+  const ans = tab==='questions' && hasText(r.answer) ? `<div class="lv-ans">💬 ${hl(clip(r.answer, 220))}</div>` : '';
+  const menu = STATE.menuFor===tab+':'+r.id ? lvMenuHtml(tab, r) : '';
+  return `<div class="lv-row ${done?'done':''} ${sel?'sel':''} ${tab==='questions' && isCrossQ(r)?'cross':''}" onclick="openItem('${tab}','${id}')">
+    ${lead}
+    <div class="lv-main"><div class="lv-ttl">${star}${hl(title)}</div>${ans}<div class="lv-sub">${sub.join('')}</div>${menu}</div>
+    <button class="lv-more" title="Thao tác" aria-label="Thao tác" onclick="event.stopPropagation();lvMenu('${tab}','${id}')">⋮</button>
+  </div>`;
+}
+function lvMenuHtml(tab, r){
+  const can = canEdit(tab, r), id = jsq(r.id), items = [];
+  items.push(`<button onclick="event.stopPropagation();openItem('${tab}','${id}')">${can ? '✏️ Xem / sửa' : '👁 Xem'}</button>`);
+  const ST = STATUS_LABEL[tab];
+  if(can && ST) Object.keys(ST).forEach(k=>{ if(k!==r.status) items.push(`<button onclick="event.stopPropagation();lvSetStatus('${tab}','${id}','${k}')">→ ${ST[k]}</button>`); });
+  if(tab!=='problems' && r.problemId && (STATE.data.problems||[]).some(p=>p.id===r.problemId)) items.push(`<button onclick="event.stopPropagation();openProblemModal('${jsq(r.problemId)}')">↗ Mở vấn đề gốc</button>`);
+  if(tab==='bestPractices') items.push(`<button onclick="event.stopPropagation();openBpSource('${jsq(r.source)}','${jsq(r.refId)}')">↗ Mở mục gốc</button>`);
+  if(can) items.push(`<button class="danger" onclick="event.stopPropagation();lvDelete('${tab}','${id}')">🗑 Xoá</button>`);
+  return `<div class="lv-menu" onclick="event.stopPropagation()">${items.join('')}</div>`;
+}
+function lvPendingRow(sg){
+  const can = canEdit('bestPractices', sg), c = toMs(sg.createdAt);
+  return `<div class="lv-row pending">
+    <span class="lv-src">${BP_ICON[sg.source]||'💎'}</span>
+    <div class="lv-main"><div class="lv-ttl">${hl(sg.text)}</div>
+      <div class="lv-sub">${c!==null?`<span class="lv-due">${DOW_SHORT[vnDow(c)]}, ${fmtDM(c)}</span>`:''}<span>Nguồn: ${esc(BP_SOURCE[sg.source]||sg.source||'')}</span>${isValidMember(sg.member)?`<span>👤 ${esc(sg.member)}</span>`:''}<a class="lv-link" onclick="openBpSource('${jsq(sg.source)}','${jsq(sg.refId)}')">Xem mục gốc ›</a></div>
+      ${can ? `<div class="lv-pend-acts"><button class="btn btn-teal btn-sm" onclick="confirmSuggestion('${jsq(sg.id)}')">✓ Thêm vào kho</button><button class="btn btn-ghost btn-sm" onclick="dismissSuggestion('${jsq(sg.id)}')">✕ Bỏ qua</button></div>` : ''}
+    </div>
+  </div>`;
+}
+function lvHeadHtml(tab, s){
+  const sorts = LV_SORTS[tab], cur = (sorts.find(x=>x[0]===s.sort) || sorts[0])[1];
+  const searching = STATE.searchOpen || hasText(STATE.search) || STATE.dateFrom || STATE.dateTo;
+  let h = `<div class="lv-head">
+    <div class="lv-title">${LV_TITLE[tab]}</div>
+    <button class="lv-icon ${searching?'on':''}" title="Tìm kiếm" aria-label="Tìm kiếm" onclick="lvToggleSearch()">🔍</button>
+    <button class="lv-sort" title="Đổi cách xếp" onclick="lvCycleSort('${tab}')">⇅ ${cur}</button>
+  </div>`;
+  if(searching){
+    h += `<div class="lv-search">
+      <input id="lvSearch" type="search" placeholder="Tìm trong nội dung, câu trả lời, tên vấn đề…" value="${esc(STATE.search)}"
+        oninput="lvSearchInput(this)" oncompositionstart="_lvComposing=true" oncompositionend="_lvComposing=false;lvSearchInput(this)"/>
+      <div class="lv-range">
+        <label>Từ ngày<input id="lvFrom" type="date" value="${esc(STATE.dateFrom)}" onchange="lvOnRange()"/></label>
+        <label>Đến ngày<input id="lvTo" type="date" value="${esc(STATE.dateTo)}" onchange="lvOnRange()"/></label>
+        <button class="btn btn-ghost btn-sm" onclick="lvClearSearch()">✕ Xoá tìm</button>
+      </div>
+      <div class="hint" style="margin:0">Khoảng ngày lọc theo ${s.sort==='due' ? 'hạn' : 'ngày tạo'}. Khi đang tìm, số trên mỗi tab là số kết quả khớp.</div>
+    </div>`;
+  }
+  const chips = [
+    `<button class="chip ${s.who==='me'?'active':''}" onclick="lvWho('${tab}','me')">Của tôi</button>`,
+    `<button class="chip ${s.who!=='me'?'active':''}" onclick="lvWho('${tab}','all')">Cả nhóm</button>`
+  ].concat((LV_CHIPS[tab]||[]).map(c=>`<button class="chip ${s.chip===c.k?'active':''}" onclick="lvChip('${tab}','${c.k}')">${c.label}</button>`));
+  h += `<div class="chip-row lv-chips">${chips.join('')}</div>`;
+  if(s.who!=='me'){
+    const names = reportMembers();
+    h += `<div class="chip-row lv-chips lv-names"><button class="chip ${s.who==='all'?'active':''}" onclick="lvWho('${tab}','all')">Tất cả</button>${names.map(n=>`<button class="chip ${same(s.who,n)?'active':''}" onclick="lvWho('${tab}','${jsq(n)}')">${esc(n)}</button>`).join('')}</div>`;
+  }
+  return h;
+}
+function lvEmptyHtml(tab, s){
+  if(!STATE.dataLoaded) return '<div class="empty-note">Đang tải dữ liệu...</div>';
+  const filtered = hasText(STATE.search) || STATE.dateFrom || STATE.dateTo || s.chip;
+  if(s.who==='me'){
+    const others = (STATE.data[tab]||[]).length>0 || (tab==='bestPractices' && (STATE.data.bpSuggestions||[]).length>0);
+    return `<div class="empty-note">${filtered ? 'Không có kết quả trong “Của tôi”.' : 'Bạn chưa có '+LV_NOUN[tab]+' nào.'}<br>
+      ${others ? `<button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="lvWho('${tab}','all')">Xem Cả nhóm</button>` : ''}
+      ${!filtered && tab!=='bestPractices' ? `<button class="btn btn-gold btn-sm" style="margin:10px 0 0 6px" onclick="onAddClick()">＋ Thêm ${LV_NOUN[tab]}</button>` : ''}</div>`;
+  }
+  return `<div class="empty-note">${filtered ? 'Không có mục nào khớp bộ lọc.' : 'Chưa có '+LV_NOUN[tab]+' nào.'}</div>`;
+}
+function bpInfoHtml(){
+  return `<details class="lv-info"><summary>ℹ️ Khi nào một mục vào đây?</summary>
+    <p style="margin:6px 0">Thực hành hiệu quả là cách làm đã được <strong>chứng minh mang lại kết quả tốt</strong> qua thực tế — đáng lặp lại và nhân rộng.</p>
+    <ul class="bp-rules">
+      <li><strong>Từ Vấn đề:</strong> vấn đề đã <em>Hoàn thành</em> và tự chấm <em>Sự hiệu quả ≥ 8/10</em>.</li>
+      <li><strong>Từ Bài học:</strong> bài học đã được đánh dấu <em>Đã áp dụng</em>.</li>
+      <li><strong>Từ Hành động:</strong> hành động <em>⚡ Đột phá</em> đã <em>Hoàn thành</em>.</li>
+    </ul>
+    <p style="margin:6px 0 4px">Hệ thống tự đưa các mục đạt điều kiện vào "Chờ duyệt". Bấm ✓ để đưa vào kho, hoặc ✕ nếu chưa muốn.</p>
+  </details>`;
+}
+function renderListView(tab){
+  const s = lvState(tab), now = nowMs(), pmap = problemMap(), C = lvCollect(tab, pmap);
+  const searching = hasText(STATE.search) || STATE.dateFrom || STATE.dateTo;
+  let body = '';
+  if(tab==='questions') body += `<details class="lv-info"><summary>ℹ️ Câu hỏi chéo là gì?</summary><p style="margin:6px 0 4px">Ai cũng có thể đặt câu hỏi khai vấn cho vấn đề của người khác: mở vấn đề của họ và thêm câu hỏi. Câu hỏi chéo có viền tím; câu gửi bạn chờ quá ${reportRules().crossDays} ngày nằm ở nhóm "Cần trả lời".</p></details>`;
+  if(tab==='bestPractices') body += bpInfoHtml();
+  if(C.pending.length){
+    body += `<div class="lv-group"><div class="lv-gh pend"><span>Chờ duyệt</span><span class="lv-gn">${C.pending.length}</span></div>${C.pending.slice().sort(byCreated(false)).map(lvPendingRow).join('')}</div>`;
+  }
+  const groups = lvGroups(tab, C.open, s, now);
+  let left = STATE.shownCount, hidden = 0;
+  groups.forEach(g=>{
+    const rows = g.items.slice(0, Math.max(0, left));
+    hidden += g.items.length - rows.length; left -= rows.length;
+    if(!rows.length) return;
+    body += `<div class="lv-group"><div class="lv-gh ${(g.key==='over' || g.key==='need')?'over':''}"><span>${g.label}</span><span class="lv-gn">${g.items.length}</span></div>${rows.map(r=>lvRow(tab, r, pmap, false)).join('')}</div>`;
+  });
+  if(hidden>0) body += `<button class="btn btn-ghost btn-block" style="margin-top:6px" onclick="loadMore()">Xem thêm ${Math.min(hidden, STATE.pageSize)} / còn ${hidden}</button>`;
+  if(!C.open.length && !C.done.length && !C.pending.length) body += lvEmptyHtml(tab, s);
+  else if(!C.open.length && tab!=='bestPractices') body += `<div class="lv-allclear">Không còn ${LV_NOUN[tab]} nào đang mở 🎉</div>`;
+  if(tab!=='bestPractices' && C.done.length){
+    const open = !!s.doneOpen || !!searching;
+    const list = C.done.slice().sort((a,b)=>(doneTime(tab,b)||toMs(b.createdAt)||0) - (doneTime(tab,a)||toMs(a.createdAt)||0));
+    const lim = STATE.doneShown || STATE.pageSize;
+    body += `<div class="lv-group lv-done">
+      <button class="lv-gh lv-gh-btn" onclick="lvToggleDone('${tab}')" aria-expanded="${open}"><span>${DONE_LBL[tab]} (${C.done.length})</span><span class="lv-chev">${open ? '⌃' : '⌄'}</span></button>
+      ${open ? list.slice(0, lim).map(r=>lvRow(tab, r, pmap, true)).join('') + (list.length>lim ? `<button class="btn btn-ghost btn-block btn-sm" style="margin-top:6px" onclick="lvDoneMore()">Xem thêm · còn ${list.length-lim}</button>` : '') : ''}
+    </div>`;
+  }
+  const sheet = renderSheet(tab, pmap);
+  return `<div class="lv-layout ${sheet?'has-detail':''}"><div class="lv-list">${lvHeadHtml(tab, s)}${body}</div>${sheet}</div>`;
+}
+
+/* ---- list actions ---- */
+function loadMore(){ STATE.shownCount += STATE.pageSize; refreshKeepScroll(); }
+function lvDoneMore(){ STATE.doneShown = (STATE.doneShown || STATE.pageSize) + STATE.pageSize; refreshKeepScroll(); }
+function lvWho(tab, who){ lvState(tab).who = who; lvSave(); STATE.shownCount = STATE.pageSize; STATE.menuFor = null; refreshKeepScroll(); }
+function lvChip(tab, k){ const s = lvState(tab); s.chip = s.chip===k ? '' : k; lvSave(); STATE.shownCount = STATE.pageSize; refreshKeepScroll(); }
+function lvCycleSort(tab){
+  const s = lvState(tab), list = LV_SORTS[tab], i = list.findIndex(x=>x[0]===s.sort);
+  s.sort = list[(i+1) % list.length][0]; lvSave();
+  STATE.shownCount = STATE.pageSize;
+  toast('Xếp: '+list[(i+1) % list.length][1]);
+  refreshKeepScroll();
+}
+function lvToggleDone(tab){ const s = lvState(tab); s.doneOpen = !s.doneOpen; lvSave(); STATE.doneShown = STATE.pageSize; refreshKeepScroll(); }
+function lvMenu(tab, id){ STATE.menuFor = STATE.menuFor===tab+':'+id ? null : tab+':'+id; refreshKeepScroll(); }
+let _lvSearchT = null, _lvComposing = false;
+function lvSearchInput(el){
+  STATE.search = el.value;
+  if(_lvComposing) return;               // wait for the Vietnamese input method to finish a letter
+  clearTimeout(_lvSearchT);
+  _lvSearchT = setTimeout(lvApplySearch, 250);
+}
+function lvApplySearch(){
+  if(_lvComposing){ _lvSearchT = setTimeout(lvApplySearch, 250); return; }
+  STATE.shownCount = STATE.pageSize;
+  renderTabs(); renderContent();
+}
+function lvToggleSearch(){
+  if(hasText(STATE.search) || STATE.dateFrom || STATE.dateTo){ lvClearSearch(); return; }
+  STATE.searchOpen = !STATE.searchOpen;
+  refreshKeepScroll();
+  if(STATE.searchOpen) setTimeout(()=>{ const i = document.getElementById('lvSearch'); if(i) i.focus(); }, 30);
+}
+function lvClearSearch(){ STATE.search = ''; STATE.dateFrom = ''; STATE.dateTo = ''; STATE.searchOpen = false; STATE.shownCount = STATE.pageSize; refreshKeepScroll(); }
+function lvOnRange(){
+  let f = (document.getElementById('lvFrom')||{}).value || '', t = (document.getElementById('lvTo')||{}).value || '';
+  if(f && t && f > t){ const x = f; f = t; t = x; }
+  STATE.dateFrom = f; STATE.dateTo = t; STATE.shownCount = STATE.pageSize;
+  refreshKeepScroll();
+}
+
+/* ---- status: circle, menu, undo ---- */
+function afterStatus(tab, id){
+  const r = (STATE.data[tab]||[]).find(x=>x.id===id); if(!r) return;
+  if(tab==='problems') maybeSuggestFromProblem(r);
+  else if(tab==='actions') maybeSuggestFromAction(r);
+  else if(tab==='learnings') maybeSuggestFromLearning(r);
+}
+function setStatusWithUndo(tab, r, next){
+  if(!r || r.status===next) return;
+  const k = TS_KEY[tab], before = {status: r.status};
+  if(k) before[k] = (r[k]===undefined || r[k]===null) ? '' : r[k];
+  const sugBefore = new Set((STATE.data.bpSuggestions||[]).map(x=>x.id));
+  updateRecord(tab, r.id, {status: next});
+  afterStatus(tab, r.id);
+  if(STATE.sheet && STATE.sheet.id===r.id){ STATE.sheet.d.status = next; STATE.sheet.d0.status = next; }
+  showUndo((DONE_ST[tab]===next ? '✓ ' : '')+(STATUS_LABEL[tab][next]||next), ()=>{
+    updateRecord(tab, r.id, before);
+    // a "Chờ duyệt" suggestion born from this tap goes away with it
+    (STATE.data.bpSuggestions||[]).filter(x=>x.refId===r.id && !sugBefore.has(x.id)).forEach(x=>deleteRecord('bpSuggestions', x.id));
+    _bpPending.delete(bpKey({problems:'problem', actions:'action', learnings:'learning'}[tab]||'', r.id));
+    if(STATE.sheet && STATE.sheet.id===r.id){ STATE.sheet.d.status = before.status; STATE.sheet.d0.status = before.status; }
+  });
+  refreshKeepScroll();
+}
+function tapCircle(tab, id){
+  const r = (STATE.data[tab]||[]).find(x=>x.id===id); if(!r) return;
+  if(!guardEdit(tab, r)) return;
+  const done = isDoneRec(tab, r);
+  if(!done && tab==='questions' && !hasText(r.answer)){
+    openItem(tab, id, {focus:'answer'});
+    toast('Viết câu trả lời rồi bấm Lưu thay đổi.');
+    return;
+  }
+  setStatusWithUndo(tab, r, done ? REOPEN_ST[tab] : DONE_ST[tab]);
+}
+function lvSetStatus(tab, id, k){
+  const r = (STATE.data[tab]||[]).find(x=>x.id===id); if(!r) return;
+  if(!guardEdit(tab, r)) return;
+  STATE.menuFor = null;
+  if(tab==='questions' && k==='answered' && !hasText(r.answer)){ openItem(tab, id, {focus:'answer'}); toast('Viết câu trả lời rồi bấm Lưu thay đổi.'); return; }
+  setStatusWithUndo(tab, r, k);
+}
+function lvDelete(tab, id){
+  const r = (STATE.data[tab]||[]).find(x=>x.id===id); if(!r) return;
+  if(tab==='problems'){ deleteProblem(id); return; }
+  if(!guardEdit(tab, r)) return;
+  const copy = Object.assign({}, r);
+  if(STATE.sheet && STATE.sheet.id===id) STATE.sheet = null;
+  STATE.menuFor = null;
+  deleteRecord(tab, id);
+  showUndo('Đã xoá '+LV_NOUN[tab], ()=>{ if(!STATE.data[tab].some(x=>x.id===id)) createRecord(tab, copy, {restore:true}); });
+  refreshKeepScroll();
+}
+let _undoFn = null;
+function showUndo(msg, fn){
+  const bar = document.getElementById('undoBar');
+  if(!bar){ toast(msg); return; }
+  document.getElementById('undoMsg').textContent = msg;
+  _undoFn = fn;
+  bar.classList.add('show');
+  clearTimeout(bar._t);
+  bar._t = setTimeout(()=>{ bar.classList.remove('show'); _undoFn = null; }, 5000);
+}
+function doUndo(){
+  const fn = _undoFn; _undoFn = null;
+  const bar = document.getElementById('undoBar'); if(bar){ clearTimeout(bar._t); bar.classList.remove('show'); }
+  if(!fn) return;
+  fn(); toast('Đã hoàn tác.'); refreshKeepScroll();
+}
+
+/* ---- detail card (questions, actions, learnings, best practices) ---- */
+function toLocalInput(v){
+  if(!hasText(v)) return '';
+  const t = deadlineTs(v); if(!Number.isFinite(t)) return '';
+  const x = vnD(t);
+  return x.getUTCFullYear()+'-'+pad2(x.getUTCMonth()+1)+'-'+pad2(x.getUTCDate())+'T'+pad2(x.getUTCHours())+':'+pad2(x.getUTCMinutes());
+}
+function sheetFromRecord(tab, r){
+  if(tab==='actions') return {status: r.status||'new', text: r.text||'', outcome: r.outcome||'', deadline: toLocalInput(r.deadline), breakthrough: isTrue(r.breakthrough), problemId: r.problemId||''};
+  if(tab==='questions') return {status: r.status==='answered' ? 'answered' : 'clarifying', text: r.text||'', answer: r.answer||'', star: isTrue(r.star), problemId: r.problemId||''};
+  if(tab==='learnings') return {status: r.status==='applied' ? 'applied' : 'available', text: r.text||'', problemId: r.problemId||''};
+  return {text: r.text||''};
+}
+function trimV(v){ return typeof v==='string' ? v.trim() : v; }
+function sheetDirty(){
+  const S = STATE.sheet; if(!S) return false;
+  return Object.keys(S.d).some(k=>trimV(S.d[k])!==trimV(S.d0[k]));
+}
+function openItem(tab, id, opts){
+  if(tab==='problems'){ STATE.menuFor = null; openProblemModal(id); return; }
+  const r = (STATE.data[tab]||[]).find(x=>x.id===id); if(!r) return;
+  if(STATE.sheet && STATE.sheet.id===id && !(opts && opts.focus)){ STATE.menuFor = null; refreshKeepScroll(); return; }
+  if(STATE.sheet && STATE.sheet.id!==id && sheetDirty() && !confirm('Thẻ đang mở có thay đổi chưa lưu. Bỏ các thay đổi đó?')) return;
+  const d = sheetFromRecord(tab, r);
+  STATE.sheet = {type: tab, id, d, d0: Object.assign({}, d), err: ''};
+  STATE.menuFor = null;
+  refreshKeepScroll();
+  setTimeout(()=>{
+    const el = document.getElementById(opts && opts.focus==='answer' ? 'sh_answer' : '');
+    if(el && !el.disabled){ el.focus(); try { el.setSelectionRange(el.value.length, el.value.length); } catch(e){} }
+    const det = document.getElementById('lvDetail'); if(det) det.scrollTop = 0;
+  }, 40);
+}
+function closeItem(force){
+  if(!STATE.sheet) return;
+  if(!force && sheetDirty() && !confirm('Có thay đổi chưa lưu. Đóng và bỏ các thay đổi đó?')) return;
+  STATE.sheet = null;
+  refreshKeepScroll();
+}
+function shSet(k, v, rerender){ const S = STATE.sheet; if(!S) return; S.d[k] = v; S.err = ''; if(rerender) refreshKeepScroll(); }
+function shStatus(k){ shSet('status', k, true); }
+function historyLine(tab, r){
+  const parts = [], c = toMs(r.createdAt);
+  const by = tab==='questions' ? (r.askedBy || r.member) : (r.createdBy || r.member);
+  if(c) parts.push('Tạo '+fmtDM(c)+(isValidMember(by) ? ' bởi '+esc(by) : ''));
+  const u = toMs(r.updatedAt);
+  if(u && (!c || u - c > 60000)) parts.push('sửa '+fmtDM(u)+' '+fmtHM(u));
+  const dt = doneTime(tab, r);
+  if(dt && isDoneRec(tab, r)) parts.push(DONE_VERB[tab].toLowerCase()+' '+fmtDM(dt));
+  return parts.join(' · ') || '—';
+}
+function renderSheet(tab, pmap){
+  const S = STATE.sheet;
+  if(!S || S.type!==tab) return '';
+  const r = (STATE.data[tab]||[]).find(x=>x.id===S.id);
+  if(!r){ STATE.sheet = null; return ''; }
+  const d = S.d, can = canEdit(tab, r), dis = can ? '' : 'disabled';
+  const T = {questions:'Chi tiết câu hỏi', actions:'Chi tiết hành động', learnings:'Chi tiết bài học', bestPractices:'Chi tiết thực hành hiệu quả'}[tab];
+  const fld = (label, inner)=>`<div class="lv-f"><div class="lv-fl">${label}</div>${inner}</div>`;
+  const ta = (k, rows, ph)=>`<textarea id="sh_${k}" rows="${rows}" placeholder="${ph||''}" ${dis} oninput="shSet('${k}', this.value)">${esc(d[k]||'')}</textarea>`;
+  let h = `<div class="lv-dh"><div class="t">${T}</div><button class="lv-x" title="Đóng" aria-label="Đóng" onclick="closeItem()">✕</button></div>`;
+  const ST = STATUS_LABEL[tab];
+  if(ST) h += fld('Trạng thái', `<div class="lv-seg">${Object.keys(ST).map(k=>`<button class="${d.status===k ? 'on'+(k===DONE_ST[tab] ? ' done' : '') : ''}" ${dis} onclick="shStatus('${k}')">${ST[k]}</button>`).join('')}</div>`);
+  if(tab==='questions' && isCrossQ(r)) h += `<div class="lv-f"><span class="cross-badge">❓ ${esc(r.askedBy||'?')} hỏi → ${esc(r.member||'?')}</span></div>`;
+  if(tab==='actions'){
+    h += fld('Làm gì', ta('text', 2, 'Việc cụ thể cần làm…'));
+    h += fld('Tạo ra kết quả gì', ta('outcome', 2, 'Kết quả đầu ra đo / thấy được…'));
+    h += fld('Thời hạn', `<input id="sh_deadline" type="datetime-local" value="${esc(d.deadline)}" ${dis} onchange="shSet('deadline', this.value)" oninput="shSet('deadline', this.value)"/>`);
+    h += `<label class="lv-chk"><input id="sh_bt" type="checkbox" ${d.breakthrough?'checked':''} ${dis} onchange="shSet('breakthrough', this.checked)"/> ⚡ Hành động đột phá</label>`;
+  } else if(tab==='questions'){
+    h += fld('Câu hỏi', ta('text', 2));
+    h += fld('Câu trả lời', ta('answer', 3, 'Trả lời câu hỏi này…'));
+    h += `<label class="lv-chk"><input id="sh_star" type="checkbox" ${d.star?'checked':''} ${dis} onchange="shSet('star', this.checked)"/> ★ Câu hỏi ưu tiên</label>`;
+  } else if(tab==='learnings'){
+    h += fld('Bài học', ta('text', 3));
+  } else {
+    h += fld('Nội dung', ta('text', 4));
+    h += fld('Nguồn', `<button class="lv-open-p" onclick="openBpSource('${jsq(r.source)}','${jsq(r.refId)}')">${BP_ICON[r.source]||'💎'} ${esc(BP_SOURCE[r.source]||r.source||'')} · mở mục gốc →</button>`);
+  }
+  if(tab!=='bestPractices'){
+    const opts = (STATE.data.problems||[]).slice().sort(byCreated(false)).map(p=>`<option value="${esc(p.id)}" ${p.id===d.problemId?'selected':''}>${esc(clip(p.title,70))}${isValidMember(p.member) ? ' · '+esc(p.member) : ''}</option>`).join('');
+    const p = d.problemId ? pmap[d.problemId] : null;
+    let step = '';
+    if(tab==='actions' && p && d.problemId===S.d0.problemId){ const i = problemSteps(p.id).findIndex(x=>x.id===r.id); if(i>=0) step = ' · Bước '+(i+1); }
+    h += fld('Thuộc vấn đề', `${p ? `<button class="lv-open-p" onclick="openProblemModal('${jsq(p.id)}')">${esc(clip(p.title,90))}${step} →</button>` : ''}
+      <select id="sh_pid" ${dis} onchange="shSet('problemId', this.value, true)"><option value="">— Độc lập, không gắn vấn đề —</option>${opts}</select>`);
+  }
+  h += fld('Lịch sử', `<div class="lv-hist">${historyLine(tab, r)}</div>`);
+  if(S.err) h += `<div class="lv-err">⚠️ ${esc(S.err)}</div>`;
+  h += can
+    ? `<div class="lv-foot"><button class="btn lv-del" onclick="sheetDelete()">🗑 Xoá</button><button class="btn btn-gold" onclick="sheetSave()">Lưu thay đổi</button></div>`
+    : `<div class="lv-ro">🔒 ${esc(editorsNote(tab, r))}</div>`;
+  return `<div class="lv-backdrop" onclick="closeItem()"></div><aside class="lv-detail" id="lvDetail" role="dialog" aria-label="${T}">${h}</aside>`;
+}
+function sheetSave(){
+  const S = STATE.sheet; if(!S) return;
+  const tab = S.type, r = (STATE.data[tab]||[]).find(x=>x.id===S.id);
+  if(!r){ STATE.sheet = null; refreshKeepScroll(); return; }
+  if(!guardEdit(tab, r)) return;
+  const d = {}; Object.keys(S.d).forEach(k=>{ d[k] = trimV(S.d[k]); });
+  const d0 = {}; Object.keys(S.d0).forEach(k=>{ d0[k] = trimV(S.d0[k]); });
+  if(!d.text){ S.err = 'Nội dung không được để trống.'; refreshKeepScroll(); return; }
+  if(tab==='questions'){
+    if(d.answer!==d0.answer && d.status===d0.status) d.status = d.answer ? 'answered' : 'clarifying';
+    if(d.status==='answered' && !d.answer){
+      S.err = 'Viết câu trả lời trước khi chuyển sang "Đã trả lời".'; refreshKeepScroll();
+      const el = document.getElementById('sh_answer'); if(el) el.focus();
+      return;
+    }
+  }
+  const patch = {};
+  Object.keys(d).forEach(k=>{ if(d[k]!==d0[k]) patch[k] = d[k]; });
+  if(!Object.keys(patch).length){ toast('Không có thay đổi.'); return; }
+  if('problemId' in patch){
+    const np = patch.problemId ? (STATE.data.problems||[]).find(p=>p.id===patch.problemId) : null;
+    if(tab==='actions') patch.order = np ? nextStepOrder(np.id) : '';
+    if(tab==='learnings') patch.order = np ? STATE.data.learnings.filter(l=>l.problemId===np.id).length : '';
+    if(tab==='questions'){
+      const asker = r.askedBy || r.member, owner = np ? (np.member || asker) : asker;
+      patch.member = owner;
+      patch.isCross = (isValidMember(asker) && isValidMember(owner) && !same(asker, owner)) ? '1' : '';
+    }
+  }
+  const draft = Object.assign({}, S.d);
+  updateRecord(tab, r.id, patch, {
+    onFail: ()=>{
+      toast('Chưa lưu được sau nhiều lần thử — nội dung vẫn giữ trong thẻ, bấm Lưu lại.');
+      if(STATE.sheet && STATE.sheet.id===r.id){
+        const cur = (STATE.data[tab]||[]).find(x=>x.id===r.id);
+        if(cur){ STATE.sheet.d0 = sheetFromRecord(tab, cur); STATE.sheet.d = draft; }
+      }
+      refreshKeepScroll();
+    }
+  });
+  if('status' in patch) afterStatus(tab, r.id);
+  const cur = (STATE.data[tab]||[]).find(x=>x.id===r.id);
+  S.d = sheetFromRecord(tab, cur); S.d0 = Object.assign({}, S.d); S.err = '';
+  toast('✓ Đã lưu.');
+  refreshKeepScroll();
+}
+function sheetDelete(){ const S = STATE.sheet; if(S) lvDelete(S.type, S.id); }
+function openBpSource(source, refId){
+  const t = {problem:'problems', learning:'learnings', action:'actions'}[source];
+  const rec = t && (STATE.data[t]||[]).find(x=>x.id===refId);
+  if(!rec){ toast('Mục gốc không còn trong hệ thống.'); return; }
+  if(t==='problems'){ openProblemModal(refId); return; }
+  if(STATE.sheet && sheetDirty() && !confirm('Thẻ đang mở có thay đổi chưa lưu. Bỏ các thay đổi đó?')) return;
+  STATE.sheet = null;
+  const s = lvState(t); if(!lvWhoOk(t, rec, s.who)){ s.who = 'all'; lvSave(); }
+  setTab(t);
+  openItem(t, refId);
+}
+document.addEventListener('keydown', e=>{
+  if(e.key!=='Escape') return;
+  const mm = document.getElementById('meMenu');
+  if(mm && !mm.classList.contains('hidden')){ mm.classList.add('hidden'); return; }
+  if(STATE.modalOpen) return;
+  if(STATE.menuFor){ STATE.menuFor = null; refreshKeepScroll(); return; }
+  if(STATE.sheet) closeItem();
+});
+
+/* ---- header menu ---- */
+function toggleMeMenu(e){ if(e) e.stopPropagation(); const m = document.getElementById('meMenu'); if(m) m.classList.toggle('hidden'); }
+document.addEventListener('click', e=>{
+  const m = document.getElementById('meMenu');
+  if(m && !m.classList.contains('hidden') && !e.target.closest('.me-wrap')) m.classList.add('hidden');
+});
 
 /* ================================================================
    REPORT — 6 tầng từ tổng quan đến chi tiết

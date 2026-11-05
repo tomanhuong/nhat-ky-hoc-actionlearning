@@ -3,7 +3,25 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover"/>
-<title>LÀM CHỦ SỰ HỌC</title>
+<title>Làm chủ sự học</title>
+<script>
+/* ===================== KHỐI CẤU HÌNH ĐỘI =====================
+   Hai đội dùng chung 100% phần code bên dưới. Muốn dựng cho đội khác,
+   chỉ sửa thẻ <title> ngay trên và object TEAM này (khớp với TEAM trong Code.gs).
+   ============================================================ */
+var TEAM = {
+  APP_ID: 'lam-chu-su-hoc',      // phải khớp TEAM.APP_ID trong Code.gs (app dùng để nhận đúng máy chủ)
+  APP_NAME: 'Làm chủ sự học',    // hiện ở màn khoá, đầu trang, báo cáo tuần
+  API_URL: 'https://script.google.com/macros/s/AKfycbyVgfJ47VBvZJYKWdVgSjz_Eroud6712RUoHpvCxyIn_ZSxrn85gW89kKVrQDih5AudDw/exec', // link /exec mặc định của đội (máy nào dán link khác trong menu › Máy chủ thì dùng link đó)
+  STORE: 'lcsh_',                // tiền tố bộ nhớ trình duyệt — giữ 'lcsh_' để máy các thành viên không mất dữ liệu đang lưu
+  ADMINS: ['Nhưỡng'],            // quản trị: sửa mọi thẻ, đăng Nhịp vận hành, xoá dòng gieo hạt, đổi mật khẩu, đặt ngày bắt đầu tính kỷ luật
+  ADMIN_IS_MEMBER: true,         // true = quản trị cũng là thành viên (hiện ở bảng xếp hạng, báo cáo, gieo hạt)
+  DEFAULT_RING: ['Nhưỡng','Hào','Huy','Dịu','Loan','Ngân'],  // vòng ghi nhận mặc định
+  KAIZEN: true,                  // true = có tab 📝 Kaizen nhóm (hạn 18:00 thứ Hai, tính kỷ luật + gieo hạt); bỏ dòng này = không dùng
+  FILE_SLUG: 'lam-chu-su-hoc'    // tên file sao lưu
+};
+/* ============================================================ */
+</script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%AD%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.7/Sortable.min.js" defer></script>
@@ -492,6 +510,7 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .lb-ex,.lb-off{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-size:13px;}
 .lb-ex{background:rgba(56,189,248,.14);}
 .lb-off{color:var(--ink-faint);}
+.lb-offw{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:24px;padding:0 4px;border-radius:12px;font:700 10.5px 'Space Mono',monospace;letter-spacing:.5px;color:#a7f3d0;background:rgba(16,185,129,.16);border:1px solid rgba(16,185,129,.35);}
 .rc-banner.seed{background:rgba(52,211,153,.10);border:1px solid rgba(52,211,153,.4);}
 .rp-warn{color:var(--amber);}
 .sd-info{display:flex;flex-direction:column;gap:4px;font-size:13px;line-height:1.55;background:rgba(0,0,0,.14);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:10px;}
@@ -803,8 +822,55 @@ mark{background:rgba(255,212,0,.38);color:inherit;border-radius:3px;padding:0 1p
 .q-st{display:inline-block;padding:7px 14px;border-radius:999px;background:#f3d9a4;color:#3a2a00;font-weight:600;font-size:15.5px;}
 .q-st.done{background:var(--teal);color:#052e2b;}
 .qd-q{font-size:18px;line-height:1.45;margin:2px 0 12px;overflow-wrap:anywhere;}
+.pb-done{margin-top:10px;min-height:48px;font-size:16px;}
 .qd-step{font-size:13px;color:var(--ink-dim);margin:2px 0 10px;}
 #qd_ans{min-height:130px;font-size:16px;}
+/* ---- v2.10: máy chủ + mật khẩu tạo trong app ---- */
+.gate-check{display:flex;gap:8px;align-items:center;justify-content:center;font-size:14px;color:var(--ink-dim);margin:0 0 12px;cursor:pointer;}
+.gate-check input{width:auto;margin:0 !important;}
+.gate-link{display:inline-block;margin-top:12px;padding:10px 12px;min-height:44px;color:var(--teal);font-family:'Crimson Text',Georgia,serif;font-size:15px;text-decoration:underline;text-underline-offset:3px;}
+.srv-input{font-family:'Space Mono',monospace;font-size:13px;min-height:84px;margin-bottom:12px;text-align:left;}
+.srv-cur{font-size:15px;line-height:1.5;margin:0 0 10px;overflow-wrap:anywhere;}
+.srv-cur code{font-family:'Space Mono',monospace;font-size:11.5px;color:var(--ink-dim);}
+.pwd-fields{display:flex;flex-direction:column;gap:10px;}
+/* ---- v2.12: Kaizen nhóm (bật theo TEAM.KAIZEN) ---- */
+.lb .is-mon{background-color:rgba(200,116,42,.07);}
+.lb .is-today.is-mon{background-color:rgba(56,189,248,.08);}
+.lb-rchip.kz.ok{color:#f3c79c;background:rgba(200,116,42,.22);}
+.rc-banner.kz{background:rgba(200,116,42,.13);border:1px solid rgba(200,116,42,.5);}
+.kz-form textarea{min-height:76px;overflow:hidden;resize:none;}
+.kz-score{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:8px;}
+.kz-sc{min-height:44px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--panel);color:var(--ink);font-size:16px;font-weight:700;}
+.kz-sc.on{background:var(--gold);color:var(--gold-ink);border-color:var(--gold);}
+.kz-badge{font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;}
+.kz-badge.ok{color:#34d399;background:rgba(52,211,153,.14);}
+.kz-badge.low{color:var(--amber);background:var(--amber-bg);}
+.kz-wk{display:grid;grid-template-columns:62px 1fr auto;grid-template-areas:"d bar v" "d bar n";align-items:center;column-gap:10px;padding:6px 0;border-bottom:1px solid var(--border-soft);}
+.kz-wk-d{grid-area:d;font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-dim);}
+.kz-bar{grid-area:bar;position:relative;height:12px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden;}
+.kz-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:999px;}
+.kz-bar i.ok{background:#34d399;} .kz-bar i.low{background:var(--amber);}
+.kz-bar b{position:absolute;top:-2px;bottom:-2px;width:2px;background:rgba(255,255,255,.75);}
+.kz-wk-v{grid-area:v;font-family:'Space Mono',monospace;font-size:12px;text-align:right;}
+.kz-wk-n{grid-area:n;font-size:11px;text-align:right;}
+.kz-view{margin:0 0 12px;display:flex;gap:8px;flex-wrap:wrap;}
+.kz-view .chip{min-height:40px;}
+.kz-q{border:1px solid var(--border-soft);border-radius:var(--radius-sm);padding:10px 12px;margin:0 0 10px;background:rgba(0,0,0,.12);}
+.kz-q-t{font-weight:600;font-size:15px;margin-bottom:8px;line-height:1.45;}
+.kz-q-a{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:8px 0;border-top:1px solid var(--border-soft);font-size:15px;line-height:1.55;}
+.kz-q-sc{display:flex;flex-wrap:wrap;gap:8px;}
+.kz-q-chip{display:inline-flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:12px;}
+.sd-tag.old{color:var(--ink-faint);background:rgba(255,255,255,.06);}
+.lb .lb-pre.pre-rule{opacity:.55;}
+/* thanh tab có thêm Kaizen: 9 mục (điện thoại: 5 cột × 2 hàng, nút Trang chủ cao 2 hàng) */
+#tabsBar.tabs.has-kz{grid-template-columns:minmax(64px,.8fr) repeat(9,minmax(0,1fr));}
+@media(max-width:640px){
+  #tabsBar.tabs.has-kz{grid-template-columns:40px repeat(5,minmax(0,1fr));gap:2px;padding:5px;}
+  #tabsBar.has-kz .tab-btn{font-size:12.5px;padding-left:0;padding-right:0;}
+  #tabsBar.tabs.has-kz.compact{grid-template-columns:34px repeat(9,minmax(0,1fr));gap:2px;padding:4px;}
+}
+@media(max-width:374px){#tabsBar.has-kz .tab-btn{font-size:11.5px;} #tabsBar.has-kz .tab-home .tb-lb{font-size:11px;}}
+@media(max-width:340px){#tabsBar.has-kz .tab-btn{font-size:10.5px;}}
 </style>
 </head>
 <body>
@@ -813,7 +879,7 @@ mark{background:rgba(255,212,0,.38);color:inherit;border-radius:3px;padding:0 1p
 <div id="bootLoading" class="gate">
   <div class="gate-box">
     <div class="gate-emoji">🧭</div>
-    <div class="gate-title">LÀM CHỦ SỰ HỌC</div>
+    <div class="gate-title" data-appname></div>
     <div class="gate-sub" id="bootLoadingText">Đang kiểm tra đăng nhập...</div>
   </div>
 </div>
@@ -822,11 +888,40 @@ mark{background:rgba(255,212,0,.38);color:inherit;border-radius:3px;padding:0 1p
 <div id="lockScreen" class="gate hidden">
   <div class="gate-box">
     <div class="gate-emoji">🧭</div>
-    <div class="gate-title">LÀM CHỦ SỰ HỌC</div>
+    <div class="gate-title" data-appname></div>
     <div class="gate-sub">Không gian để bạn tự quản lý việc ứng dụng học tập</div>
     <input id="pwdInput" type="password" placeholder="Nhập mật khẩu truy cập..." onkeydown="if(event.key==='Enter' && !event.isComposing && event.keyCode!==229)tryUnlock()"/>
     <div class="gate-error" id="pwdError"></div>
     <button id="unlockBtn" class="btn btn-gold btn-block" onclick="tryUnlock()">Mở khoá</button>
+    <button class="gate-link" onclick="showServerScreen()">Dùng máy chủ khác</button>
+  </div>
+</div>
+
+<!-- CREATE PASSWORD (máy chủ mới, chưa có mật khẩu) -->
+<div id="createPwdScreen" class="gate hidden">
+  <div class="gate-box">
+    <div class="gate-emoji">🔑</div>
+    <div class="gate-title" data-appname></div>
+    <div class="gate-sub">Máy chủ này chưa có mật khẩu. Người quản trị đặt một mật khẩu chung, rồi gửi cho cả đội.</div>
+    <input id="newPwd1" type="password" autocomplete="new-password" placeholder="Mật khẩu mới (ít nhất 6 ký tự)"/>
+    <input id="newPwd2" type="password" autocomplete="new-password" placeholder="Nhập lại mật khẩu" onkeydown="if(event.key==='Enter' && !event.isComposing && event.keyCode!==229)createPassword()"/>
+    <label class="gate-check"><input type="checkbox" onchange="togglePwdView(this,['newPwd1','newPwd2'])"/> Hiện mật khẩu</label>
+    <div class="gate-error" id="createPwdError"></div>
+    <button id="createPwdBtn" class="btn btn-gold btn-block" onclick="createPassword()">Tạo mật khẩu</button>
+    <button class="gate-link" onclick="showServerScreen()">Dùng máy chủ khác</button>
+  </div>
+</div>
+
+<!-- SERVER SCREEN (chưa có / đổi link máy chủ /exec) -->
+<div id="serverScreen" class="gate hidden">
+  <div class="gate-box">
+    <div class="gate-emoji">🖥</div>
+    <div class="gate-title" data-appname></div>
+    <div class="gate-sub">Dán link máy chủ của đội (kết thúc bằng /exec, lấy ở Apps Script › Deploy). Dán cả đoạn tin nhắn cũng được.</div>
+    <textarea id="srvInput" class="srv-input" placeholder="https://script.google.com/macros/s/…/exec"></textarea>
+    <div class="gate-error" id="srvError"></div>
+    <button id="srvBtn" class="btn btn-gold btn-block" onclick="connectServerFromGate()">Kết nối</button>
+    <button id="srvBackBtn" class="gate-link hidden" onclick="location.reload()">‹ Giữ máy chủ đang dùng</button>
   </div>
 </div>
 
@@ -858,7 +953,7 @@ mark{background:rgba(255,212,0,.38);color:inherit;border-radius:3px;padding:0 1p
 <div id="app" class="hidden">
   <div class="shell">
     <header class="app-top">
-      <div class="app-brand" role="link" tabindex="0" title="Về trang chủ" onclick="goHome()" onkeydown="if(event.key==='Enter')goHome()"><span class="bn">🧭 LÀM CHỦ SỰ HỌC</span><span class="bc" title="Thập giá là tình yêu"><svg viewBox="0 0 24 32" width="22" height="29" role="img" aria-label="Thập giá là tình yêu"><title>Thập giá là tình yêu</title><rect x="10" y="1" width="4" height="30" rx="1.6" fill="#FFD400"/><rect x="3" y="8" width="18" height="4" rx="1.6" fill="#FFD400"/><path d="M12 18.2c-.35-.3-5-3.6-5-6.7 0-1.6 1.2-2.9 2.8-2.9 1 0 1.8.5 2.2 1.2.4-.7 1.2-1.2 2.2-1.2 1.6 0 2.8 1.3 2.8 2.9 0 3.1-4.65 6.4-5 6.7z" fill="#f85149" stroke="#1C1A4A" stroke-width="1.1"/></svg></span><span class="ver">v2.9.6</span></div>
+      <div class="app-brand" role="link" tabindex="0" title="Về trang chủ" onclick="goHome()" onkeydown="if(event.key==='Enter')goHome()"><span class="bn">🧭 <span data-appname></span></span><span class="bc" title="Thập giá là tình yêu"><svg viewBox="0 0 24 32" width="22" height="29" role="img" aria-label="Thập giá là tình yêu"><title>Thập giá là tình yêu</title><rect x="10" y="1" width="4" height="30" rx="1.6" fill="#FFD400"/><rect x="3" y="8" width="18" height="4" rx="1.6" fill="#FFD400"/><path d="M12 18.2c-.35-.3-5-3.6-5-6.7 0-1.6 1.2-2.9 2.8-2.9 1 0 1.8.5 2.2 1.2.4-.7 1.2-1.2 2.2-1.2 1.6 0 2.8 1.3 2.8 2.9 0 3.1-4.65 6.4-5 6.7z" fill="#f85149" stroke="#1C1A4A" stroke-width="1.1"/></svg></span><span class="ver" id="appVer"></span></div>
       <span id="syncStatus" class="sync-indicator">⏳</span>
       <div class="me-wrap">
         <button class="me-btn" onclick="toggleMeMenu(event)" title="Tài khoản" aria-haspopup="menu"><span id="whoLabel"></span> ▾</button>
@@ -867,6 +962,8 @@ mark{background:rgba(255,212,0,.38);color:inherit;border-radius:3px;padding:0 1p
           <button onclick="toggleMeMenu();changeMember()">👤 Đổi người dùng</button>
           <button onclick="toggleMeMenu();exportBackup()">⬇ Xuất dữ liệu</button>
           <button onclick="toggleMeMenu();repairData()">🛠 Sửa dữ liệu tên</button>
+          <button onclick="toggleMeMenu();openServerModal()">🖥 Máy chủ</button>
+          <button id="meChangePwd" class="hidden" onclick="toggleMeMenu();openPwdModal()">🔑 Đổi mật khẩu</button>
           <button onclick="toggleMeMenu();doLogout()">⎋ Đăng xuất</button>
         </div>
       </div>
@@ -892,11 +989,21 @@ mark{background:rgba(255,212,0,.38);color:inherit;border-radius:3px;padding:0 1p
 
 <script>
 /* ============================================================
-   LÀM CHỦ SỰ HỌC — frontend
+   Frontend dùng chung (tên đội, máy chủ, quản trị: xem KHỐI CẤU HÌNH ĐỘI ở đầu file)
    Backend: Google Apps Script Web App (Sheet làm database)
    ============================================================ */
 
-const API_URL = "https://script.google.com/macros/s/AKfycbyVgfJ47VBvZJYKWdVgSjz_Eroud6712RUoHpvCxyIn_ZSxrn85gW89kKVrQDih5AudDw/exec";
+const APP_VERSION = 'v2.12.0';
+const SK = TEAM.STORE;                       // tiền tố mọi khoá localStorage
+// Máy chủ: link dán riêng trên máy này (menu › Máy chủ) thắng link gắn sẵn trong TEAM.API_URL
+let API_URL = (function(){ try { return localStorage.getItem(SK+'api') || TEAM.API_URL || ''; } catch(e){ return TEAM.API_URL || ''; } })();
+function isAdmin(m){ return !!m && TEAM.ADMINS.some(a=>nfc(a)===nfc(m)); }
+function adminNames(){ return TEAM.ADMINS.join(', '); }
+(function fillAppName(){
+  const up = TEAM.APP_NAME.toUpperCase();
+  document.querySelectorAll('[data-appname]').forEach(el=>{ el.textContent = up; });
+  const v = document.getElementById('appVer'); if(v) v.textContent = APP_VERSION;
+})();
 
 const PROBLEM_STATUS   = {new:'Mới tạo', inprogress:'Đang tiến hành', done:'Hoàn thành'};
 const QUESTION_STATUS  = {clarifying:'Đang làm rõ', answered:'Đã trả lời'};
@@ -909,11 +1016,11 @@ const PRIORITY_THRESHOLD = 800;
 let STATE = {
   pwd: null,
   member: null,
-  tab: localStorage.getItem('lcsh_tab') || 'problems',
+  tab: localStorage.getItem(SK+'tab') || 'problems',
   problemSubTab: 'all',
   actionSubTab: 'all',
   report: { from:'', to:'', member:null, showDetail:false },
-  drafts: (()=>{ try { return JSON.parse(localStorage.getItem('lcsh_drafts')||'{}') || {}; } catch(e){ return {}; } })(),
+  drafts: (()=>{ try { return JSON.parse(localStorage.getItem(SK+'drafts')||'{}') || {}; } catch(e){ return {}; } })(),
   pendingWrites: 0, writeSeq: 0, reloadAfterWrites: false, renderPending: false,
   search: '',
   personFilter: 'all',
@@ -924,10 +1031,10 @@ let STATE = {
   dataLoaded: false,
   pageSize: 30,
   shownCount: 30,
-  recogWeeks: 3, ringDraft: null, ringOpen: false,
+  recogWeeks: 3, ringDraft: null, ringOpen: false, kaizenWeeks: 2, kzView: 'person',
   sheet: null, menuFor: null, searchOpen: false, doneShown: 30,
   seedOpen: null, seedForm: null, seedDraft: null, exForm: false, seedSettings: false,
-  data: { problems:[], questions:[], actions:[], learnings:[], bestPractices:[], bpSuggestions:[], recognitions:[], seeds:[], exemptions:[], docs:{}, config:{}, presetNames:[] }
+  data: { problems:[], questions:[], actions:[], learnings:[], bestPractices:[], bpSuggestions:[], recognitions:[], seeds:[], exemptions:[], kaizen:[], docs:{}, config:{}, presetNames:[] }
 };
 
 let pollTimer = null;
@@ -1001,9 +1108,18 @@ async function apiPost(payload){
 // count "completed / answered / applied in this period" accurately.
 // Every status change in the app goes through createRecord/updateRecord,
 // so doing it here guarantees no call site is missed.
+// "touches": t<ISO>,<ISO>,… — mỗi ngày (giờ VN) giữ một mốc là lần sửa sớm nhất của ngày đó
+function touchList(v){ return String(v===undefined||v===null?'':v).replace(/^['t]+/,'').split(',').map(x=>x.trim()).filter(x=>toMs(x)!==null); }
+function addTouch(cur, iso){
+  const list = touchList(cur), k = dayKey(toMs(iso));
+  if(!list.some(x=>dayKey(toMs(x))===k)) list.push(iso);
+  return list.length ? 't'+list.join(',') : '';
+}
 function stampPatch(type, prev, patch){
   const now = new Date().toISOString();
   const p = Object.assign({}, patch, {updatedAt: now});
+  // v2.11: nhớ lần sửa ĐẦU TIÊN của mỗi ngày — sửa buổi tối không xoá mốc sửa buổi sáng
+  if(type==='problems' || type==='actions') p.touches = addTouch(prev && prev.touches, now);
   if(p.status !== undefined && (!prev || p.status !== prev.status)){
     if(type==='actions' || type==='problems'){
       if(!('doneAt' in patch)) p.doneAt = p.status==='done' ? now : '';
@@ -1022,7 +1138,7 @@ function stampPatch(type, prev, patch){
    3) While writes are pending, background reloads wait, so a server snapshot
       can't overwrite fresh local changes. */
 let _writeChain = Promise.resolve();
-const FATAL_ERRORS = ['unauthorized','unknown_type','unknown_op','forbidden_key','forbidden','unknown_doc','empty','too_long'];
+const FATAL_ERRORS = ['unauthorized','unknown_type','unknown_op','forbidden_key','forbidden','unknown_doc','empty','too_long','bad_date','bad_value'];
 async function postWithRetry(payload){
   const delays = [0, 1000, 2500, 5000];
   let last = {ok:false, error:'network'};
@@ -1055,6 +1171,7 @@ function queuedPost(payload){
 function createRecord(type, record, opts={}){
   if(CREATED_BY_TYPES.includes(type) && !opts.restore && !record.createdBy) record.createdBy = STATE.member;
   if((type==='actions'||type==='problems') && record.status==='done' && !record.doneAt) record.doneAt = new Date().toISOString();
+  if(!STATE.data[type]) STATE.data[type] = [];          // máy chủ cũ chưa có tab mới (vd. Kaizen)
   STATE.data[type].push(record);
   saveCache();
   queuedPost({type, op:'create', record}).then(r=>{
@@ -1101,9 +1218,10 @@ function deleteRecord(type, id, opts={}){
 }
 
 /* ---------------- local cache (offline-first) ---------------- */
-const CACHE_KEY = 'lcsh_data_cache';
+const CACHE_KEY = SK+'data_cache';
 
 function saveCache(){
+  STATE._dataRev = (STATE._dataRev||0) + 1;
   try { localStorage.setItem(CACHE_KEY, JSON.stringify(STATE.data)); } catch(e){}
 }
 function loadCache(){
@@ -1112,6 +1230,7 @@ function loadCache(){
     if(raw){
       const cached = JSON.parse(raw);
       STATE.data = Object.assign(STATE.data, cached);
+      STATE._dataRev = (STATE._dataRev||0) + 1;
       STATE.dataLoaded = true;
       return true;
     }
@@ -1132,7 +1251,18 @@ function setSyncStatus(status){
 window.addEventListener('DOMContentLoaded', init);
 
 async function init(){
-  const savedPwd = localStorage.getItem('lcsh_pwd');
+  // ?may=<link /exec>: link mời từ người quản trị → dùng máy chủ đó, rồi bỏ ?may= khỏi thanh địa chỉ
+  try {
+    const q = new URLSearchParams(location.search);
+    if(q.has('may')){
+      const u = extractExec(q.get('may'));
+      if(u && u!==API_URL) setServer(u);
+      q.delete('may');
+      history.replaceState(null, '', location.pathname + (q.toString() ? '?'+q : '') + location.hash);
+    }
+  } catch(e){}
+  if(!API_URL){ showServerScreen(); return; }
+  const savedPwd = localStorage.getItem(SK+'pwd');
   if(savedPwd){
     // Step 1: load cache instantly — app is usable in <0.1s
     const hasCache = loadCache();
@@ -1143,9 +1273,9 @@ async function init(){
       // Step 2: verify password + refresh data from Sheet in background
       apiPing(savedPwd).then(ping=>{
         if(!ping.ok){
-          localStorage.removeItem('lcsh_pwd');
+          localStorage.removeItem(SK+'pwd');
           localStorage.removeItem(CACHE_KEY);
-          localStorage.removeItem('lcsh_nhip_md');
+          localStorage.removeItem(SK+'nhip_md');
           toast('Mật khẩu đã thay đổi — cần đăng nhập lại.');
           setTimeout(()=>location.reload(), 1500);
         }
@@ -1160,13 +1290,50 @@ async function init(){
       proceedAfterAuth();
       return;
     } else {
-      localStorage.removeItem('lcsh_pwd');
-      localStorage.removeItem('lcsh_nhip_md');
+      localStorage.removeItem(SK+'pwd');
+      localStorage.removeItem(SK+'nhip_md');
+      if(ping.hasPassword===false || (ping.app && ping.app!==TEAM.APP_ID)) return routeByPing(ping);
     }
   }
-  document.getElementById('bootLoading').classList.add('hidden');
-  document.getElementById('lockScreen').classList.remove('hidden');
+  showLockOrCreate();
 }
+
+/* ---- Màn vào app: máy chủ · tạo mật khẩu · mở khoá ---- */
+const GATES = ['bootLoading','lockScreen','createPwdScreen','serverScreen','nameScreen'];
+function showGate(id){
+  GATES.forEach(g=>{ const el = document.getElementById(g); if(el) el.classList.toggle('hidden', g!==id); });
+  document.getElementById('app').classList.add('hidden');
+}
+function showLock(msg){
+  showGate('lockScreen');
+  document.getElementById('pwdError').textContent = msg || '';
+  setTimeout(()=>{ const i = document.getElementById('pwdInput'); if(i) i.focus(); }, 30);
+}
+function showCreatePwd(msg){
+  showGate('createPwdScreen');
+  document.getElementById('createPwdError').textContent = msg || '';
+}
+function showServerScreen(msg){
+  showGate('serverScreen');
+  const inp = document.getElementById('srvInput');
+  if(inp && !inp.value) inp.value = API_URL || '';
+  document.getElementById('srvError').textContent = msg || '';
+  document.getElementById('srvBackBtn').classList.toggle('hidden', !API_URL);
+}
+// Đọc câu trả lời ping của máy chủ để chọn màn: sai app → màn máy chủ; chưa có mật khẩu → màn tạo mật khẩu
+function routeByPing(r){
+  if(r && r.app && r.app!==TEAM.APP_ID){ showServerScreen('Link máy chủ đang dùng là của app khác ('+(r.appName||r.app)+'). Dán link máy chủ '+TEAM.APP_NAME+'.'); return true; }
+  if(r && r.hasPassword===false){ showCreatePwd(); return true; }
+  return false;
+}
+async function showLockOrCreate(){
+  let r = null;
+  try { r = await apiPing(''); } catch(e){ r = null; }
+  if(!r){ showLock('Chưa kết nối được máy chủ. Kiểm tra mạng, hoặc bấm "Dùng máy chủ khác".'); return; }
+  if(routeByPing(r)) return;
+  showLock();
+}
+function togglePwdView(cb, ids){ ids.forEach(id=>{ const el = document.getElementById(id); if(el) el.type = cb.checked ? 'text' : 'password'; }); }
 
 async function tryUnlock(){
   const pwd = document.getElementById('pwdInput').value;
@@ -1176,25 +1343,190 @@ async function tryUnlock(){
   if(!pwd){ errBox.textContent = 'Vui lòng nhập mật khẩu.'; return; }
 
   btn.disabled = true; btn.textContent = 'Đang kiểm tra...';
-  const ping = await apiPing(pwd);
+  let ping = null;
+  try { ping = await apiPing(pwd); } catch(e){ ping = null; }
   btn.disabled = false; btn.textContent = 'Mở khoá';
+  if(!ping){ errBox.textContent = 'Chưa kết nối được máy chủ. Kiểm tra mạng rồi thử lại.'; return; }
   if(!ping.ok){
+    if(routeByPing(ping)) return;
     errBox.textContent = 'Sai mật khẩu. Thử lại nhé.';
     return;
   }
 
   STATE.pwd = pwd;
-  localStorage.setItem('lcsh_pwd', pwd);
+  localStorage.setItem(SK+'pwd', pwd);
   proceedAfterAuth();
+}
+
+async function createPassword(){
+  const a = document.getElementById('newPwd1').value.trim(), b = document.getElementById('newPwd2').value.trim();
+  const err = document.getElementById('createPwdError'), btn = document.getElementById('createPwdBtn');
+  err.textContent = '';
+  if(a.length < 6){ err.textContent = 'Mật khẩu cần ít nhất 6 ký tự.'; return; }
+  if(a !== b){ err.textContent = 'Hai lần nhập chưa khớp.'; return; }
+  btn.disabled = true; btn.textContent = 'Đang tạo...';
+  let r = null;
+  try { r = await apiPost({type:'auth', op:'init', newPwd:a}); } catch(e){ r = null; }
+  btn.disabled = false; btn.textContent = 'Tạo mật khẩu';
+  if(!r){ err.textContent = 'Chưa kết nối được máy chủ. Kiểm tra mạng rồi thử lại.'; return; }
+  if(r.error==='pwd_exists'){ showLock('Máy chủ đã có mật khẩu. Nhập mật khẩu để vào.'); return; }
+  if(!r.ok){ err.textContent = r.error==='unauthorized' ? 'Máy chủ chưa phải bản mới — dán Code.gs mới rồi chọn New version.' : 'Chưa tạo được ('+(r.error||'lỗi')+'). Thử lại.'; return; }
+  STATE.pwd = a;
+  localStorage.setItem(SK+'pwd', a);
+  toast('✓ Đã tạo mật khẩu. Gửi mật khẩu này cho cả đội.');
+  proceedAfterAuth();
+}
+
+/* ---- Máy chủ (link /exec): dán một lần lúc cài; link dán trên máy thắng link gắn sẵn ---- */
+function extractExec(raw){
+  const s = String(raw||'');
+  const m = /https:\/\/script\.google\.com\/(?:a\/[^\/\s]+\/)?macros\/s\/[A-Za-z0-9_\-]+\/exec/.exec(s) || /https?:\/\/[^\s"'<>]+?\/exec\b/.exec(s);
+  return m ? m[0] : '';
+}
+async function probeServer(url){
+  const res = await fetch(url + '?action=ping&pwd=');
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  return res.json();
+}
+// Đổi máy chủ thì xoá mật khẩu, dữ liệu tạm và bản nháp của máy chủ cũ trên máy này
+function setServer(url){
+  [SK+'pwd', SK+'nhip_md', SK+'drafts', CACHE_KEY].forEach(k=>{ try { localStorage.removeItem(k); } catch(e){} });
+  try {
+    if(url && url===TEAM.API_URL) localStorage.removeItem(SK+'api'); else localStorage.setItem(SK+'api', url);
+  } catch(e){}
+  API_URL = url;
+  STATE.pwd = null;
+}
+// Kiểm tra link trước khi đổi: phải trả lời ping và đúng TEAM.APP_ID. Lỗi thì giữ máy chủ cũ.
+async function checkServer(raw){
+  const url = extractExec(raw);
+  if(!url) return {err:'Chưa thấy link kết thúc bằng /exec.'};
+  let r;
+  try { r = await probeServer(url); }
+  catch(e){ return {err:'Chưa kết nối được. Kiểm tra link kết thúc bằng /exec và quyền truy cập "Anyone" (Bất kỳ ai). Máy vẫn dùng máy chủ cũ.'}; }
+  if(!r || r.app!==TEAM.APP_ID){
+    return {err: r && r.app ? 'Link này là máy chủ của app khác ('+(r.appName||r.app)+'), không phải '+TEAM.APP_NAME+'.'
+                            : 'Link này chưa phải máy chủ '+TEAM.APP_NAME+' bản mới. Kiểm tra đã dán Code.gs mới và chọn New version chưa.'};
+  }
+  return {url, r};
+}
+async function connectServerFromGate(){
+  const btn = document.getElementById('srvBtn'), err = document.getElementById('srvError');
+  err.textContent = ''; btn.disabled = true; btn.textContent = 'Đang kiểm tra...';
+  const c = await checkServer(document.getElementById('srvInput').value);
+  btn.disabled = false; btn.textContent = 'Kết nối';
+  if(c.err){ err.textContent = c.err; return; }
+  if(c.url!==API_URL) setServer(c.url);
+  if(c.r.hasPassword===false) showCreatePwd(); else showLock();
+}
+function serverSourceText(){
+  let own = false; try { own = !!localStorage.getItem(SK+'api'); } catch(e){}
+  if(!API_URL) return 'chưa có máy chủ';
+  if(!own) return 'máy chủ mặc định (gắn sẵn trong app)';
+  return TEAM.API_URL ? 'máy chủ dán riêng trên máy này' : 'máy chủ đã dán trên máy này (app chưa gắn sẵn máy chủ mặc định)';
+}
+function inviteLink(){ return location.origin + location.pathname + '?may=' + encodeURIComponent(API_URL); }
+function openServerModal(){
+  if(STATE.modalOpen && STATE.modalDirty && !confirm('Bạn có thay đổi chưa lưu. Bỏ và mở Máy chủ?')) return;
+  MODAL = {mode:'server', problem:null, tags:[]};
+  renderModal(); showModal();
+}
+function renderServerModal(){
+  let own = false; try { own = !!localStorage.getItem(SK+'api'); } catch(e){}
+  const canDefault = own && TEAM.API_URL && TEAM.API_URL!==API_URL;
+  document.getElementById('modalBox').innerHTML = `
+    <div class="add-head"><div class="modal-title">🖥 Máy chủ</div><button class="lv-x" title="Đóng" aria-label="Đóng" onclick="closeModal(true)">✕</button></div>
+    <div class="modal-sub">Link /exec của Apps Script, nơi lưu dữ liệu của đội. Thường chỉ dán một lần lúc cài. Sửa Code.gs rồi chọn New version thì link giữ nguyên, không cần dán lại.</div>
+    <div class="srv-cur">Đang dùng: <strong>${esc(serverSourceText())}</strong></div>
+    <textarea id="srvModalInput" class="srv-input" placeholder="https://script.google.com/macros/s/…/exec">${esc(API_URL)}</textarea>
+    <div class="gate-error" id="srvModalErr"></div>
+    <div class="flex gap8 wrap">
+      <button id="srvModalBtn" class="btn btn-gold" onclick="saveServerFromModal()">Kiểm tra và lưu</button>
+      ${canDefault ? '<button class="btn btn-ghost" onclick="saveServerFromModal(true)">Về máy chủ mặc định</button>' : ''}
+    </div>
+    ${API_URL ? `<div class="section-title" style="margin-top:22px">Mời cả đội</div>
+    <div class="hint" style="margin:0 0 10px">Gửi link này qua Zalo: mở là vào đúng máy chủ của đội, chỉ cần nhập mật khẩu.</div>
+    <button class="btn btn-teal btn-block" onclick="copyText(inviteLink(), '✓ Đã chép link mời — dán vào nhóm Zalo.')">📋 Chép link mời</button>` : ''}`;
+}
+async function saveServerFromModal(toDefault){
+  const err = document.getElementById('srvModalErr'), btn = document.getElementById('srvModalBtn');
+  const raw = toDefault ? TEAM.API_URL : document.getElementById('srvModalInput').value;
+  err.textContent = '';
+  if(STATE.pendingWrites > 0){ err.textContent = 'Còn thay đổi chưa gửi xong. Chờ vài giây rồi thử lại.'; return; }
+  btn.disabled = true; btn.textContent = 'Đang kiểm tra...';
+  const c = await checkServer(raw);
+  btn.disabled = false; btn.textContent = 'Kiểm tra và lưu';
+  if(c.err){ err.textContent = c.err; return; }
+  if(c.url===API_URL){ toast('Đang dùng đúng máy chủ này.'); return; }
+  if(!confirm('Chuyển sang máy chủ này?\nMáy này sẽ xoá mật khẩu và dữ liệu tạm của máy chủ cũ, rồi '+(c.r.hasPassword===false ? 'mở màn Tạo mật khẩu.' : 'hỏi mật khẩu của máy chủ mới.'))) return;
+  setServer(c.url);
+  STATE.modalDirty = false;
+  location.reload();
+}
+function copyText(text, okMsg){
+  const fallback = ()=>{
+    const ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly',''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch(e){}
+    ta.remove();
+    if(ok) toast(okMsg); else prompt('Chép link này:', text);
+  };
+  try { if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(()=>toast(okMsg), fallback); else fallback(); }
+  catch(e){ fallback(); }
+}
+
+/* ---- Đổi mật khẩu chung (chỉ quản trị) ---- */
+function openPwdModal(){
+  if(!isAdmin(STATE.member)){ toast('Chỉ '+adminNames()+' đổi được mật khẩu.'); return; }
+  MODAL = {mode:'pwd', problem:null, tags:[]};
+  renderModal(); showModal();
+}
+function renderPwdModal(){
+  document.getElementById('modalBox').innerHTML = `
+    <div class="add-head"><div class="modal-title">🔑 Đổi mật khẩu</div><button class="lv-x" title="Đóng" aria-label="Đóng" onclick="closeModal()">✕</button></div>
+    <div class="modal-sub">Mật khẩu chung của cả đội. Đổi xong, các máy khác phải nhập mật khẩu mới.</div>
+    <div class="pwd-fields">
+      <input id="chPwd1" type="password" autocomplete="new-password" placeholder="Mật khẩu mới (ít nhất 6 ký tự)"/>
+      <input id="chPwd2" type="password" autocomplete="new-password" placeholder="Nhập lại mật khẩu mới"/>
+      <label class="gate-check" style="justify-content:flex-start"><input type="checkbox" onchange="togglePwdView(this,['chPwd1','chPwd2'])"/> Hiện mật khẩu</label>
+    </div>
+    <div class="gate-error" id="chPwdErr"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Huỷ</button>
+      <button id="chPwdBtn" class="btn btn-gold" onclick="changePassword()">Đổi mật khẩu</button>
+    </div>`;
+}
+async function changePassword(){
+  const a = document.getElementById('chPwd1').value.trim(), b = document.getElementById('chPwd2').value.trim();
+  const err = document.getElementById('chPwdErr'), btn = document.getElementById('chPwdBtn');
+  err.textContent = '';
+  if(a.length < 6){ err.textContent = 'Mật khẩu cần ít nhất 6 ký tự.'; return; }
+  if(a !== b){ err.textContent = 'Hai lần nhập chưa khớp.'; return; }
+  if(STATE.pendingWrites > 0){ err.textContent = 'Còn thay đổi chưa gửi xong. Chờ vài giây rồi thử lại.'; return; }
+  btn.disabled = true; btn.textContent = 'Đang đổi...';
+  let r = null;
+  try { r = await apiPost({type:'auth', op:'change', newPwd:a, by:STATE.member}); } catch(e){ r = null; }
+  btn.disabled = false; btn.textContent = 'Đổi mật khẩu';
+  if(!r){ err.textContent = 'Chưa kết nối được máy chủ. Thử lại.'; return; }
+  if(!r.ok){
+    err.textContent = r.error==='forbidden' ? 'Chỉ '+adminNames()+' đổi được mật khẩu.'
+      : r.error==='unauthorized' ? 'Mật khẩu lưu trên máy này đã cũ. Đăng xuất rồi đăng nhập lại.'
+      : 'Chưa đổi được ('+(r.error||'lỗi')+').';
+    return;
+  }
+  STATE.pwd = a;
+  localStorage.setItem(SK+'pwd', a);
+  STATE.modalDirty = false;
+  closeModal(true);
+  toast('✓ Đã đổi mật khẩu — gửi mật khẩu mới cho cả đội.');
 }
 
 // Called the instant the password is confirmed correct. Shows the app
 // right away with whatever data is on hand, then fills in real data
 // quietly in the background once it arrives — never blocks entry.
 function proceedAfterAuth(){
-  document.getElementById('lockScreen').classList.add('hidden');
-  document.getElementById('bootLoading').classList.add('hidden');
-  const member = localStorage.getItem('lcsh_member');
+  ['lockScreen','bootLoading','createPwdScreen','serverScreen'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+  const member = localStorage.getItem(SK+'member');
   if(member){
     STATE.member = member;
     enterApp();
@@ -1217,9 +1549,9 @@ function proceedAfterAuth(){
 
 function doLogout(){
   if(!confirm('Đăng xuất khỏi thiết bị này?')) return;
-  localStorage.removeItem('lcsh_pwd');
+  localStorage.removeItem(SK+'pwd');
   localStorage.removeItem(CACHE_KEY);
-  localStorage.removeItem('lcsh_nhip_md');
+  localStorage.removeItem(SK+'nhip_md');
   location.reload();
 }
 
@@ -1241,12 +1573,12 @@ function chooseCustomName(){
 }
 function chooseMember(name){
   STATE.member = name;
-  localStorage.setItem('lcsh_member', name);
+  localStorage.setItem(SK+'member', name);
   document.getElementById('nameScreen').classList.add('hidden');
   enterApp();
 }
 function changeMember(){
-  localStorage.removeItem('lcsh_member');
+  localStorage.removeItem(SK+'member');
   document.getElementById('app').classList.add('hidden');
   showNameScreen();
 }
@@ -1310,6 +1642,7 @@ function removePresetName(name){
 function enterApp(){
   document.getElementById('app').classList.remove('hidden');
   document.getElementById('whoLabel').innerHTML = memberBadge(STATE.member);
+  document.getElementById('meChangePwd').classList.toggle('hidden', !isAdmin(STATE.member));
   renderPersonFilterOptions();
   renderTabs();
   renderAll();
@@ -1336,6 +1669,11 @@ async function loadAll(silent){
       if(!document.getElementById('nameScreen').classList.contains('hidden')) renderNameGrid();
       setSyncStatus('synced');
       if(!silent) toast('Đã cập nhật dữ liệu mới nhất.');
+    } else if(r.error==='unauthorized'){
+      // Mật khẩu chung vừa được đổi ở máy khác → đăng nhập lại
+      localStorage.removeItem(SK+'pwd');
+      toast('Mật khẩu đã thay đổi — cần đăng nhập lại.');
+      setTimeout(()=>location.reload(), 1500);
     } else {
       setSyncStatus('error');
     }
@@ -1401,7 +1739,7 @@ function clearDateFilter(){
 }
 
 // Count cross-questions addressed to the current user that they haven't seen yet
-function seenCrossKey(){ return 'lcsh_seen_cross_'+(STATE.member||''); }
+function seenCrossKey(){ return SK+'seen_cross_'+(STATE.member||''); }
 function getSeenCross(){
   try { return new Set(JSON.parse(localStorage.getItem(seenCrossKey())||'[]')); } catch(e){ return new Set(); }
 }
@@ -1442,15 +1780,17 @@ function renderTabs(){
     {id:'learnings', ic:'💡', label:'Bài học'},
     {id:'bestPractices', ic:'💎', label:'Thực hành', full:'Thực hành hiệu quả'},
     {id:'nhip', ic:'🔄', label:'Nhịp', full:'Nhịp vận hành'},
+    ...(kzOn() ? [{id:'kaizen', ic:'📝', label:'Kaizen', full:'Kaizen nhóm'}] : []),
     {id:'recog', ic:'💬', label:'Ghi nhận', full:'Ghi nhận đồng đội'},
     {id:'report', ic:'📊', label:'Báo cáo'}
   ];
   const unseen = unseenCrossQuestions().length;
   const recogN = recogBadgeCount();
+  document.getElementById('tabsBar').classList.toggle('has-kz', kzOn());
   document.getElementById('tabsBar').innerHTML = `<button class="tab-btn tab-home" title="Về trang chủ" aria-label="Về trang chủ" onclick="goHome()"><span class="tb-ic" aria-hidden="true">🏠</span><span class="tb-lb">Trang chủ</span></button>` + tabs.map(t=>{
     let count = 0, over = false;
     if(LIST_TABS.includes(t.id) && STATE.member && STATE.dataLoaded){ const c = lvCounts(t.id); count = c.n; over = c.over; }
-    const news = t.id==='questions' ? unseen : (t.id==='recog' ? recogN : (t.id==='nhip' && nhipUnseen() ? 1 : 0));
+    const news = t.id==='questions' ? unseen : (t.id==='recog' ? recogN : (t.id==='kaizen' ? kzBadgeCount() : (t.id==='nhip' && nhipUnseen() ? 1 : 0)));
     let badge = '', tip = t.full || t.label;
     if(count>0){
       badge = `<span class="tb-b ${over?'r':''}">${count}</span>`;
@@ -1463,14 +1803,22 @@ function renderTabs(){
   bindTabsCompact();
 }
 // Phone: once the bar is pinned, shrink it to a single row of icons
+// v2.11: có "vùng đệm" (thu khi đã cuộn quá 120px, mở lại khi gần về đầu) — trước đây trang ngắn cuộn
+// tới cuối thì thanh tab thu lại → trang ngắn đi → trình duyệt kéo trang lên → thanh mở ra → lặp mãi (giật).
 function bindTabsCompact(){
   if(STATE._tabsObs) return;
   const sen = document.getElementById('tabsSentinel'), bar = document.getElementById('tabsBar');
-  if(!sen || !bar || typeof IntersectionObserver==='undefined') return;
-  STATE._tabsObs = new IntersectionObserver(es=>{
-    es.forEach(e=>bar.classList.toggle('compact', !e.isIntersecting && e.boundingClientRect.top < 0));
-  });
-  STATE._tabsObs.observe(sen);
+  if(!sen || !bar) return;
+  STATE._tabsObs = true;
+  let ticking = false;
+  const update = ()=>{
+    ticking = false;
+    const top = sen.getBoundingClientRect().top, on = bar.classList.contains('compact');
+    if(!on && top < -120) bar.classList.add('compact');
+    else if(on && top > -20) bar.classList.remove('compact');
+  };
+  window.addEventListener('scroll', ()=>{ if(!ticking){ ticking = true; requestAnimationFrame(update); } }, {passive:true});
+  update();
 }
 function setTab(tab){
   if(STATE.sheet && tab!==STATE.tab){
@@ -1478,7 +1826,7 @@ function setTab(tab){
     STATE.sheet = null;
   }
   STATE.menuFor = null; STATE.doneShown = STATE.pageSize;
-  STATE.tab = tab; STATE.shownCount = STATE.pageSize; localStorage.setItem('lcsh_tab', tab); STATE._tabAt = Date.now();
+  STATE.tab = tab; STATE.shownCount = STATE.pageSize; localStorage.setItem(SK+'tab', tab); STATE._tabAt = Date.now();
   if(tab==='questions') markCrossSeen();
   if(tab==='recog') markRecogSeen();
   renderTabs(); renderContent();
@@ -1506,13 +1854,15 @@ function renderContent(){
   const el = document.getElementById('content');
   const _focus = captureFocus('content');
   const gf = document.getElementById('globalFilters');
-  if(gf) gf.classList.toggle('hidden', STATE.tab==='report' || STATE.tab==='recog' || STATE.tab==='nhip');
+  if(STATE.tab==='kaizen' && !kzOn()) STATE.tab = 'problems';
+  if(gf) gf.classList.toggle('hidden', STATE.tab==='report' || STATE.tab==='recog' || STATE.tab==='kaizen' || STATE.tab==='nhip');
   const fab = document.querySelector('.fab');
-  if(fab) fab.classList.remove('hidden');
+  if(fab) fab.classList.toggle('hidden', STATE.tab==='kaizen');   // trang Kaizen là form dài: nút + nổi dễ bấm nhầm
   try {
     if(LIST_TABS.includes(STATE.tab)) el.innerHTML = renderListView(STATE.tab);
     else if(STATE.tab==='report') el.innerHTML = renderReportTab();
     else if(STATE.tab==='recog') el.innerHTML = renderRecogTab();
+    else if(STATE.tab==='kaizen') el.innerHTML = renderKaizenTab();
     else if(STATE.tab==='nhip') renderNhipTab(el);
   } catch(err){
     console.error('render error:', err);
@@ -1753,6 +2103,8 @@ function renderModal(){
   if(MODAL.mode==='choose'){ renderAddChooser(); return; }
   if(MODAL.mode==='qdone'){ renderQDone(); return; }
   if(MODAL.mode==='quick'){ renderQuickAddModal(); return; }
+  if(MODAL.mode==='server'){ renderServerModal(); return; }
+  if(MODAL.mode==='pwd'){ renderPwdModal(); return; }
   const p = MODAL.problem;
   const isEdit = MODAL.mode==='edit';
   const score = currentScore();
@@ -1845,11 +2197,11 @@ function renderModal(){
     </div>
     <div class="field">
       <label class="field-label">Thực tế hoàn thành</label>
-      <input id="f_actual" type="date" value="${p.actualDate||''}"/>
+      <input id="f_actual" type="date" value="${p.actualDate||''}" onchange="onActualDateChange(this)"/>
     </div>
     <div class="field">
       <label class="field-label">Trạng thái</label>
-      <select id="f_status">
+      <select id="f_status" onchange="markDirty()">
         ${Object.keys(PROBLEM_STATUS).map(k=>`<option value="${k}" ${p.status===k?'selected':''}>${PROBLEM_STATUS[k]}</option>`).join('')}
       </select>
     </div>
@@ -1857,6 +2209,7 @@ function renderModal(){
     ${isEdit ? renderProblemDetailSections(p, questions, actions, learnings) :
       `<div class="hint">Lưu vấn đề để mở khoá câu hỏi làm rõ, hành động, kết quả và bài học.</div>`}
 
+    ${isEdit && canEdit('problems', p) && p.status!=='done' ? `<button class="btn btn-teal btn-block pb-done" onclick="completeProblemFromModal()">✓ Hoàn thành vấn đề</button>` : ''}
     <div class="modal-footer">
       ${isEdit && canEdit('problems', p) ? `<button class="btn lv-del" style="flex:0 0 auto" onclick="deleteProblemFromModal()">🗑 Xoá</button>` : ''}
       <button class="btn btn-ghost" onclick="closeModal()">${isEdit && !canEdit('problems', p) ? 'Đóng' : 'Huỷ'}</button>
@@ -2069,13 +2422,14 @@ function saveProblemTop(){
     score: currentScore(),
     plannedDate: planned,
     actualDate: document.getElementById('f_actual').value,
-    status: document.getElementById('f_status').value,
+    status: document.getElementById('f_status').value,  // (v2.11: Hoàn thành mà chưa có ngày thực tế → điền hôm nay, xem dưới)
     result: document.getElementById('f_result') ? document.getElementById('f_result').value : (p.result||''),
     effectiveness: p.effectiveness,
     member: p.member || STATE.member,
     createdAt: p.createdAt || new Date().toISOString()
   };
 
+  if(record.status==='done' && !record.actualDate) record.actualDate = dayKey(nowMs());
   if(MODAL.mode==='create'){
     createRecord('problems', record); // instant — appears right away, syncs in the background
     toast('Đã lưu vấn đề.');
@@ -2094,6 +2448,27 @@ function saveProblemTop(){
     renderModal();
     renderAll();
   }
+  return true;
+}
+// v2.11: điền "Thực tế hoàn thành" thì trạng thái tự chuyển sang Hoàn thành (xoá ngày thì về Đang tiến hành)
+function onActualDateChange(el){
+  const st = document.getElementById('f_status'); if(!st) return;
+  markDirty();
+  if(el.value && st.value!=='done'){ st.value = 'done'; toast('Trạng thái chuyển sang Hoàn thành — bấm Cập nhật để lưu.'); }
+  else if(!el.value && st.value==='done'){ st.value = 'inprogress'; }
+}
+// v2.11: nút "✓ Hoàn thành vấn đề" cuối cửa sổ: lưu mọi thay đổi + chuyển Hoàn thành + đóng cửa sổ, có Hoàn tác
+function completeProblemFromModal(){
+  const p = MODAL.problem; if(!p || !p.id) return;
+  const st = document.getElementById('f_status'), act = document.getElementById('f_actual');
+  const before = {status: p.status, actualDate: p.actualDate||''};
+  if(st) st.value = 'done';
+  if(act && !act.value) act.value = dayKey(nowMs());
+  if(!saveProblemTop()){ if(st) st.value = before.status; return; }
+  const id = p.id;
+  closeModal(true);
+  showUndo('✓ Đã hoàn thành vấn đề', ()=>{ updateRecord('problems', id, before); refreshKeepScroll(); });
+  refreshKeepScroll();
 }
 
 /* ---- drafts: typed text survives re-renders, sync failures and reloads ---- */
@@ -2102,7 +2477,7 @@ function getDraft(k){ return STATE.drafts[k]; }
 function setDraft(k, v){
   if(v===null || v===undefined || v==='') delete STATE.drafts[k]; else STATE.drafts[k] = v;
   clearTimeout(_draftTimer);
-  _draftTimer = setTimeout(()=>{ try { localStorage.setItem('lcsh_drafts', JSON.stringify(STATE.drafts)); } catch(e){} }, 250);
+  _draftTimer = setTimeout(()=>{ try { localStorage.setItem(SK+'drafts', JSON.stringify(STATE.drafts)); } catch(e){} }, 250);
 }
 function ansValue(q){ const d = getDraft('ans_'+q.id); return d!==undefined ? d : (q.answer||''); }
 function draftFlag(q){
@@ -2455,7 +2830,7 @@ const STATUS_LABEL = {problems:PROBLEM_STATUS, actions:ACTION_STATUS, questions:
 const BP_ICON = {problem:'🧩', learning:'💡', action:'⚡', manual:'✍️'};
 const DOW_FULL = ['Chủ nhật','Thứ 2','Thứ 3','Thứ 4','Thứ 5','Thứ 6','Thứ 7'];
 const DOW_SHORT = ['CN','T2','T3','T4','T5','T6','T7'];
-const ADMIN_NAMES = ['Nhưỡng'];
+const ADMIN_NAMES = TEAM.ADMINS;
 const CREATED_BY_TYPES = ['problems','actions','learnings','bestPractices'];
 
 function isTrue(v){ return v===true || v===1 || v==='1' || String(v).toUpperCase()==='TRUE'; }
@@ -2463,7 +2838,7 @@ function pad2(n){ return String(n).padStart(2,'0'); }
 function hasText(v){ return !!(v!==undefined && v!==null && String(v).trim()); }
 
 /* ---- per-tab view state (remembered on this device) ---- */
-let LV = (()=>{ try { return JSON.parse(localStorage.getItem('lcsh_lv')||'{}') || {}; } catch(e){ return {}; } })();
+let LV = (()=>{ try { return JSON.parse(localStorage.getItem(SK+'lv')||'{}') || {}; } catch(e){ return {}; } })();
 function lvState(tab){
   const s = LV[tab] || (LV[tab] = {});
   if(!s.who) s.who = 'me';
@@ -2471,7 +2846,7 @@ function lvState(tab){
   if(s.chip && !(LV_CHIPS[tab]||[]).some(c=>c.k===s.chip)) s.chip = '';
   return s;
 }
-function lvSave(){ try { localStorage.setItem('lcsh_lv', JSON.stringify(LV)); } catch(e){} }
+function lvSave(){ try { localStorage.setItem(SK+'lv', JSON.stringify(LV)); } catch(e){} }
 
 /* ---- record helpers ---- */
 function problemMap(){ const m = {}; (STATE.data.problems||[]).forEach(p=>{ m[p.id] = p; }); return m; }
@@ -3086,12 +3461,12 @@ const POINTS = {day:5, problem:3, question:1, crossAsk:2, answer:1, action:1, ac
 const DAY_MS = 86400000;
 
 function reportRules(){
-  try { return Object.assign({}, REPORT_DEFAULT_RULES, JSON.parse(localStorage.getItem('lcsh_report_rules')||'{}')); }
+  try { return Object.assign({}, REPORT_DEFAULT_RULES, JSON.parse(localStorage.getItem(SK+'report_rules')||'{}')); }
   catch(e){ return Object.assign({}, REPORT_DEFAULT_RULES); }
 }
 function setReportRule(k, v){
   const r = reportRules(); const n = Number(v);
-  if(Number.isFinite(n) && n>=0){ r[k]=n; try{ localStorage.setItem('lcsh_report_rules', JSON.stringify(r)); }catch(e){} }
+  if(Number.isFinite(n) && n>=0){ r[k]=n; try{ localStorage.setItem(SK+'report_rules', JSON.stringify(r)); }catch(e){} }
   refreshKeepScroll();
 }
 function toMs(v){ if(v===undefined||v===null||v==='') return null; const t = new Date(v).getTime(); return isNaN(t) ? null : t; }
@@ -3158,15 +3533,19 @@ function reportMembers(){
     if(t==='questions' && isValidMember(r.askedBy)) set.add(nfc(r.askedBy));
   }));
   buddyRing().forEach(n=>{ if(isValidMember(n)) set.add(n); }); // everyone in the ring shows on the board
-  return Array.from(set);
+  return Array.from(set).filter(n=>!isAdminOnly(n));
 }
+// Quản trị không phải thành viên đội (TEAM.ADMIN_IS_MEMBER=false): không hiện ở bảng xếp hạng,
+// báo cáo, chip lọc tên. Ai có tên trong vòng ghi nhận thì luôn là thành viên.
+function isAdminOnly(n){ return !TEAM.ADMIN_IS_MEMBER && isAdmin(n) && !buddyRing().some(x=>same(x,n)); }
 // Every dated trace a member leaves = a "ghi chép" (used for active days, streaks, heatmap)
 function buildEvents(){
   const ev = [], D = STATE.data;
   const add = (m, t, type)=>{ if(t && isValidMember(m)) ev.push({m:nfc(m), t, type}); };
-  (D.problems||[]).forEach(p=>{ add(p.member,toMs(p.createdAt),'problem'); add(p.member,toMs(p.updatedAt),'touch'); add(p.member,toMs(p.doneAt),'problemDone'); });
+  const touches = (r)=>touchList(r.touches).forEach(x=>add(r.member,toMs(x),'touch')); // v2.11: mọi ngày đã sửa, giữ lần sửa đầu
+  (D.problems||[]).forEach(p=>{ add(p.member,toMs(p.createdAt),'problem'); touches(p); add(p.member,toMs(p.updatedAt),'touch'); add(p.member,toMs(p.doneAt),'problemDone'); });
   (D.questions||[]).forEach(q=>{ add(q.askedBy||q.member,toMs(q.createdAt),'question'); add(q.member,toMs(q.answeredAt),'answer'); });
-  (D.actions||[]).forEach(a=>{ add(a.member,toMs(a.createdAt),'action'); add(a.member,toMs(a.updatedAt),'touch'); add(a.member,toMs(a.doneAt),'actionDone'); });
+  (D.actions||[]).forEach(a=>{ add(a.member,toMs(a.createdAt),'action'); touches(a); add(a.member,toMs(a.updatedAt),'touch'); add(a.member,toMs(a.doneAt),'actionDone'); });
   (D.learnings||[]).forEach(l=>{ add(l.member,toMs(l.createdAt),'learning'); add(l.member,toMs(l.appliedAt),'applied'); });
   (D.bestPractices||[]).forEach(b=>add(b.member,toMs(b.createdAt),'bp'));
   return ev;
@@ -3232,6 +3611,9 @@ function memberAlerts(m, events, P){
   const rec = monthRecog(m, nowMs());
   if(rec.misses>=2) out.push({lvl:'red', text:'Nghỉ ghi nhận đồng đội '+rec.misses+' lần trong tháng '+rec.monthNo+' — vi phạm kỷ luật', tip:'Trao đổi trực tiếp, cam kết lại lịch ghi nhận mỗi thứ Năm.'});
   else if(rec.misses===1) out.push({lvl:'yellow', text:'Đã nghỉ 1 lần ghi nhận đồng đội tháng '+rec.monthNo+' — hết lượt nghỉ', tip:'Đặt nhắc lịch thứ Năm, ghi nhận trước 24:00.'});
+  const kz = monthKaizen(m, nowMs());
+  if(kz.misses>=2) out.push({lvl:'red', text:'Nghỉ Kaizen '+kz.misses+' lần trong tháng '+kz.monthNo+' — vi phạm kỷ luật', tip:'Trao đổi trực tiếp, cam kết nộp Kaizen trước 18:00 thứ Hai.'});
+  else if(kz.misses===1) out.push({lvl:'yellow', text:'Đã nghỉ 1 lần Kaizen tháng '+kz.monthNo+' — hết lượt nghỉ', tip:'Đặt nhắc lịch sáng thứ Hai, nộp Kaizen trước 18:00.'});
   if(inSeedScope(m)){
     const L = ledger(m, events);
     if(L.level==='red') out.push({lvl:'red', text:'Còn '+money(L.balance)+' chưa gieo hạt — có khoản quá '+SEED_STALE_DAYS+' ngày ('+L.age+' ngày)', tip:'Nhắc gieo hạt và bấm 🌱 Cập nhật đã gieo hạt ở mục Kỷ luật & gieo hạt.'});
@@ -3249,7 +3631,14 @@ const CUTOFF_HOUR = 18;
 function cfg(k){ return String(((STATE.data||{}).config||{})[k] || '').trim(); }
 function cfgDate(k){ const v = cfg(k); return /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : '9999-12-31'; }
 function rule18From(){ return cfgDate('RULE18_FROM'); }
-function isOnTimeEntry(t){ return dayKey(t) < rule18From() || vnHour(t) < CUTOFF_HOUR; }
+function isOnTimeEntry(t){
+  const k = dayKey(t);
+  if(k < rule18From()) return true;
+  // v2.12: khoảng khoan hồng (LENIENT_FROM → LENIENT_TO, máy chủ ghi khi đội "bắt đầu lại"): có ghi chép là đúng hạn
+  const lf = lenientFrom(), lt = lenientTo();
+  if(lf && lt && k >= lf && k <= lt) return true;
+  return vnHour(t) < CUTOFF_HOUR;
+}
 function dayStatusMap(m, events){
   const map = {};
   events.forEach(x=>{
@@ -3327,7 +3716,7 @@ function renderReportTab(){
   const lb = buildLeaderboard(members, events, P, days);
   let html = renderReportHeader(P) + renderLeaderboard(lb, days);
 
-  html += `<button class="btn btn-ghost btn-block rp-detail-toggle" onclick="toggleReportDetail()">${STATE.report.showDetail ? '▲ Ẩn phân tích chi tiết' : '📈 Xem phân tích chi tiết — kỷ luật & gieo hạt, cam kết hành vi, xu hướng, bảng điểm, phễu học, ghi nhận, cảnh báo, hồ sơ'}</button>`;
+  html += `<button class="btn btn-ghost btn-block rp-detail-toggle" onclick="toggleReportDetail()">${STATE.report.showDetail ? '▲ Ẩn phân tích chi tiết' : '📈 Xem phân tích chi tiết — kỷ luật & gieo hạt, cam kết hành vi, xu hướng, bảng điểm, phễu học, ghi nhận, '+(kzOn() ? 'Kaizen, ' : '')+'cảnh báo, hồ sơ'}</button>`;
   if(STATE.report.showDetail){
     const cur = members.map(m=>memberMetrics(m, P.s, P.e, events));
     const prev = members.map(m=>memberMetrics(m, P.ps, P.pe, events));
@@ -3345,6 +3734,7 @@ function renderReportTab(){
           + renderReportScoreboard(cur, prev, members, days)
           + renderReportFunnel(cur)
           + renderReportRecog(P)
+          + (kzOn() ? renderReportKaizen(P) : '')
           + renderReportAlerts(ranked)
           + renderReportPersonal(ranked, prevBy, events, members);
   }
@@ -3375,17 +3765,19 @@ function renderReportHeader(P){
 
 const WEEKDAY_VI = ['CN','T2','T3','T4','T5','T6','T7'];
 function buildLeaderboard(members, events, P, days){
-  const endTs = days.length ? days[days.length-1] : P.s;
+  const endTs = days.length ? days[days.length-1] : P.s, jf = journalSeedFrom();
   const rows = members.map(m=>{
     const map = dayStatusMap(m, events), valid = validDaySet(map), first = minKeyOf(map);
+    const skip = k => isJournalNeutral(m,k) || k < jf;          // v2.12: trước ngày bắt đầu tính kỷ luật thì không tính "phải ghi"
     return {
       m, map, valid, first,
       streak: streakAsOf(valid, endTs, first, k=>isJournalNeutral(m,k)),
       active: days.filter(t=>valid.has(dayKey(t))).length,
-      req: days.filter(t=>{ const k = dayKey(t); return valid.has(k) || !isJournalNeutral(m,k); }).length,
-      late: days.filter(t=>{ const k = dayKey(t), x = map[k]; return x && x.st==='late' && !isJournalNeutral(m,k); }).length,
+      req: days.filter(t=>{ const k = dayKey(t); return valid.has(k) || !skip(k); }).length,
+      late: days.filter(t=>{ const k = dayKey(t), x = map[k]; return x && x.st==='late' && !skip(k); }).length,
       total: days.reduce((a,t)=>a+((map[dayKey(t)]||{}).n||0),0),
-      rec: monthRecog(m, endTs)
+      rec: monthRecog(m, endTs),
+      kz: monthKaizen(m, endTs)
     };
   });
   rows.sort((a,b)=> b.streak-a.streak || b.active-a.active || b.total-a.total || a.m.localeCompare(b.m));
@@ -3399,7 +3791,7 @@ function lbAvatar(name, rank){
 }
 function renderLeaderboard(lb, days){
   const now = nowMs(), todayK = dayKey(now), yK = dayKey(addDays(sod(now),-1));
-  const ruleFrom = rule18From(), ruleOn = todayK >= ruleFrom;
+  const ruleFrom = rule18From(), ruleOn = todayK >= ruleFrom, jf = journalSeedFrom(), kzc = kzOn();
   const cols = days.slice().reverse(); // newest first
   const okToday = lb.filter(r=>r.valid.has(todayK)).length;
   const inRange = days.some(t=>dayKey(t)===todayK);
@@ -3408,25 +3800,28 @@ function renderLeaderboard(lb, days){
       <th class="lb-name">Thành viên</th>
       <th class="lb-streak">🔥 Streak</th>
       <th class="lb-recog" title="Ghi nhận đồng đội trong tháng: số lần đã ghi nhận đúng hạn / số thứ Năm đã qua">💬 Ghi nhận<span class="lb-sub">tháng ${monthNo}</span></th>
-      ${cols.map(t=>{ const k = dayKey(t), dow = vnDow(t);
+      ${kzc ? `<th class="lb-recog" title="Kaizen trong tháng: số lần nộp đúng hạn / số thứ Hai đã qua">📝 Kaizen<span class="lb-sub">tháng ${monthNo}</span></th>` : ''}
+      ${cols.map(t=>{ const k = dayKey(t), dow = vnDow(t), mon = kzc && dow===1;
         const sub = k===todayK ? '<span class="lb-sub today">Hôm nay</span>' : (k===yK ? '<span class="lb-sub">Hôm qua</span>' : '');
-        return `<th class="lb-day ${k===todayK?'is-today':''} ${dow===4?'is-thu':''}"><span class="lb-wd">${WEEKDAY_VI[dow]}${dow===4?' 💬':''}</span><span class="lb-dm">${fmtDMs(t)}</span>${sub}</th>`;
+        return `<th class="lb-day ${k===todayK?'is-today':''} ${dow===4?'is-thu':''} ${mon?'is-mon':''}"><span class="lb-wd">${WEEKDAY_VI[dow]}${dow===4?' 💬':''}${mon?' 📝':''}</span><span class="lb-dm">${fmtDMs(t)}</span>${sub}</th>`;
       }).join('')}
     </tr>`;
   const body = lb.map((r,i)=>`<tr onclick="selectReportMember('${esc(r.m).replace(/'/g,"\\'")}')">
       <td class="lb-name"><div class="lb-person">${lbAvatar(r.m, i+1)}<div><div class="lb-pname">${esc(r.m)}</div><div class="lb-pmeta" title="Số ngày ghi đúng giờ / số ngày phải ghi trong khoảng lọc (không tính ngày miễn)${r.late?' · số ngày ghi muộn':''}">✓ ${r.active}/${r.req}${r.late?` · ⏰ ${r.late}`:''}</div></div></div></td>
       <td class="lb-streak"><span class="lb-fire ${r.streak?'':'zero'}">🔥 ${r.streak}</span></td>
       <td class="lb-recog">${recogMonthCell(r.rec)}</td>
-      ${cols.map(t=>{ const k = dayKey(t), x = r.map[k], isT = k===todayK, dow = vnDow(t);
+      ${kzc ? `<td class="lb-recog">${kzMonthCell(r.kz)}</td>` : ''}
+      ${cols.map(t=>{ const k = dayKey(t), x = r.map[k], isT = k===todayK, dow = vnDow(t), mon = kzc && dow===1;
         let cell;
         if(x && x.st==='ok') cell = `<span class="lb-ok" title="${fmtDMY(t)}: ${x.n} ghi chép · sớm nhất ${fmtHM(x.first)}">✓</span>`;
         else if(isJournalNeutral(r.m,k)) cell = exemptCell(r.m,k);
+        else if(k < jf && r.first!==null && k >= r.first) cell = `<span class="lb-pre pre-rule" title="${fmtDMY(t)}: trước ngày bắt đầu tính kỷ luật — không tính">·</span>`;
         else if(x) cell = `<span class="lb-late" title="${fmtDMY(t)}: ghi lúc ${fmtHM(x.firstLate)} — sau 18:00, không tính chuỗi">⏰</span>`;
         else if(r.first===null || k<r.first) cell = `<span class="lb-pre" title="Chưa tham gia">·</span>`;
         else if(isT && isTodayPending(r.valid)) cell = `<span class="lb-wait" title="Chưa ghi — còn hạn đến 18:00">…</span>`;
         else cell = `<span class="lb-no" title="${fmtDMY(t)}: chưa có ghi chép hợp lệ">✕</span>`;
-        const chip = dow===4 ? recogChip(r.m, k) : '';
-        return `<td class="lb-day ${isT?'is-today':''} ${dow===4?'is-thu':''}">${cell}${chip}</td>`;
+        const chip = dow===4 ? recogChip(r.m, k) : (mon ? kzChip(r.m, k) : '');
+        return `<td class="lb-day ${isT?'is-today':''} ${dow===4?'is-thu':''} ${mon?'is-mon':''}">${cell}${chip}</td>`;
       }).join('')}
     </tr>`).join('');
   let summary = '';
@@ -3444,7 +3839,7 @@ function renderLeaderboard(lb, days){
   return `<div class="lb-card">
     ${summary}
     <div class="lb-scroll"><table class="lb">${head}${body}</table></div>
-    <div class="lb-rule">🔥 <strong>Streak</strong> = số ngày ghi chép hợp lệ liên tiếp. Ngày hợp lệ = có ít nhất 1 ghi chép <strong>trước 18:00</strong> (giờ VN). Nghỉ lẻ <strong>1 ngày</strong> vẫn giữ chuỗi; nghỉ <strong>2 ngày liền</strong> thì chuỗi về 0. · ✓ đúng giờ · ⏰ ghi sau 18:00 (không tính, coi như nghỉ) · ✕ chưa ghi · … hôm nay còn hạn · 🛡 ngày miễn (không tính, không làm đứt chuỗi). · 💬 cột thứ Năm: ghi nhận đồng đội (tối đa nghỉ 1 lần/tháng). ${ruleNote} Bấm vào tên để xem chi tiết.</div>
+    <div class="lb-rule">🔥 <strong>Streak</strong> = số ngày ghi chép hợp lệ liên tiếp. Ngày hợp lệ = có ít nhất 1 ghi chép <strong>trước 18:00</strong> (giờ VN); đã ghi trước 18:00 thì sửa lại sau 18:00 vẫn đúng hạn. Nghỉ lẻ <strong>1 ngày</strong> vẫn giữ chuỗi; nghỉ <strong>2 ngày liền</strong> thì chuỗi về 0. · ✓ đúng giờ · ⏰ ghi sau 18:00 (không tính, coi như nghỉ) · ✕ chưa ghi · … hôm nay còn hạn · 🛡 ngày miễn (không tính, không làm đứt chuỗi) · <strong>OFF</strong> ngày nghỉ trong tuần: mỗi tuần ngày thiếu đầu tiên tự được nghỉ, không tính tiền, không đứt chuỗi. · (·) trước ngày bắt đầu tính kỷ luật: không tính. · 💬 cột thứ Năm: ghi nhận đồng đội${kzc ? ' · 📝 cột thứ Hai: Kaizen, hạn 18:00' : ''} (mỗi việc tối đa nghỉ 1 lần/tháng). ${ruleNote} Bấm vào tên để xem chi tiết.</div>
   </div>`;
 }
 
@@ -3533,7 +3928,7 @@ function renderReportAlerts(ranked){
     </div>
     <div class="hint">Ngưỡng lưu trên thiết bị này.</div>
   </details>`;
-  return rpSection('7','Cảnh báo can thiệp','Ai cần được hỗ trợ ngay, kèm gợi ý cách can thiệp.', list + settings);
+  return rpSection(kzOn() ? '8' : '7','Cảnh báo can thiệp','Ai cần được hỗ trợ ngay, kèm gợi ý cách can thiệp.', list + settings);
 }
 
 /* Tầng 6 — Tôi đang ở đâu (hồ sơ cá nhân) */
@@ -3581,6 +3976,7 @@ function renderReportPersonal(ranked, prevBy, events, members){
         <span>Điểm <strong>${me.points}</strong></span>
         <span>🔥 Chuỗi <strong>${me.streak}</strong> ngày</span>
         ${recogStatsSpan(m)}
+        ${kaizenStatsSpan(m)}
         ${seedStatsSpan(m)}
         <span class="rp-light ${me.light}"></span>
       </div>
@@ -3588,7 +3984,7 @@ function renderReportPersonal(ranked, prevBy, events, members){
     <div class="rp-scroll"><table class="rp-table rp-me-table"><thead><tr><th>Chỉ số</th><th>Kỳ này</th><th>Kỳ trước</th><th>TB đội</th></tr></thead><tbody>${rows}</tbody></table></div>
     <div class="rp-subhead">📈 Số ngày ghi đúng giờ (trước 18:00) — 8 tuần gần nhất</div>${trend}
     <div class="rp-subhead">📋 Việc cần chú ý</div>${todo}`;
-  return rpSection('8','Tôi đang ở đâu','So với chính mình kỳ trước và trung bình đội — chọn tên để xem từng người.', body, 'rp-personal');
+  return rpSection(kzOn() ? '9' : '8','Tôi đang ở đâu','So với chính mình kỳ trước và trung bình đội — chọn tên để xem từng người.', body, 'rp-personal');
 }
 
 document.addEventListener('focusout', ()=>{
@@ -3600,7 +3996,7 @@ document.addEventListener('focusout', ()=>{
    nhật ký tuần của đồng đội mình hỗ trợ (theo vòng tròn) và ghi nhận:
    điều hiệu quả · điều chưa hiệu quả · đề xuất. Tối đa nghỉ 1 lần/tháng.
    ================================================================ */
-const DEFAULT_RING = ['Nhưỡng','Hào','Huy','Dịu','Loan','Ngân'];
+const DEFAULT_RING = TEAM.DEFAULT_RING;
 const RC_FIELDS = [
   {k:'didWell',      icon:'🌟', short:'điều hiệu quả',       card:'Đã làm hiệu quả',  label:'Bạn ấy đã làm hiệu quả điều gì trong tuần vừa rồi?', hint:'Nêu việc cụ thể và kết quả nó tạo ra.'},
   {k:'notEffective', icon:'🔍', short:'điều chưa hiệu quả',  card:'Chưa hiệu quả',    label:'Điều gì chưa hiệu quả?',                            hint:'Nói về việc làm, hành vi — không phán xét con người.'},
@@ -3679,7 +4075,7 @@ function myRecogTask(){
   return {mode:'closed', wk:lastK, nextK, buddy};
 }
 /* ---- seen / badges / banner ---- */
-function seenRecogKey(){ return 'lcsh_seen_recog_'+(STATE.member||''); }
+function seenRecogKey(){ return SK+'seen_recog_'+(STATE.member||''); }
 function unseenRecogs(){
   let seen; try { seen = new Set(JSON.parse(localStorage.getItem(seenRecogKey())||'[]')); } catch(e){ seen = new Set(); }
   return (STATE.data.recognitions||[]).filter(r=>same(r.receiver, STATE.member) && !seen.has(r.id));
@@ -3696,22 +4092,21 @@ function recogBadgeCount(){
 }
 function renderRecogBanner(){
   const el = document.getElementById('recogBanner'); if(!el) return;
-  if(!STATE.member || STATE.tab==='recog'){ el.innerHTML = ''; return; }
-  const t = myRecogTask(), now = nowMs();
-  let html = '';
-  if(t.mode==='open'){
-    html = `<div class="rc-banner open"><span>💬 Hôm nay là ngày <strong>Ghi nhận đồng đội</strong> — bạn ghi nhận cho ${memberBadge(t.buddy)} · còn ${fmtLeft(sod(now).getTime()+DAY_MS-now)}</span><button class="btn btn-gold btn-sm" onclick="setTab('recog')">Ghi nhận ngay</button></div>`;
-  } else if(t.mode==='late'){
-    html = `<div class="rc-banner late"><span>⏰ Bạn chưa ghi nhận cho ${memberBadge(t.buddy)} (thứ Năm ${fmtDMs(keyToMs(t.wk))}) — vẫn nộp được, nhưng tuần đó tính là nghỉ.</span><button class="btn btn-ghost btn-sm" onclick="setTab('recog')">Nộp ngay</button></div>`;
-  } else if(nhipBannerHtml()){
-    html = nhipBannerHtml();
-  } else {
-    const u = unseenRecogs();
-    if(!u.length) html = seedBannerHtml();
-    else html = `<div class="rc-banner recv"><span>🎁 Bạn nhận được <strong>${u.length}</strong> ghi nhận mới từ ${memberBadge(u[0].giver)}</span><button class="btn btn-ghost btn-sm" onclick="setTab('recog')">Đọc ngay</button></div>`;
+  if(!STATE.member){ el.innerHTML = ''; return; }
+  const parts = [], now = nowMs();
+  if(STATE.tab!=='recog'){
+    const t = myRecogTask();
+    if(t.mode==='open') parts.push(`<div class="rc-banner open"><span>💬 Hôm nay là ngày <strong>Ghi nhận đồng đội</strong> — bạn ghi nhận cho ${memberBadge(t.buddy)} · còn ${fmtLeft(sod(now).getTime()+DAY_MS-now)}</span><button class="btn btn-gold btn-sm" onclick="setTab('recog')">Ghi nhận ngay</button></div>`);
+    else if(t.mode==='late') parts.push(`<div class="rc-banner late"><span>⏰ Bạn chưa ghi nhận cho ${memberBadge(t.buddy)} (thứ Năm ${fmtDMs(keyToMs(t.wk))}) — vẫn nộp được, nhưng tuần đó tính là nghỉ.</span><button class="btn btn-ghost btn-sm" onclick="setTab('recog')">Nộp ngay</button></div>`);
   }
-  if(t.mode==='open' || t.mode==='late') html += nhipBannerHtml();   // a new team document is news too
-  el.innerHTML = html;
+  const kz = kzBannerHtml(); if(kz) parts.push(kz);           // v2.12: Kaizen thứ Hai
+  const nv = nhipBannerHtml(); if(nv) parts.push(nv);         // a new team document is news too
+  if(!parts.length && STATE.tab!=='recog'){
+    const u = unseenRecogs();
+    if(u.length) parts.push(`<div class="rc-banner recv"><span>🎁 Bạn nhận được <strong>${u.length}</strong> ghi nhận mới từ ${memberBadge(u[0].giver)}</span><button class="btn btn-ghost btn-sm" onclick="setTab('recog')">Đọc ngay</button></div>`);
+    else { const sb = seedBannerHtml(); if(sb) parts.push(sb); }
+  }
+  el.innerHTML = parts.join('');
 }
 /* ---- buddy's week, gathered for the reader ---- */
 function buddyWeekDigest(name, wk){
@@ -3731,14 +4126,14 @@ function buddyWeekDigest(name, wk){
     lrn: mine(D.learnings).filter(l=>inW(toMs(l.createdAt)))
   };
 }
-function renderBuddyDigest(name, wk){
+function renderBuddyDigest(name, wk, self){
   const d = buddyWeekDigest(name, wk);
   // v2.9.5: hiện đủ mọi mục, nguyên văn, để người ghi nhận không phải mở từng vấn đề
   const list = (arr, fn)=> arr.length
     ? `<ul>${arr.map(x=>`<li>${fn(x)}</li>`).join('')}</ul>`
     : '<div class="rc-none">—</div>';
   const grp = (icon, title, arr, fn)=> `<div class="rc-dg"><div class="rc-dg-t">${icon} ${title} <span class="rc-dg-n">${arr.length}</span></div>${list(arr, fn)}</div>`;
-  return `<details class="rc-digest" open><summary>📖 Nhật ký tuần của ${esc(name)} · ${fmtDMs(d.s)} → ${fmtDMs(d.e - DAY_MS)}</summary>
+  return `<details class="rc-digest" ${self?'':'open'}><summary>📖 Nhật ký tuần ${self?'của bạn — xem lại trước khi viết':'của '+esc(name)} · ${fmtDMs(d.s)} → ${fmtDMs(d.e - DAY_MS)}</summary>
     <div class="rc-dg-stats"><span>✓ <strong>${d.ok}</strong>/7 ngày ghi đúng giờ</span>${d.late?`<span>⏰ ${d.late} ngày ghi muộn</span>`:''}</div>
     <div class="rc-dg-grid">
       ${grp('📌','Vấn đề mới', d.probs, p=>esc(p.title))}
@@ -3748,7 +4143,7 @@ function renderBuddyDigest(name, wk){
       ${grp('💬','Câu trả lời', d.ans, q=>`<i>${esc(q.text)}</i> — ${esc(q.answer)}`)}
       ${grp('💡','Bài học', d.lrn, l=>esc(l.text))}
     </div>
-    ${(!d.probs.length && !d.actsNew.length && !d.actsDone.length && !d.lrn.length && !d.qs.length && !d.ans.length) ? '<div class="hint" style="padding:0 2px 6px">Tuần này đồng đội chưa có ghi chép — đây cũng là điều đáng ghi nhận và đề xuất.</div>' : ''}
+    ${(!d.probs.length && !d.actsNew.length && !d.actsDone.length && !d.lrn.length && !d.qs.length && !d.ans.length) ? `<div class="hint" style="padding:0 2px 6px">${self ? 'Tuần này bạn chưa có ghi chép nào trong app.' : 'Tuần này đồng đội chưa có ghi chép — đây cũng là điều đáng ghi nhận và đề xuất.'}</div>` : ''}
   </details>`;
 }
 /* ---- tab ---- */
@@ -3779,7 +4174,8 @@ function ringChain(ring){
 function renderMyRecogCard(t){
   const me = STATE.member, title = '<div class="rp-sec-title">✍️ Phiếu ghi nhận của bạn</div>';
   if(t.mode==='noring'){
-    const msg = buddyRing().length
+    const msg = isAdminOnly(me) ? `Bạn là quản trị, không nằm trong vòng ghi nhận. Bạn vẫn đọc được mọi phiếu và xem kỷ luật ghi nhận bên dưới.`
+      : buddyRing().length
       ? `Tên “${esc(me)}” chưa có trong vòng ghi nhận. Nếu bạn thuộc nhóm, bấm <strong>Đổi người dùng</strong> và chọn đúng tên trong vòng, hoặc thêm tên vào vòng ở phần Cài đặt bên dưới.`
       : 'Chưa thiết lập vòng ghi nhận — mở phần <strong>⚙️ Cài đặt vòng ghi nhận</strong> bên dưới.';
     return `<section class="rp-section">${title}<div class="rc-closed">${msg}</div></section>`;
@@ -3958,9 +4354,9 @@ function recogStatsSpan(m){
    • Ngày miễn (ốm, công tác…) và ngày nghỉ cố định không phát sinh, không làm đứt chuỗi
    • Còn nợ = phát sinh − đã gieo (tự khai), cộng dồn; tiền gieo trả khoản cũ trước
    ================================================================ */
-const SEED_DEFAULTS = {SEED_JOURNAL:20000, SEED_RECOG:50000};
+const SEED_DEFAULTS = {SEED_JOURNAL:20000, SEED_RECOG:50000, SEED_KAIZEN:50000};
 const SEED_STALE_DAYS = 14;
-const TREND_COLORS = {j:'#00A79D', r:'#9575ef'}; // validated pair on the dark surface
+const TREND_COLORS = {j:'#00A79D', k:'#c8742a', r:'#9575ef'}; // validated trio on the dark surface (dataviz validator, all pairs)
 function seedRate(k){ const v = cfg(k), n = Number(v); return (v!=='' && Number.isFinite(n) && n>=0) ? n : SEED_DEFAULTS[k]; }
 function money(n){ n = Math.round(Number(n)||0); const s = String(Math.abs(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'.'); return (n<0?'−':'')+s+'đ'; }
 function jsq(s){ return esc(String(s===undefined||s===null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")); }
@@ -3972,7 +4368,36 @@ function offDays(){ return cfg('SEED_OFF_DAYS').split(',').map(x=>parseInt(x,10)
 function dkOf(v){ const s = String(v||''); if(/^d\d{4}-\d{2}-\d{2}$/.test(s)) return s.slice(1); if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s; const t = toMs(s); return t ? dayKey(t) : ''; }
 function exemptionOf(m, key, kind){ return (STATE.data.exemptions||[]).find(e=>same(e.member,m) && dkOf(e.dateKey)===key && (e.kind==='all' || e.kind===kind)); }
 function isOffDay(key){ return offDays().includes(vnDow(keyToMs(key))); }
-function isJournalNeutral(m, key){ return isOffDay(key) || !!exemptionOf(m, key, 'journal'); }
+function isBaseNeutral(m, key){ return isOffDay(key) || !!exemptionOf(m, key, 'journal'); }
+function isJournalNeutral(m, key){ return isBaseNeutral(m, key) || isWeeklyOff(m, key); }
+// v2.11 NGÀY NGHỈ HẰNG TUẦN: mỗi tuần (thứ Hai → Chủ Nhật), kể từ ngày bắt đầu tính kỷ luật,
+// ngày thiếu hoặc ghi sau 18:00 ĐẦU TIÊN tự thành ngày nghỉ: không tính tiền, không đứt chuỗi,
+// bảng xếp hạng ghi OFF. Không cần báo. Ngày miễn 🛡 và ngày nghỉ cố định không dùng mất lượt này.
+let _woCache = {sig:'', map:{}};
+function weekStartKey(t){ return dayKey(addDays(sod(t), -((vnDow(t)+6)%7))); }
+function weeklyOffSet(m){
+  const now = nowMs(), from = journalSeedFrom();
+  const sig = [STATE._dataRev||0, dayKey(now), vnHour(now)>=CUTOFF_HOUR, from, cfg('SEED_OFF_DAYS')].join('|');
+  if(_woCache.sig!==sig) _woCache = {sig, map:{}};
+  const key = nfc(m);
+  if(_woCache.map[key]) return _woCache.map[key];
+  const set = new Set();
+  _woCache.map[key] = set;
+  if(from !== '9999-12-31'){
+    const map = dayStatusMap(key, buildEvents()), todayK = dayKey(now), endT = sod(now).getTime(), used = {};
+    for(let t = keyToMs(from); t <= endT; t += DAY_MS){
+      const k = dayKey(t), x = map[k];
+      if(x && x.st==='ok') continue;
+      if(k===todayK && vnHour(now) < CUTOFF_HOUR) continue;   // hôm nay còn hạn
+      if(isBaseNeutral(key, k)) continue;
+      const wk = weekStartKey(t);
+      if(used[wk]) continue;
+      used[wk] = true; set.add(k);
+    }
+  }
+  return set;
+}
+function isWeeklyOff(m, key){ return weeklyOffSet(m).has(key); }
 function journalReqFrom(map){ const j = journalSeedFrom(), f = minKeyOf(map); return (f && f < j) ? f : j; }
 function deadlineTs(d){
   const s = String(d||'').trim(); if(!s) return NaN;
@@ -3985,6 +4410,7 @@ function thuOnOrAfter(t){ const d = sod(t); return addDays(d, (4 - vnDow(d) + 7)
 function seedMembers(){ return buddyRing(); }
 function inSeedScope(m){ return seedMembers().some(x=>same(x,m)); }
 function exemptCell(m, k){
+  if(!isBaseNeutral(m, k) && isWeeklyOff(m, k)) return '<span class="lb-offw" title="Ngày nghỉ trong tuần — không tính tiền, không đứt chuỗi">OFF</span>';
   const e = exemptionOf(m, k, 'journal');
   return e ? `<span class="lb-ex" title="Ngày miễn: ${esc(e.reason||'')}">🛡</span>` : '<span class="lb-off" title="Ngày nghỉ cố định — không tính">—</span>';
 }
@@ -3998,7 +4424,8 @@ function debtItems(m, events){
       const k = dayKey(t), x = map[k];
       if(x && x.st==='ok') continue;
       if(k===todayK && vnHour(now) < CUTOFF_HOUR) continue;   // today is still open
-      if(isJournalNeutral(m, k)) continue;
+      if(isBaseNeutral(m, k)) continue;
+      if(isWeeklyOff(m, k)){ items.push({k, type:'journal', amount:0, free:true, reason:'Ngày nghỉ trong tuần — miễn'}); continue; }
       items.push({k, type:'journal', amount: seedRate('SEED_JOURNAL'), free:false,
         reason: x ? 'Ghi nhật ký muộn ('+fmtHM(x.firstLate)+', sau 18:00)' : 'Không ghi nhật ký'});
     }
@@ -4014,6 +4441,17 @@ function debtItems(m, events){
         reason: (s==='late' ? 'Nộp ghi nhận muộn' : 'Không ghi nhận đồng đội') + (free ? ' — lượt nghỉ đầu tháng, miễn' : '')});
     }
   }
+  const kFrom = kaizenSeedFrom();                              // v2.12: Kaizen thứ Hai — lần nghỉ đầu mỗi tháng miễn
+  if(kFrom !== '9999-12-31' && inKaizen(m)){
+    const freeUsed = {};
+    for(let d = monOnOrAfter(keyToMs(kFrom)); d.getTime() <= endT; d = addDays(d,7)){
+      const k = dayKey(d), s = kaizenStatus(m, k);
+      if(s!=='miss' && s!=='late') continue;
+      const mon = k.slice(0,7), free = !freeUsed[mon]; freeUsed[mon] = true;
+      items.push({k, type:'kaizen', amount: free ? 0 : seedRate('SEED_KAIZEN'), free,
+        reason: (s==='late' ? 'Nộp Kaizen muộn (sau 18:00 thứ Hai)' : 'Không nộp Kaizen') + (free ? ' — lượt nghỉ đầu tháng, miễn' : '')});
+    }
+  }
   return items.sort((a,b)=>a.k.localeCompare(b.k) || (a.type<b.type?-1:1));
 }
 function seedsOf(m){
@@ -4021,7 +4459,9 @@ function seedsOf(m){
     .sort((a,b)=>dkOf(b.sownAt).localeCompare(dkOf(a.sownAt)) || (toMs(b.createdAt)||0)-(toMs(a.createdAt)||0));
 }
 function ledger(m, events){
-  const items = debtItems(m, events), seeds = seedsOf(m);
+  // v2.11: chỉ tính tiền gieo từ ngày bắt đầu tính kỷ luật; tiền gieo trước đó bỏ qua cùng các lỗi cũ
+  const items = debtItems(m, events), all = seedsOf(m), sf = seedFrom();
+  const seeds = all.filter(s=>dkOf(s.sownAt) >= sf), oldSeeds = all.filter(s=>dkOf(s.sownAt) < sf);
   const owed = items.reduce((a,x)=>a+x.amount,0), sown = seeds.reduce((a,s)=>a+(Number(s.amount)||0),0);
   let left = sown, oldest = null;
   items.forEach(it=>{                                  // money sown pays the oldest items first
@@ -4031,15 +4471,16 @@ function ledger(m, events){
   });
   const balance = owed - sown;
   const age = oldest ? Math.round((sod(nowMs()).getTime() - keyToMs(oldest))/DAY_MS) : 0;
-  return {m, items, seeds, owed, sown, balance, oldest, age,
+  return {m, items, seeds, oldSeeds, owed, sown, balance, oldest, age,
           level: balance<=0 ? 'green' : (age>SEED_STALE_DAYS ? 'red' : 'yellow')};
 }
 // what each person had to do / did / missed within a period
 function periodDiscipline(m, P, days, events){
-  const map = dayStatusMap(nfc(m), events), now = nowMs(), todayK = dayKey(now);
-  const r = {req:0, ok:0, late:0, miss:0, ex:0, rReq:0, rOk:0, rLate:0, rMiss:0, rEx:0}, from = journalReqFrom(map);
+  const map = dayStatusMap(nfc(m), events), now = nowMs(), todayK = dayKey(now), jf = journalSeedFrom();
+  const r = {req:0, ok:0, late:0, miss:0, ex:0, rReq:0, rOk:0, rLate:0, rMiss:0, rEx:0, kReq:0, kOk:0, kLate:0, kMiss:0, kEx:0}, from = journalReqFrom(map);
   days.forEach(t=>{
     const k = dayKey(t), x = map[k];
+    if(jf!=='9999-12-31' && k < jf) return;                       // v2.12: trước ngày bắt đầu tính kỷ luật: không tính
     if(k < from && !x) return;                                   // not started yet
     if(isJournalNeutral(m,k)){ r.ex++; return; }
     if(k===todayK && !(x && x.st==='ok') && vnHour(now) < CUTOFF_HOUR) return; // pending
@@ -4053,6 +4494,14 @@ function periodDiscipline(m, P, days, events){
     if(s==='na' || s==='future' || s==='pending') return;
     r.rReq++;
     if(s==='ok') r.rOk++; else if(s==='late') r.rLate++; else r.rMiss++;
+  });
+  if(inKaizen(m)) days.forEach(t=>{
+    if(vnDow(t)!==1) return;
+    const s = kaizenStatus(m, dayKey(t));
+    if(s==='exempt'){ r.kEx++; return; }
+    if(s==='na' || s==='future' || s==='pending') return;
+    r.kReq++;
+    if(s==='ok') r.kOk++; else if(s==='late') r.kLate++; else r.kMiss++;
   });
   return r;
 }
@@ -4087,7 +4536,7 @@ function saveSeed(){
 }
 function deleteSeed(id){
   const s = (STATE.data.seeds||[]).find(x=>x.id===id); if(!s) return;
-  if(!(same(s.by, STATE.member) || same(STATE.member, 'Nhưỡng'))){ toast('Chỉ người đã ghi hoặc Nhưỡng được xoá dòng này.'); return; }
+  if(!(same(s.by, STATE.member) || isAdmin(STATE.member))){ toast('Chỉ người đã ghi hoặc '+adminNames()+' được xoá dòng này.'); return; }
   if(!confirm('Xoá dòng gieo hạt '+money(s.amount)+' của '+s.member+' ngày '+fmtDMs(keyToMs(dkOf(s.sownAt)))+'?')) return;
   deleteRecord('seeds', id); refreshKeepScroll();
 }
@@ -4100,8 +4549,8 @@ function saveExemption(){
   if(to < from){ toast('"Đến ngày" phải sau "Từ ngày".'); return; }
   if(!reason){ toast('Ghi lý do miễn.'); g('ex_reason').focus(); return; }
   const keys = []; for(let t = keyToMs(from); t <= keyToMs(to) && keys.length<62; t += DAY_MS) keys.push(dayKey(t));
-  const useKeys = kind==='recog' ? keys.filter(k=>vnDow(keyToMs(k))===4) : keys;
-  if(!useKeys.length){ toast('Khoảng ngày này không có thứ Năm nào để miễn ghi nhận.'); return; }
+  const useKeys = kind==='recog' ? keys.filter(k=>vnDow(keyToMs(k))===4) : (kind==='kaizen' ? keys.filter(k=>vnDow(keyToMs(k))===1) : keys);
+  if(!useKeys.length){ toast(kind==='kaizen' ? 'Khoảng ngày này không có thứ Hai nào để miễn Kaizen.' : 'Khoảng ngày này không có thứ Năm nào để miễn ghi nhận.'); return; }
   useKeys.forEach(k=>{
     if(exemptionOf(m, k, kind==='all' ? 'journal' : kind) && kind!=='all') return;
     createRecord('exemptions', {id:uid(), member:m, dateKey:'d'+k, kind, reason, createdBy:STATE.member,
@@ -4120,22 +4569,30 @@ function saveSeedSettings(){
   const vals = {
     SEED_JOURNAL: String(Math.max(0, Math.round(Number(g('st_j').value)||0))),
     SEED_RECOG: String(Math.max(0, Math.round(Number(g('st_r').value)||0))),
+    ...(g('st_k') ? {SEED_KAIZEN: String(Math.max(0, Math.round(Number(g('st_k').value)||0)))} : {}),
     CHARITY_NAME: g('st_name').value.trim(),
     CHARITY_ACCOUNT: g('st_acc').value.trim(),
     SEED_OFF_DAYS: [0,1,2,3,4,5,6].filter(i=>{ const c = g('st_off_'+i); return c && c.checked; }).join(',')
   };
   const curOf = k => (k in SEED_DEFAULTS) ? String(seedRate(k)) : cfg(k);   // compare with what is in effect
   const changed = Object.keys(vals).filter(k=>vals[k] !== curOf(k));
-  if(!changed.length){ toast('Không có thay đổi.'); return; }
-  const rateChanged = changed.includes('SEED_JOURNAL') || changed.includes('SEED_RECOG') || changed.includes('SEED_OFF_DAYS');
-  if(rateChanged && !confirm('Đổi mức tiền hoặc ngày nghỉ sẽ tính lại toàn bộ số tiền phát sinh từ đầu. Tiếp tục?')) return;
+  // v2.11: ngày bắt đầu tính kỷ luật — một ngày cho cả nhật ký, ghi nhận, gieo hạt
+  const fromEl = g('st_from'), newFrom = fromEl ? fromEl.value : '';
+  const fromChanged = !!(fromEl && isAdmin(STATE.member) && /^\d{4}-\d{2}-\d{2}$/.test(newFrom) &&
+    ['RULE18_FROM','RECOG_FROM','SEED_FROM'].some(k=>cfg(k)!==newFrom));
+  if(fromEl && fromEl.value && newFrom > dayKey(nowMs()) && !confirm('Ngày bắt đầu ở tương lai: từ nay đến đó không tính kỷ luật. Tiếp tục?')) return;
+  if(!changed.length && !fromChanged){ toast('Không có thay đổi.'); return; }
+  const rateChanged = ['SEED_JOURNAL','SEED_RECOG','SEED_KAIZEN','SEED_OFF_DAYS'].some(k=>changed.includes(k));
+  if(fromChanged && !confirm('Bắt đầu tính kỷ luật từ '+fmtDMY(keyToMs(newFrom))+'?\nMọi lỗi nhật ký, ghi nhận và tiền gieo hạt trước ngày này sẽ được bỏ qua.')) return;
+  if(!fromChanged && rateChanged && !confirm('Đổi mức tiền hoặc ngày nghỉ sẽ tính lại toàn bộ số tiền phát sinh từ đầu. Tiếp tục?')) return;
+  if(fromChanged) ['RULE18_FROM','RECOG_FROM','SEED_FROM'].forEach(k=>{ vals[k] = newFrom; if(!changed.includes(k)) changed.push(k); });
   changed.forEach(k=>{
     const prev = cfg(k);
     STATE.data.config = Object.assign({}, STATE.data.config, {[k]: vals[k]});
-    queuedPost({type:'config', op:'setConfig', key:k, value:vals[k]}).then(res=>{
+    queuedPost({type:'config', op:'setConfig', key:k, value:vals[k], by:STATE.member}).then(res=>{
       if(res && res.ok) return;
       STATE.data.config = Object.assign({}, STATE.data.config, {[k]: prev});
-      saveCache(); toast('Chưa lưu được cài đặt — đã hoàn tác.'); refreshKeepScroll();
+      saveCache(); toast(res && res.error==='forbidden' ? 'Chỉ '+adminNames()+' đổi được ngày bắt đầu.' : (res && res.error==='forbidden_key' ? 'Máy chủ chưa phải bản mới — dán Code.gs v2.11 rồi chọn New version.' : 'Chưa lưu được cài đặt — đã hoàn tác.')); refreshKeepScroll();
     });
   });
   saveCache(); STATE.seedSettings = false;
@@ -4152,15 +4609,15 @@ function weeklyReportText(){
   const ev = buildEvents(), W = lastWeekRange(), days = [];
   for(let t = W.s; t < W.e; t += DAY_MS) days.push(t);
   const ring = seedMembers(), sK = dayKey(W.s), eK = dayKey(W.e), L = [];
-  L.push('📋 CHỐT SỔ TUẦN '+fmtDM(W.s)+' – '+fmtDMY(W.e-DAY_MS)+' · LÀM CHỦ SỰ HỌC');
+  L.push('📋 CHỐT SỔ TUẦN '+fmtDM(W.s)+' – '+fmtDMY(W.e-DAY_MS)+' · '+TEAM.APP_NAME.toUpperCase());
   if(!ring.length){ L.push('Chưa thiết lập vòng thành viên.'); return L.join('\n'); }
   const top = ring.map(m=>({m, s:memberStreak(m, ev)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,3);
   if(top.length) L.push('🔥 Top chuỗi: '+top.map(x=>x.m+' '+x.s+' ngày').join(' · '));
   let req = 0, ok = 0; const lines = [];
   ring.forEach(m=>{
     const d = periodDiscipline(m, {s:W.s, e:W.e}, days, ev); req += d.req; ok += d.ok;
-    const map = dayStatusMap(nfc(m), ev), miss = [], late = [];
-    days.forEach(t=>{ const k = dayKey(t); if(isJournalNeutral(m,k)) return; const x = map[k]; if(x && x.st==='ok') return; (x ? late : miss).push(fmtDMs(t)); });
+    const map = dayStatusMap(nfc(m), ev), miss = [], late = [], jf = journalSeedFrom();
+    days.forEach(t=>{ const k = dayKey(t); if(isJournalNeutral(m,k) || k < jf) return; const x = map[k]; if(x && x.st==='ok') return; (x ? late : miss).push(fmtDMs(t)); });
     const parts = [];
     if(miss.length) parts.push('thiếu '+miss.length+' ngày ('+miss.join(', ')+')');
     if(late.length) parts.push('ghi muộn '+late.length+' ngày ('+late.join(', ')+')');
@@ -4168,6 +4625,15 @@ function weeklyReportText(){
   });
   L.push(''); L.push('📒 Nhật ký trước 18:00: '+ok+'/'+req+' ngày ('+(req ? Math.round(ok/req*100) : 0)+'%)');
   L.push(...(lines.length ? lines : ['• Cả nhóm ghi đủ, đúng giờ 👏']));
+  // Kaizen: phiếu hạn thứ Hai đầu tuần này (nếu đã qua 18:00), nếu chưa thì phiếu thứ Hai đầu tuần trước
+  const kzK = nowMs() >= kzDeadline(eK) ? eK : sK;
+  const kst = ring.map(m=>({m, s:kaizenStatus(m, kzK)})).filter(x=>!['na','future'].includes(x.s));
+  if(kst.length){
+    const counted = kst.filter(x=>x.s!=='exempt'), ws = kzWeekStats(kzK);
+    L.push(''); L.push('📝 Kaizen (hạn 18:00 thứ Hai '+fmtDMs(keyToMs(kzK))+'): '+counted.filter(x=>x.s==='ok').length+'/'+counted.length+' đúng hạn');
+    kst.filter(x=>x.s==='miss' || x.s==='late' || x.s==='pending').forEach(x=>L.push('• '+x.m+': '+(x.s==='late' ? 'nộp muộn' : (x.s==='pending' ? 'chưa nộp' : 'không nộp'))));
+    if(ws.avg!==null) L.push('⭐ Điểm hiệu quả đội: '+kzAvgText(ws.avg)+'/10 ('+ws.scored+' phiếu) — '+(ws.avg>=KZ_TARGET ? 'đạt' : 'chưa đạt')+' KR3 ≥ '+KZ_TARGET+'/10');
+  }
   const thu = days.find(t=>vnDow(t)===4);
   if(thu){
     const k = dayKey(thu), st = ring.map(m=>({m, s:recogStatus(m,k)})).filter(x=>!['na','future'].includes(x.s));
@@ -4220,12 +4686,12 @@ function renderSeedForm(){
 }
 function renderExForm(){
   const list = (STATE.data.exemptions||[]).slice().sort((a,b)=>dkOf(b.dateKey).localeCompare(dkOf(a.dateKey))).slice(0,12);
-  const kindTxt = {all:'nhật ký + ghi nhận', journal:'nhật ký', recog:'ghi nhận'};
+  const kindTxt = {all: kzOn() ? 'nhật ký + ghi nhận + Kaizen' : 'nhật ký + ghi nhận', journal:'nhật ký', recog:'ghi nhận', kaizen:'Kaizen'};
   return `<div class="sd-form ex">
     <div class="sd-form-t">🛡 Ngày miễn (ốm, công tác, việc gia đình…)</div>
     <div class="sd-grid">
       <label>Thành viên<select id="ex_member">${memberOptions(STATE.member)}</select></label>
-      <label>Miễn cho<select id="ex_kind"><option value="all">Nhật ký + ghi nhận</option><option value="journal">Chỉ nhật ký</option><option value="recog">Chỉ ghi nhận (thứ Năm)</option></select></label>
+      <label>Miễn cho<select id="ex_kind"><option value="all">Nhật ký + ghi nhận${kzOn() ? ' + Kaizen' : ''}</option><option value="journal">Chỉ nhật ký</option><option value="recog">Chỉ ghi nhận (thứ Năm)</option>${kzOn() ? '<option value="kaizen">Chỉ Kaizen (thứ Hai)</option>' : ''}</select></label>
       <label>Từ ngày<input id="ex_date" type="date" value="${dayKey(nowMs())}"/></label>
       <label>Đến ngày (tuỳ chọn)<input id="ex_date_to" type="date"/></label>
       <label class="sd-wide">Lý do<input id="ex_reason" type="text" placeholder="VD: Ốm sốt, đi viện"/></label>
@@ -4241,17 +4707,20 @@ function renderSeedSettings(){
     <div class="sd-grid">
       <label>📒 Mỗi ngày thiếu / ghi muộn (đ)<input id="st_j" type="number" min="0" step="1000" value="${seedRate('SEED_JOURNAL')}"/></label>
       <label>💬 Mỗi lần nghỉ ghi nhận (đ)<input id="st_r" type="number" min="0" step="1000" value="${seedRate('SEED_RECOG')}"/></label>
+      ${kzOn() ? `<label>📝 Mỗi lần nghỉ Kaizen (đ)<input id="st_k" type="number" min="0" step="1000" value="${seedRate('SEED_KAIZEN')}"/></label>` : ''}
       <label>Tên quỹ / tổ chức từ thiện<input id="st_name" type="text" value="${esc(cfg('CHARITY_NAME'))}" placeholder="VD: Quỹ Bảo trợ trẻ em…"/></label>
       <label>Số tài khoản – ngân hàng<input id="st_acc" type="text" value="${esc(cfg('CHARITY_ACCOUNT'))}" placeholder="VD: 0123456789 – Vietcombank"/></label>
     </div>
+    ${isAdmin(STATE.member) ? `<div class="sd-grid" style="margin-top:10px"><label class="sd-wide">📅 Bắt đầu tính kỷ luật từ (chỉ ${esc(adminNames())})<input id="st_from" type="date" value="${journalSeedFrom()==='9999-12-31' ? '' : journalSeedFrom()}"/></label></div>
+    <div class="hint" style="margin-top:-2px">Nhật ký 18:00, ghi nhận thứ Năm và gieo hạt chỉ tính từ ngày này. Mọi lỗi và tiền gieo trước ngày này được bỏ qua.</div>` : ''}
     <div class="sd-sub">Ngày cố định không tính nhật ký (không phát sinh, không làm đứt chuỗi)</div>
     <div class="sd-days">${names.map((n,i)=>`<label class="sd-day"><input id="st_off_${i}" type="checkbox" ${off.includes(i)?'checked':''}/> ${n}</label>`).join('')}</div>
-    <div class="hint">Sổ gieo hạt bắt đầu tính từ ${seedFrom()==='9999-12-31' ? 'khi cập nhật backend' : fmtDMY(keyToMs(seedFrom()))}. Lần nghỉ ghi nhận đầu tiên mỗi tháng luôn được miễn. Đổi mức tiền sẽ tính lại toàn bộ khoản phát sinh.</div>
+    <div class="hint">Sổ gieo hạt bắt đầu tính từ ${seedFrom()==='9999-12-31' ? 'khi cập nhật backend' : fmtDMY(keyToMs(seedFrom()))}. Mỗi tuần được nghỉ 1 ngày nhật ký (tự tính, không cần báo). Lần nghỉ ghi nhận${kzOn() ? ' và lần nghỉ Kaizen' : ''} đầu tiên mỗi tháng luôn được miễn. Đổi mức tiền sẽ tính lại toàn bộ khoản phát sinh.</div>
     <div class="sd-actions"><button class="btn btn-ghost btn-sm" onclick="closeSeedForms()">Huỷ</button><button class="btn btn-gold btn-sm" onclick="saveSeedSettings()">💾 Lưu cài đặt</button></div>
   </div>`;
 }
 function renderSeedDetail(row){
-  const L = row.L, kindIcon = {journal:'📒', recog:'💬'};
+  const L = row.L, kindIcon = {journal:'📒', recog:'💬', kaizen:'📝'};
   const items = L.items.slice().reverse(), shown = items.slice(0,40);
   const itemsHtml = shown.length ? shown.map(it=>`<div class="sd-li ${it.paid?'paid':''}">
       <span class="sd-d">${WEEKDAY_VI[vnDow(keyToMs(it.k))]} ${fmtDMs(keyToMs(it.k))}</span>
@@ -4260,10 +4729,11 @@ function renderSeedDetail(row){
       ${it.free ? '' : `<span class="sd-tag ${it.paid?'ok':'due'}">${it.paid?'đã gieo':'chưa gieo'}</span>`}
     </div>`).join('') + (items.length>shown.length ? `<div class="hint">+${items.length-shown.length} khoản cũ hơn</div>` : '')
     : '<div class="empty-note">Chưa có khoản nào phát sinh 👏</div>';
-  const seedsHtml = L.seeds.length ? L.seeds.map(s=>{
+  const seedsHtml = (L.seeds.length || L.oldSeeds.length) ? L.seeds.concat(L.oldSeeds).map(s=>{
+      const old = dkOf(s.sownAt) < seedFrom();
       const proof = /^https?:\/\//i.test(String(s.proof||'')) ? ` · <a href="${esc(s.proof)}" target="_blank" rel="noopener">minh chứng</a>` : (s.proof ? ' · '+esc(s.proof) : '');
-      const canDel = same(s.by, STATE.member) || same(STATE.member,'Nhưỡng');
-      return `<div class="sd-li"><span class="sd-d">${fmtDMs(keyToMs(dkOf(s.sownAt)))}</span><span>${esc(s.note||'')}${proof}<span class="rp-muted"> · ghi bởi ${esc(s.by||'?')}</span></span><span class="sd-amt ok">+${money(s.amount)}</span>${canDel?`<button class="step-del" title="Xoá dòng này" onclick="deleteSeed('${jsq(s.id)}')">✕</button>`:''}</div>`;
+      const canDel = same(s.by, STATE.member) || isAdmin(STATE.member);
+      return `<div class="sd-li ${old?'paid':''}"><span class="sd-d">${fmtDMs(keyToMs(dkOf(s.sownAt)))}</span><span>${esc(s.note||'')}${proof}<span class="rp-muted"> · ghi bởi ${esc(s.by||'?')}${old?' · trước ngày bắt đầu, không tính':''}</span></span><span class="sd-amt ${old?'':'ok'}">+${money(s.amount)}</span>${canDel?`<button class="step-del" title="Xoá dòng này" onclick="deleteSeed('${jsq(s.id)}')">✕</button>`:''}</div>`;
     }).join('') : '<div class="empty-note">Chưa có lần gieo hạt nào.</div>';
   return `<div class="sd-detail-in">
     <div class="sd-sum">Từ ${fmtDMY(keyToMs(journalSeedFrom()==='9999-12-31' ? dayKey(nowMs()) : journalSeedFrom()))}: phát sinh <strong>${money(L.owed)}</strong> · đã gieo <strong class="rp-ok">${money(L.sown)}</strong> · còn nợ <strong class="${L.balance>0?'rp-bad':'rp-ok'}">${money(Math.max(0,L.balance))}</strong>${L.balance<0?` (dư ${money(-L.balance)})`:''}${L.oldest?` · khoản chưa gieo cũ nhất ${fmtDMs(keyToMs(L.oldest))} (${L.age} ngày)`:''}</div>
@@ -4284,16 +4754,18 @@ function renderReportSeeds(P, days, events){
       owedP: L.items.filter(x=>inP(x.k)).reduce((a,x)=>a+x.amount,0),
       sownP: L.seeds.filter(s=>inP(dkOf(s.sownAt))).reduce((a,s)=>a+(Number(s.amount)||0),0)};
   }).sort((a,b)=> b.L.balance-a.L.balance || a.m.localeCompare(b.m));
-  const T = rows.reduce((t,r)=>{ ['req','ok','late','miss','rReq','rOk','rLate','rMiss'].forEach(k=>t[k]+=r.d[k]); t.owedP+=r.owedP; t.sownP+=r.sownP; t.bal+=Math.max(0,r.L.balance); return t; },
-    {req:0,ok:0,late:0,miss:0,rReq:0,rOk:0,rLate:0,rMiss:0,owedP:0,sownP:0,bal:0});
+  const T = rows.reduce((t,r)=>{ ['req','ok','late','miss','rReq','rOk','rLate','rMiss','kReq','kOk','kLate','kMiss'].forEach(k=>t[k]+=r.d[k]); t.owedP+=r.owedP; t.sownP+=r.sownP; t.bal+=Math.max(0,r.L.balance); return t; },
+    {req:0,ok:0,late:0,miss:0,rReq:0,rOk:0,rLate:0,rMiss:0,kReq:0,kOk:0,kLate:0,kMiss:0,owedP:0,sownP:0,bal:0});
+  const kzc = kzOn();
   const jCell = d => d.req ? `<strong>${d.ok}</strong>/${d.req}${d.late?` · <span class="rp-warn">⏰${d.late}</span>`:''}${d.miss?` · <span class="rp-bad">✕${d.miss}</span>`:''}` : '<span class="rp-muted">—</span>';
   const rCell = d => d.rReq ? `<strong>${d.rOk}</strong>/${d.rReq}${d.rLate?` · <span class="rp-warn">⏰${d.rLate}</span>`:''}${d.rMiss?` · <span class="rp-bad">✕${d.rMiss}</span>`:''}` : '<span class="rp-muted">—</span>';
+  const kCell = d => !kzc ? '' : '<td>' + (d.kReq ? `<strong>${d.kOk}</strong>/${d.kReq}${d.kLate?` · <span class="rp-warn">⏰${d.kLate}</span>`:''}${d.kMiss?` · <span class="rp-bad">✕${d.kMiss}</span>`:''}` : '<span class="rp-muted">—</span>') + '</td>';
   const balCell = L => {
     const tip = L.level==='red' ? 'Có khoản chưa gieo quá '+SEED_STALE_DAYS+' ngày' : (L.level==='yellow' ? 'Còn nợ' : 'Đã gieo đủ');
     return `<span class="sd-bal ${L.level}" title="${tip}">${L.level==='red'?'🔴':L.level==='yellow'?'🟡':'🟢'} ${money(Math.max(0,L.balance))}</span>`;
   };
   const body = rows.map(r=>`<tr class="sd-row ${STATE.seedOpen && same(STATE.seedOpen,r.m)?'open':''}" onclick="toggleSeedDetail('${jsq(r.m)}')">
-      <td>${memberBadge(r.m)}</td><td>${jCell(r.d)}</td><td>${rCell(r.d)}</td>
+      <td>${memberBadge(r.m)}</td><td>${jCell(r.d)}</td>${kCell(r.d)}<td>${rCell(r.d)}</td>
       <td>${r.owedP ? money(r.owedP) : '<span class="rp-muted">0đ</span>'}</td>
       <td>${r.sownP ? `<span class="rp-ok">${money(r.sownP)}</span>` : '<span class="rp-muted">0đ</span>'}</td>
       <td>${balCell(r.L)}</td><td class="sd-chev">${STATE.seedOpen && same(STATE.seedOpen,r.m)?'▲':'▼'}</td>
@@ -4306,7 +4778,7 @@ function renderReportSeeds(P, days, events){
   const fund = [cfg('CHARITY_NAME'), cfg('CHARITY_ACCOUNT')].filter(Boolean);
   const info = `<div class="sd-info">
       <div>🏦 ${fund.length ? `Gieo hạt vào: <strong>${esc(fund.join(' – '))}</strong>` : '<span class="rp-warn">Chưa có thông tin quỹ từ thiện — điền ở ⚙️ Cài đặt.</span>'}</div>
-      <div class="rp-muted">📒 Thiếu/ghi muộn nhật ký: <strong>${money(seedRate('SEED_JOURNAL'))}</strong>/ngày · 💬 Nghỉ ghi nhận: <strong>${money(seedRate('SEED_RECOG'))}</strong>/lần (lần đầu mỗi tháng miễn)${offDays().length?` · Không tính ngày: ${offDays().map(i=>['CN','T2','T3','T4','T5','T6','T7'][i]).join(', ')}`:''}</div>
+      <div class="rp-muted">📒 Thiếu/ghi muộn nhật ký: <strong>${money(seedRate('SEED_JOURNAL'))}</strong>/ngày ${kzc ? ` · 📝 Nghỉ Kaizen: <strong>${money(seedRate('SEED_KAIZEN'))}</strong>/lần` : ''} · 💬 Nghỉ ghi nhận: <strong>${money(seedRate('SEED_RECOG'))}</strong>/lần (${kzc ? 'Kaizen, ghi nhận: ' : ''}lần đầu mỗi tháng miễn) · mỗi tuần nghỉ 1 ngày nhật ký: miễn${offDays().length?` · Không tính ngày: ${offDays().map(i=>['CN','T2','T3','T4','T5','T6','T7'][i]).join(', ')}`:''}</div>
     </div>`;
   const bar = `<div class="sd-bar">
       <button class="btn btn-gold btn-sm" onclick="openSeedForm()">🌱 Cập nhật đã gieo hạt</button>
@@ -4316,9 +4788,9 @@ function renderReportSeeds(P, days, events){
     </div>`;
   const forms = (STATE.seedForm ? renderSeedForm() : '') + (STATE.exForm ? renderExForm() : '') + (STATE.seedSettings ? renderSeedSettings() : '');
   const table = `<div class="rp-scroll"><table class="rp-table sd-table">
-      <thead><tr><th>Thành viên</th><th>📒 Nhật ký<br><small>đúng giờ/phải ghi · ⏰muộn · ✕thiếu</small></th><th>💬 Ghi nhận<br><small>đúng hạn/phải · ⏰ · ✕</small></th><th>Phát sinh<br><small>trong kỳ</small></th><th>Đã gieo<br><small>trong kỳ</small></th><th>Tổng còn nợ<br><small>cộng dồn</small></th><th></th></tr></thead>
+      <thead><tr><th>Thành viên</th><th>📒 Nhật ký<br><small>đúng giờ/phải ghi · ⏰muộn · ✕thiếu</small></th>${kzc ? '<th>📝 Kaizen<br><small>đúng hạn/phải · ⏰ · ✕</small></th>' : ''}<th>💬 Ghi nhận<br><small>đúng hạn/phải · ⏰ · ✕</small></th><th>Phát sinh<br><small>trong kỳ</small></th><th>Đã gieo<br><small>trong kỳ</small></th><th>Tổng còn nợ<br><small>cộng dồn</small></th><th></th></tr></thead>
       <tbody>${body}</tbody>
-      <tfoot><tr><td><strong>Cả nhóm</strong></td><td>${jCell(T)}</td><td>${rCell(T)}</td><td><strong>${money(T.owedP)}</strong></td><td><strong class="rp-ok">${money(T.sownP)}</strong></td><td><strong>${money(T.bal)}</strong></td><td></td></tr></tfoot>
+      <tfoot><tr><td><strong>Cả nhóm</strong></td><td>${jCell(T)}</td>${kCell(T)}<td>${rCell(T)}</td><td><strong>${money(T.owedP)}</strong></td><td><strong class="rp-ok">${money(T.sownP)}</strong></td><td><strong>${money(T.bal)}</strong></td><td></td></tr></tfoot>
     </table></div>${detail}
     <div class="hint">Bấm một dòng để xem từng khoản phát sinh và lịch sử gieo hạt. 🔴 = có khoản chưa gieo quá ${SEED_STALE_DAYS} ngày.</div>`;
   const preview = `<details class="rp-formula"><summary>Xem trước báo cáo tuần</summary><pre class="sd-pre">${esc(weeklyReportText())}</pre></details>`;
@@ -4326,6 +4798,7 @@ function renderReportSeeds(P, days, events){
 }
 const BEHAVIORS = [
   {k:'j', icon:'📒', name:'Nhật ký trước 18:00',      norm:'Mỗi ngày',          seed:true},
+  {k:'k', icon:'📝', name:'Kaizen trước 18:00 thứ Hai', norm:'Mỗi thứ Hai', seed:true, kz:true},   // chỉ hiện khi TEAM.KAIZEN
   {k:'r', icon:'💬', name:'Ghi nhận đồng đội',        norm:'Mỗi thứ Năm',       seed:true},
   {k:'c', icon:'❓', name:'Trả lời câu hỏi chéo',     norm:'Trong 3 ngày',      seed:false},
   {k:'a', icon:'⏱', name:'Hành động xong đúng hạn',  norm:'Theo hạn đã đặt',   seed:false}
@@ -4345,7 +4818,7 @@ function behaviorStats(m, P, days, events){
     const t = doneTs(a);
     if(t!==null && t<=dl){ aDue++; aOk++; } else { aDue++; }
   });
-  return {j:[d.ok, d.req], r:[d.rOk, d.rReq], c:[cOk, cDue], a:[aOk, aDue]};
+  return {j:[d.ok, d.req], k:[d.kOk, d.kReq], r:[d.rOk, d.rReq], c:[cOk, cDue], a:[aOk, aDue]};
 }
 function renderBehaviorMatrix(P, days, events){
   const ring = seedMembers(); if(!ring.length) return '';
@@ -4356,7 +4829,7 @@ function renderBehaviorMatrix(P, days, events){
     return `<span class="bm-c ${cls}" title="${x}/${y}">${p}%</span><small class="bm-n">${x}/${y}</small>`;
   };
   const head = `<thead><tr><th>Hành vi</th><th>Định mức</th><th>Gieo hạt</th>${ring.map(m=>`<th>${esc(m)}</th>`).join('')}<th>Cả nhóm</th></tr></thead>`;
-  const rows = BEHAVIORS.map(b=>{
+  const rows = BEHAVIORS.filter(b=>!b.kz || kzOn()).map(b=>{
     const tot = stats.reduce((t,x)=>[t[0]+x.s[b.k][0], t[1]+x.s[b.k][1]],[0,0]);
     return `<tr><td class="bm-name">${b.icon} ${b.name}</td><td class="rp-muted">${b.norm}</td><td>${b.seed?'<span class="sd-tag due">có</span>':'<span class="rp-muted">chỉ đo</span>'}</td>${stats.map(x=>`<td>${cell(x.s[b.k][0], x.s[b.k][1])}</td>`).join('')}<td>${cell(tot[0], tot[1])}</td></tr>`;
   }).join('');
@@ -4365,50 +4838,51 @@ function renderBehaviorMatrix(P, days, events){
      <div class="rp-legend">≥ 90% đạt · 70–89% cần cố gắng · &lt; 70% cần hỗ trợ · số nhỏ = đạt/phải làm</div>`);
 }
 function weeklyCompliance(events){
-  const ring = seedMembers(), now = nowMs(), todayK = dayKey(now), mon = addDays(sod(now), -((vnDow(now)+6)%7)), weeks = [];
+  const ring = seedMembers(), now = nowMs(), todayK = dayKey(now), mon = addDays(sod(now), -((vnDow(now)+6)%7)), weeks = [], jf = journalSeedFrom();
   const maps = ring.map(m=>{ const map = dayStatusMap(nfc(m), events); return {m, map, from:journalReqFrom(map)}; });
   for(let i=7;i>=0;i--){
-    const s = addDays(mon,-7*i).getTime(); let jR=0, jO=0, rR=0, rO=0;
+    const s = addDays(mon,-7*i).getTime(); let jR=0, jO=0, rR=0, rO=0, kR=0, kO=0;
     for(let t=s; t<s+7*DAY_MS && t<=sod(now).getTime(); t+=DAY_MS){
       const k = dayKey(t);
       maps.forEach(({m,map,from})=>{
-        if(k>=from && !isJournalNeutral(m,k)){
+        if(k>=from && k>=jf && !isJournalNeutral(m,k)){
           const x = map[k];
           if(!(k===todayK && !(x && x.st==='ok') && vnHour(now)<CUTOFF_HOUR)){ jR++; if(x && x.st==='ok') jO++; }
         }
         if(vnDow(t)===4){ const st = recogStatus(m,k); if(!['na','future','pending','exempt'].includes(st)){ rR++; if(st==='ok') rO++; } }
+        if(vnDow(t)===1){ const st = kaizenStatus(m,k); if(!['na','future','pending','exempt'].includes(st)){ kR++; if(st==='ok') kO++; } }
       });
     }
-    weeks.push({s, label:fmtDMs(s), cur:i===0, jO, jR, rO, rR, j: jR?Math.round(jO/jR*100):null, r: rR?Math.round(rO/rR*100):null});
+    weeks.push({s, label:fmtDMs(s), cur:i===0, jO, jR, rO, rR, kO, kR, j: jR?Math.round(jO/jR*100):null, r: rR?Math.round(rO/rR*100):null, k: kR?Math.round(kO/kR*100):null});
   }
   return weeks;
 }
 function renderComplianceTrend(events){
   if(!seedMembers().length) return '';
-  const W = weeklyCompliance(events), pc = v => v===null ? '—' : v+'%';
+  const W = weeklyCompliance(events), pc = v => v===null ? '—' : v+'%', kzc = kzOn();
   const bh = v => v===null ? 0 : Math.max(v, 1.5);   // 0% still shows a hairline so it never looks like "no data"
-  const chart = `<div class="tr-legend"><span><i style="background:${TREND_COLORS.j}"></i>Nhật ký đúng giờ</span><span><i style="background:${TREND_COLORS.r}"></i>Ghi nhận đúng hạn</span></div>
+  const chart = `<div class="tr-legend"><span><i style="background:${TREND_COLORS.j}"></i>Nhật ký đúng giờ</span>${kzc ? `<span><i style="background:${TREND_COLORS.k}"></i>Kaizen đúng hạn</span>` : ''}<span><i style="background:${TREND_COLORS.r}"></i>Ghi nhận đúng hạn</span></div>
     <div class="tr-chart">
       <div class="tr-axis"><span>100%</span><span>50%</span><span>0%</span></div>
       <div class="tr-plot">
         <div class="tr-grid"><i></i><i></i><i></i></div>
-        ${W.map(w=>`<div class="tr-w" title="Tuần từ ${w.label}${w.cur?' (tuần này)':''}: nhật ký ${pc(w.j)} (${w.jO}/${w.jR}) · ghi nhận ${pc(w.r)} (${w.rO}/${w.rR})">
-          <div class="tr-bars"><div class="tr-b" style="height:${bh(w.j)}%;background:${TREND_COLORS.j}"></div><div class="tr-b" style="height:${bh(w.r)}%;background:${TREND_COLORS.r}"></div></div>
-          <div class="tr-l">${w.cur ? 'tuần này' : w.label}</div>${w.j===null && w.r===null ? '<div class="tr-na">chưa áp dụng</div>' : ''}</div>`).join('')}
+        ${W.map(w=>`<div class="tr-w" title="Tuần từ ${w.label}${w.cur?' (tuần này)':''}: nhật ký ${pc(w.j)} (${w.jO}/${w.jR})${kzc ? ` · Kaizen ${pc(w.k)} (${w.kO}/${w.kR})` : ''} · ghi nhận ${pc(w.r)} (${w.rO}/${w.rR})">
+          <div class="tr-bars"><div class="tr-b" style="height:${bh(w.j)}%;background:${TREND_COLORS.j}"></div>${kzc ? `<div class="tr-b" style="height:${bh(w.k)}%;background:${TREND_COLORS.k}"></div>` : ''}<div class="tr-b" style="height:${bh(w.r)}%;background:${TREND_COLORS.r}"></div></div>
+          <div class="tr-l">${w.cur ? 'tuần này' : w.label}</div>${w.j===null && w.r===null && w.k===null ? '<div class="tr-na">chưa áp dụng</div>' : ''}</div>`).join('')}
       </div>
     </div>`;
-  const table = `<details class="rp-formula"><summary>Xem dạng bảng</summary><table class="rp-table rp-me-table" style="margin-top:6px"><thead><tr><th>Tuần từ</th><th>📒 Nhật ký đúng giờ</th><th>💬 Ghi nhận đúng hạn</th></tr></thead><tbody>${W.map(w=>`<tr><td>${w.label}${w.cur?' (tuần này)':''}</td><td>${pc(w.j)} <span class="rp-muted">${w.jO}/${w.jR}</span></td><td>${pc(w.r)} <span class="rp-muted">${w.rO}/${w.rR}</span></td></tr>`).join('')}</tbody></table></details>`;
+  const table = `<details class="rp-formula"><summary>Xem dạng bảng</summary><table class="rp-table rp-me-table" style="margin-top:6px"><thead><tr><th>Tuần từ</th><th>📒 Nhật ký đúng giờ</th>${kzc ? '<th>📝 Kaizen đúng hạn</th>' : ''}<th>💬 Ghi nhận đúng hạn</th></tr></thead><tbody>${W.map(w=>`<tr><td>${w.label}${w.cur?' (tuần này)':''}</td><td>${pc(w.j)} <span class="rp-muted">${w.jO}/${w.jR}</span></td>${kzc ? `<td>${pc(w.k)} <span class="rp-muted">${w.kO}/${w.kR}</span></td>` : ''}<td>${pc(w.r)} <span class="rp-muted">${w.rO}/${w.rR}</span></td></tr>`).join('')}</tbody></table></details>`;
   return rpSection('3','📈 Xu hướng tuân thủ 8 tuần','Kỷ luật của cả nhóm đang lên hay xuống — rê chuột / chạm vào cột để xem số.', chart + table);
 }
 function seedBannerHtml(){
   const me = STATE.member; if(!me || !inSeedScope(me)) return '';
   const L = ledger(me); if(L.balance<=0) return '';
   const sig = dayKey(nowMs())+'|'+L.balance;
-  try { if(localStorage.getItem('lcsh_seed_hide_'+me)===sig) return ''; } catch(e){}
+  try { if(localStorage.getItem(SK+'seed_hide_'+me)===sig) return ''; } catch(e){}
   const due = L.items.filter(i=>!i.paid && i.amount>0).length;
   return `<div class="rc-banner seed ${L.level}"><span>🌱 Bạn còn <strong>${money(L.balance)}</strong> chưa gieo hạt (${due} khoản${L.level==='red'?`, khoản cũ nhất ${L.age} ngày`:''}). Đã gieo thì cập nhật để lưu lịch sử.</span><span class="rc-banner-act"><button class="btn btn-gold btn-sm" onclick="goSeeds()">🌱 Xem & cập nhật</button><button class="step-del" title="Ẩn đến mai" onclick="hideSeedBanner('${jsq(sig)}')">✕</button></span></div>`;
 }
-function hideSeedBanner(sig){ try { localStorage.setItem('lcsh_seed_hide_'+STATE.member, sig); } catch(e){} renderRecogBanner(); }
+function hideSeedBanner(sig){ try { localStorage.setItem(SK+'seed_hide_'+STATE.member, sig); } catch(e){} renderRecogBanner(); }
 function seedStatsSpan(m){
   if(!inSeedScope(m)) return '';
   const L = ledger(m);
@@ -4420,14 +4894,14 @@ function seedStatsSpan(m){
    NHỊP VẬN HÀNH — tài liệu nội bộ của đội
    • Nội dung lưu trong Google Sheet (tab Docs), tải về cùng dữ liệu sau khi Mở khoá
      → không còn nằm trong mã nguồn trang
-   • Nhưỡng đăng bản mới ngay trong app: ⚙️ Cài đặt tài liệu → chọn file .md / dán →
+   • Quản trị (TEAM.ADMINS) đăng bản mới ngay trong app: ⚙️ Cài đặt tài liệu → chọn file .md / dán →
      xem trước + kiểm tra → Đăng. Mỗi lần đăng là 1 phiên bản, khôi phục được.
    • Markdown (GFM: bảng, xuống dòng) → marked → DOMPurify (giữ <details>/<summary>/<a id>)
    • Trang được dựng một lần cho mỗi phiên bản, nên đồng bộ nền không làm đóng các mục đang mở
    ================================================================ */
 const NHIP_KEY = 'nhip';
 const NHIP_MAX = 150000;
-const DOC_EDITORS = ['Nhưỡng'];
+const DOC_EDITORS = TEAM.ADMINS;
 const NHIP = { node: null, builtId: null, page: null, loading: null, error: '', draft: null,
                paste: false, pasteText: '', busy: false, settingsOpen: null, rev: 0, setSig: '' };
 function isDocEditor(m){ return !!m && DOC_EDITORS.some(x=>same(x, m)); }
@@ -4608,7 +5082,7 @@ function nhipStatusHtml(doc){
   if(doc || !STATE.dataLoaded) return '<div class="empty-note">Đang tải tài liệu Nhịp vận hành…</div>';
   return isDocEditor(STATE.member)
     ? '<div class="empty-note">Chưa có nội dung. Mở <strong>⚙️ Cài đặt tài liệu</strong> bên dưới để tải file .md lên.</div>'
-    : '<div class="empty-note">Chưa có nội dung Nhịp vận hành — Nhưỡng sẽ đăng sớm.</div>';
+    : '<div class="empty-note">Chưa có nội dung Nhịp vận hành — '+esc(adminNames())+' sẽ đăng sớm.</div>';
 }
 function nhipRefresh(){
   if(!(STATE.tab==='nhip' && STATE.pwd)) return;
@@ -4686,7 +5160,7 @@ function nhipSettingsRender(){
         ${h.id===doc.id ? '<span class="sd-tag ok">đang dùng</span>' : `<button class="btn btn-ghost btn-sm" onclick="nhipRestore(${Number(h.version)})" ${NHIP.busy?'disabled':''}>↩ Khôi phục</button>`}
       </div>`).join('')}` : '';
   holder.innerHTML = `<details class="rp-section rc-settings nv-set" ${NHIP.settingsOpen?'open':''} ontoggle="NHIP.settingsOpen=this.open">
-      <summary class="rp-sec-title">⚙️ Cài đặt tài liệu <span class="rc-chip">chỉ Nhưỡng</span></summary>
+      <summary class="rp-sec-title">⚙️ Cài đặt tài liệu <span class="rc-chip">chỉ ${esc(adminNames())}</span></summary>
       <div class="nv-cur">${cur}</div>
       ${bar}${paste}${draft}${hist}
       <div class="hint">File Markdown (.md) soạn sẵn, tối đa 150.000 ký tự. Đăng xong, cả đội thấy bản mới ở lần mở app tiếp theo.</div>
@@ -4765,7 +5239,7 @@ function nhipCheck(text, prev){
 function nhipErrText(r){
   const e = r && r.error;
   if(e==='unknown_type') return 'Backend chưa cập nhật — cần dán file .gs mới và Deploy bản mới trước.';
-  if(e==='forbidden') return 'Chỉ Nhưỡng được đăng nội dung.';
+  if(e==='forbidden') return 'Chỉ '+adminNames()+' được đăng nội dung.';
   if(e==='too_long') return 'Nội dung quá dài (tối đa 150.000 ký tự).';
   if(e==='empty') return 'Nội dung trống.';
   if(e==='not_found') return 'Không tìm thấy phiên bản này.';
@@ -4810,7 +5284,7 @@ function nhipDownload(){
 }
 
 /* ---- "có bản mới" for everyone else (once per person, within 7 days) ---- */
-function nhipSeenKey(){ return 'lcsh_nhip_seen_'+(STATE.member||''); }
+function nhipSeenKey(){ return SK+'nhip_seen_'+(STATE.member||''); }
 function nhipUnseen(){
   const d = nhipDoc();
   if(!d || !STATE.member || same(d.by, STATE.member)) return null;
@@ -4826,12 +5300,309 @@ function nhipBannerHtml(){
   return `<div class="rc-banner nv"><span>📢 <strong>Nhịp vận hành</strong> vừa cập nhật (v${d.version})${d.note?': '+esc(d.note):''}</span><button class="btn btn-gold btn-sm" onclick="setTab('nhip')">Đọc ngay</button></div>`;
 }
 
+/* ================================================================
+   KAIZEN NHÓM — mỗi tuần, hạn 18:00 thứ Hai (v2.11)
+   • Phiếu mở từ 00:00 thứ Bảy đến 18:00 thứ Hai; nộp sau hạn vẫn được nhưng tính là nghỉ
+   • Tối đa nghỉ 1 lần/tháng (🟡 / 🔴); gieo hạt như ghi nhận: lần nghỉ đầu mỗi tháng miễn
+   • Câu hỏi giữ nguyên văn của đội; câu 7 là điểm hiệu quả đội 1–10 (KR3: ≥ 8/10)
+   • Cả nhóm cùng đọc: xem theo người hoặc theo từng câu hỏi (dùng cho buổi sinh hoạt thứ Ba)
+   ================================================================ */
+const KZ_FIELDS = [
+  {k:'actual',       short:'kết quả thực tế',            label:'Kết quả thực tế bạn đã đạt được so với kỳ vọng đặt ra trong tuần vừa rồi'},
+  {k:'effective',    short:'hành vi hiệu quả',            label:'Đâu là những hành vi hiệu quả bạn đã làm ?'},
+  {k:'notEffective', short:'hành vi chưa hiệu quả',       label:'Đâu là những hành vi CHƯA hiệu quả bạn đã làm ?'},
+  {k:'rootCause',    short:'nguyên nhân gốc rễ',          label:'Nguyên nhân gốc rễ là gì ?'},
+  {k:'contribution', short:'hành động đóng góp cho đội',  label:'Theo đúng tinh thần ACTION LEARNING , bạn đã có những hành động gì hiệu quả đóng góp cho đội nhóm, đồng đội trong tuần vừa rồi ?'},
+  {k:'teamBetter',   short:'điều đội làm tốt hơn',        label:'Đâu là điều đội nhóm CHÚNG TA có thể làm tốt hơn ?'}
+];
+const KZ_SCORE = {k:'teamScore', short:'mức độ hiệu quả đội nhóm', label:'Mức độ hiệu quả đội nhóm theo đúng tinh thần AL và bộ OKRs'};
+const KZ_HOUR = 18, KZ_TARGET = 8;
+// Bật / tắt theo đội: TEAM.KAIZEN trong khối cấu hình đội (đội không dùng Kaizen thì không có tab, không tính lỗi)
+function kzOn(){ return !!(typeof TEAM!=='undefined' && TEAM.KAIZEN); }
+function kaizenFrom(){ return kzOn() ? cfgDate('KAIZEN_FROM') : '9999-12-31'; }
+function kzMembers(){ return seedMembers(); }
+function inKaizen(m){ return kzOn() && !!m && kzMembers().some(x=>same(x,m)); }
+function monOnOrBefore(t){ const d = sod(t); return addDays(d, -((vnDow(d)+6)%7)); }
+function monOnOrAfter(t){ const d = sod(t); return addDays(d, (8 - vnDow(d)) % 7); }
+function kzDeadline(wk){ return keyToMs(wk) + KZ_HOUR*3600000; }           // thứ Hai 18:00
+function kzOpenAt(wk){ return keyToMs(wk) - 2*DAY_MS; }                    // thứ Bảy 00:00
+function kzCounts(wk){ return dayKey(kzOpenAt(wk)) >= kaizenFrom(); }       // chỉ tính tuần mở phiếu sau ngày bắt đầu
+function kzWeekRange(wk){ const e = keyToMs(wk); return {s: e - 7*DAY_MS, e}; }
+function findKaizen(m, wk){ return (STATE.data.kaizen||[]).find(r=>same(r.member,m) && wkOf(r)===wk); }
+function kzScore(r){ const n = Number(r && r.teamScore); return (n>=1 && n<=10) ? n : null; }
+function kzAvgText(n){ return n===null ? '—' : String(Math.round(n*10)/10).replace('.', ','); }
+// ok · late (nộp sau 18:00 thứ Hai = tính nghỉ) · miss · exempt · pending (đang mở) · future · na (không áp dụng)
+function kaizenStatus(m, wk){
+  if(!inKaizen(m)) return 'na';
+  const r = findKaizen(m, wk), now = nowMs();
+  if(r){ const t = toMs(r.createdAt); if(t===null || t < kzDeadline(wk)) return 'ok'; }
+  if(!kzCounts(wk)) return 'na';                                           // tuần trước khi có Kaizen: không tính thiếu
+  if(exemptionOf(m, wk, 'kaizen')) return 'exempt';
+  let s;
+  if(r) s = 'late';
+  else if(now < kzOpenAt(wk)) return 'future';
+  else if(now < kzDeadline(wk)) return 'pending';
+  else s = 'miss';
+  const sf = seedFrom();
+  return (sf!=='9999-12-31' && wk < sf) ? 'na' : s;                        // lỗi trước ngày bắt đầu tính kỷ luật: bỏ
+}
+function mondaysInMonth(refTs){
+  const start = vnMonthStart(refTs), mo = vnD(start).getUTCMonth(), keys = [];
+  let d = start;
+  while(vnD(d).getUTCMonth()===mo){ if(vnDow(d)===1) keys.push(dayKey(d)); d = addDays(d,1); }
+  return {keys, monthNo: mo+1};
+}
+function monthKaizen(m, refTs){
+  const {keys, monthNo} = mondaysInMonth(refTs);
+  const list = keys.map(k=>({k, s:kaizenStatus(m,k)}));
+  const counted = list.filter(x=>x.s!=='na' && x.s!=='future' && x.s!=='exempt');
+  const done = counted.filter(x=>x.s==='ok').length;
+  const misses = counted.filter(x=>x.s==='miss' || x.s==='late').length;
+  const pending = counted.filter(x=>x.s==='pending').length;
+  return {list, done, misses, pending, total: counted.length - pending, monthNo,
+          applicable: counted.length>0, level: misses>=2 ? 'red' : (misses===1 ? 'yellow' : 'green')};
+}
+function kzMonthCell(rec){
+  if(!rec.applicable) return '<span class="rp-muted" title="Chưa có thứ Hai nào cần nộp Kaizen trong tháng">—</span>';
+  if(rec.total===0) return rec.pending ? '<span class="lb-rc wait" title="Kaizen đang mở — hạn 18:00 thứ Hai">…</span>' : '<span class="rp-muted">—</span>';
+  const tip = rec.level==='red' ? 'Vi phạm kỷ luật: nghỉ Kaizen '+rec.misses+' lần' : (rec.level==='yellow' ? 'Cảnh báo: đã nghỉ Kaizen 1 lần — hết lượt nghỉ' : 'Đạt — chưa nghỉ Kaizen lần nào');
+  return `<span class="lb-rc ${rec.level}" title="${tip}">${rec.done}/${rec.total}</span>${rec.misses?`<span class="lb-rc-miss ${rec.level}">nghỉ ${rec.misses}</span>`:''}`;
+}
+function kzChip(m, wk){
+  const s = kaizenStatus(m, wk);
+  const map = {ok:['📝✓','Đã nộp Kaizen đúng hạn'], late:['📝⏰','Nộp Kaizen sau 18:00 thứ Hai — tính là nghỉ'], miss:['📝✕','Không nộp Kaizen — nghỉ'], exempt:['📝🛡','Được miễn Kaizen tuần này'], pending:['📝…','Kaizen đang mở — hạn 18:00 thứ Hai']};
+  return map[s] ? `<span class="lb-rchip kz ${s}" title="${map[s][1]}">${map[s][0]}</span>` : '';
+}
+function kzStatusIcon(s){
+  const map = {ok:['✓','Đúng hạn'], late:['⏰','Nộp sau 18:00 thứ Hai — tính là nghỉ'], miss:['✕','Nghỉ'], exempt:['🛡','Được miễn'], pending:['…','Đang mở, hạn 18:00 thứ Hai'], future:['·','Chưa tới'], na:['—','Chưa áp dụng']};
+  const v = map[s] || map.na;
+  return `<span class="rg-s ${s}" title="${v[1]}">${v[0]}</span>`;
+}
+// What the signed-in member should do right now
+function myKaizenTask(){
+  const me = STATE.member;
+  if(!kzOn()) return {mode:'off'};
+  if(!inKaizen(me)) return {mode: isAdminOnly(me) ? 'admin' : 'noring'};
+  if(kaizenFrom()==='9999-12-31') return {mode:'off'};
+  const now = nowMs();
+  const wkNext = dayKey(monOnOrAfter(now));                                 // thứ Hai sắp tới (hoặc hôm nay)
+  const nextK = now < kzDeadline(wkNext) ? wkNext : dayKey(addDays(keyToMs(wkNext), 7));
+  if(now >= kzOpenAt(wkNext) && now < kzDeadline(wkNext)){                // mở cả tuần đầu (chưa tính thiếu) để nộp được ngay
+    if(findKaizen(me, wkNext)) return {mode:'submitted', wk:wkNext, nextK};
+    return {mode: exemptionOf(me, wkNext, 'kaizen') ? 'exempt' : 'open', wk:wkNext, nextK};
+  }
+  const wkLast = dayKey(monOnOrBefore(now));
+  if(kzCounts(wkLast) && now >= kzDeadline(wkLast) && !findKaizen(me, wkLast) && !exemptionOf(me, wkLast, 'kaizen'))
+    return {mode:'late', wk:wkLast, nextK};
+  return {mode:'closed', wk:wkLast, nextK};
+}
+function kzBadgeCount(){
+  if(!STATE.member) return 0;
+  const t = myKaizenTask();
+  return (t.mode==='open' || t.mode==='late') ? 1 : 0;
+}
+function kzBannerHtml(){
+  if(!STATE.member || STATE.tab==='kaizen') return '';
+  const t = myKaizenTask(), now = nowMs();
+  if(t.mode==='open' && vnDow(now)===1)
+    return `<div class="rc-banner kz"><span>📝 Hôm nay hạn nộp <strong>Kaizen nhóm</strong> trước 18:00 · còn ${fmtLeft(kzDeadline(t.wk)-now)}</span><button class="btn btn-gold btn-sm" onclick="setTab('kaizen')">Viết Kaizen</button></div>`;
+  if(t.mode==='late')
+    return `<div class="rc-banner late"><span>⏰ Bạn chưa nộp <strong>Kaizen</strong> (hạn 18:00 thứ Hai ${fmtDMs(keyToMs(t.wk))}) — vẫn nộp được, nhưng tuần đó tính là nghỉ.</span><button class="btn btn-ghost btn-sm" onclick="setTab('kaizen')">Nộp ngay</button></div>`;
+  return '';
+}
+/* ---- tab ---- */
+function renderKaizenTab(){
+  const t = myKaizenTask();
+  return `<div class="rp-head">
+      <div class="rp-h1">📝 Kaizen nhóm</div>
+      <div class="rc-sub">Mỗi tuần viết Kaizen 7 câu, hạn <strong>18:00 thứ Hai</strong> (phiếu mở từ thứ Bảy). Tối đa nghỉ 1 lần/tháng; nộp sau 18:00 thứ Hai vẫn được nhưng tính là nghỉ. Cả nhóm cùng đọc để chọn cải tiến trong buổi sinh hoạt thứ Ba.</div>
+    </div>`
+    + renderMyKaizenCard(t)
+    + renderKaizenScores()
+    + renderKaizenDiscipline()
+    + renderTeamKaizenFeed();
+}
+function renderMyKaizenCard(t){
+  const me = STATE.member, title = '<div class="rp-sec-title">✍️ Kaizen của bạn</div>';
+  if(t.mode==='admin') return `<section class="rp-section">${title}<div class="rc-closed">Bạn là quản trị, không nằm trong danh sách nộp Kaizen. Bạn vẫn đọc được mọi phiếu và xem kỷ luật Kaizen bên dưới.</div></section>`;
+  if(t.mode==='noring') return `<section class="rp-section">${title}<div class="rc-closed">Tên “${esc(me||'')}” chưa có trong danh sách thành viên (vòng ghi nhận). Nếu bạn thuộc nhóm, bấm <strong>Đổi người dùng</strong> và chọn đúng tên.</div></section>`;
+  if(t.mode==='off') return `<section class="rp-section">${title}<div class="rc-closed">Tính năng sẽ bắt đầu sau khi cập nhật backend (file Code.gs mới).</div></section>`;
+  if(t.mode==='closed'){
+    const last = findKaizen(me, t.wk), open = kzOpenAt(t.nextK), now = nowMs();
+    return `<section class="rp-section">${title}
+      <div class="rc-closed">🔒 Phiếu Kaizen tuần tới mở vào <strong>thứ Bảy ${fmtDMY(open)}</strong> (còn ${fmtLeft(open-now)}), hạn <strong>18:00 thứ Hai ${fmtDMs(keyToMs(t.nextK))}</strong>.</div>
+      ${last ? `<div class="rc-sub" style="margin:10px 0 6px">Kaizen gần nhất của bạn:</div>${renderKaizenCard(last)}` : ''}
+    </section>`;
+  }
+  return renderKaizenForm(t);
+}
+function kzDraftKey(wk, k){ return 'kzd_'+wk+'_'+k; }
+function kzGrow(el){ if(!el) return; el.style.height = 'auto'; el.style.height = Math.max(el.scrollHeight, 76)+'px'; }
+function renderKaizenForm(t){
+  const me = STATE.member, wk = t.wk, rec = findKaizen(me, wk), now = nowMs(), R = kzWeekRange(wk);
+  let status;
+  if(t.mode==='exempt'){ const ex = exemptionOf(me, wk, 'kaizen'); status = `<div class="rc-status ok">🛡 Bạn được miễn Kaizen tuần này${ex && ex.reason ? ' ('+esc(ex.reason)+')' : ''} — không bắt buộc, vẫn gửi được nếu muốn.</div>`; }
+  else if(t.mode==='open') status = `<div class="rc-status open">🟢 Đang mở — hạn chót <strong>18:00 thứ Hai ${fmtDMs(keyToMs(wk))}</strong> (còn ${fmtLeft(kzDeadline(wk)-now)})</div>`;
+  else if(t.mode==='submitted') status = `<div class="rc-status ok">✓ Đã gửi lúc ${fmtHM(toMs(rec.createdAt))} ${fmtDMs(toMs(rec.createdAt))} — vẫn sửa được đến 18:00 thứ Hai</div>`;
+  else status = `<div class="rc-status late">⏰ Đã quá hạn 18:00 thứ Hai ${fmtDMs(keyToMs(wk))}. Bạn vẫn nộp được để cả nhóm đọc, nhưng tuần này tính là <strong>nghỉ</strong>.</div>`;
+  const fields = KZ_FIELDS.map((f,i)=>{
+    const dk = kzDraftKey(wk, f.k), d = getDraft(dk), v = d!==undefined ? d : (rec ? (rec[f.k]||'') : '');
+    return `<label class="rc-field"><span class="rc-q">${i+1}. ${esc(f.label)} <span class="req">*</span></span><textarea id="kz_${f.k}" rows="3" oninput="setDraft('${dk}', this.value); kzGrow(this)">${esc(v)}</textarea></label>`;
+  }).join('');
+  const dS = getDraft(kzDraftKey(wk, 'teamScore')), cur = Number(dS!==undefined ? dS : (rec ? rec.teamScore : 0)) || 0;
+  const score = `<div class="rc-field"><span class="rc-q">7. ${esc(KZ_SCORE.label)} <span class="req">*</span></span>
+      <span class="rc-hint">Chấm từ 1 đến 10 · mục tiêu KR3: đội đạt từ ${KZ_TARGET}/10</span>
+      <div class="kz-score" role="radiogroup" aria-label="Điểm từ 1 đến 10">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button type="button" class="kz-sc ${n===cur?'on':''}" data-n="${n}" role="radio" aria-checked="${n===cur}" onclick="kzPickScore('${wk}',${n})">${n}</button>`).join('')}</div>
+    </div>`;
+  return `<section class="rp-section rc-form kz-form">
+    <div class="rp-sec-title">✍️ Kaizen tuần ${fmtDMs(R.s)} – ${fmtDMs(R.e - DAY_MS)}</div>
+    ${status}
+    ${renderBuddyDigest(me, wk, true)}
+    ${fields}
+    ${score}
+    <button class="btn btn-gold btn-block" onclick="saveKaizen('${wk}')">${rec ? '💾 Cập nhật Kaizen' : '📨 Gửi Kaizen'}</button>
+  </section>`;
+}
+function kzPickScore(wk, n){
+  setDraft(kzDraftKey(wk, 'teamScore'), String(n));
+  document.querySelectorAll('.kz-sc').forEach(b=>{ const on = Number(b.dataset.n)===n; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
+}
+function saveKaizen(wk){
+  const me = STATE.member, t = myKaizenTask();
+  if(t.wk!==wk || !['open','submitted','late','exempt'].includes(t.mode)){ toast('Phiếu Kaizen tuần này đã khoá.'); refreshKeepScroll(); return; }
+  const vals = {};
+  KZ_FIELDS.forEach(f=>{ const el = document.getElementById('kz_'+f.k); vals[f.k] = el ? el.value.trim() : ''; });
+  const rec = findKaizen(me, wk), dS = getDraft(kzDraftKey(wk, 'teamScore'));
+  const sc = Number(dS!==undefined ? dS : (rec ? rec.teamScore : 0)) || 0;
+  const missing = KZ_FIELDS.filter(f=>!vals[f.k]);
+  if(missing.length || !(sc>=1 && sc<=10)){
+    const nums = missing.map(f=>KZ_FIELDS.indexOf(f)+1).concat(sc>=1 && sc<=10 ? [] : [7]);
+    toast(nums.length===7 ? 'Bạn chưa trả lời câu nào.' : 'Còn thiếu câu '+nums.join(', ')+(nums.includes(7) ? ' (chấm điểm 1–10)' : '')+'.');
+    const el = missing.length ? document.getElementById('kz_'+missing[0].k) : document.querySelector('.kz-sc');
+    if(el){ el.focus(); el.scrollIntoView({behavior:'smooth', block:'center'}); }
+    return;
+  }
+  vals.teamScore = sc;
+  KZ_FIELDS.forEach(f=>setDraft(kzDraftKey(wk, f.k), vals[f.k]));      // keep a safety copy until the Sheet confirms
+  const clearDrafts = ()=>{ KZ_FIELDS.forEach(f=>{ const k = kzDraftKey(wk, f.k); if((getDraft(k)||'').trim()===vals[f.k]) setDraft(k, null); }); setDraft(kzDraftKey(wk, 'teamScore'), null); };
+  const opts = {
+    onOk: ()=>{ clearDrafts(); toast(t.mode==='late' ? '✓ Đã nộp Kaizen (nộp muộn — tuần này vẫn tính là nghỉ).' : '✓ Đã gửi Kaizen tuần này.'); refreshKeepScroll(); },
+    onFail: ()=>{ toast('Chưa lưu được — nội dung vẫn được giữ, bấm gửi lại.'); refreshKeepScroll(); }
+  };
+  const stamp = new Date(nowMs()).toISOString();
+  if(rec) updateRecord('kaizen', rec.id, vals, opts);
+  else createRecord('kaizen', Object.assign({id:uid(), weekKey:'wk'+wk, member:nfc(me), createdAt:stamp, updatedAt:stamp}, vals), opts);
+  toast('Đang gửi Kaizen...');
+  refreshKeepScroll();
+}
+function kzText(v){
+  return /^#(ERROR!|NAME\?|VALUE!|REF!|N\/A)$/.test(String(v||'').trim())
+    ? '<span class="rp-muted">⚠️ Nội dung chưa đọc được do lỗi lưu cũ. Bấm ⟳ Làm mới dữ liệu để hiện lại.</span>'
+    : esc(v||'');
+}
+function kzChipHtml(r){
+  const t = toMs(r.createdAt), wk = wkOf(r);
+  return (t && wk && t >= kzDeadline(wk)) ? '<span class="rc-chip late">nộp muộn</span>' : '<span class="rc-chip ok">đúng hạn</span>';
+}
+function kzScoreBadge(r){ const sc = kzScore(r); return sc===null ? '' : `<span class="kz-badge ${sc>=KZ_TARGET?'ok':'low'}" title="${esc(KZ_SCORE.label)}">⭐ ${sc}/10</span>`; }
+function renderKaizenCard(r){
+  const wk = wkOf(r);
+  return `<div class="rc-item kz-item">
+    <div class="rc-item-h">${memberBadge(r.member)}<span class="rc-date">hạn T2 ${wk?fmtDMs(keyToMs(wk)):'?'}</span>${kzChipHtml(r)}${kzScoreBadge(r)}</div>
+    ${KZ_FIELDS.map((f,i)=>`<div class="rc-ans"><div class="rc-ans-l">${i+1}. ${esc(f.label)}</div><div class="rc-ans-v">${kzText(r[f.k])}</div></div>`).join('')}
+    <div class="rc-ans"><div class="rc-ans-l">7. ${esc(KZ_SCORE.label)}</div><div class="rc-ans-v">${kzScore(r)===null ? '—' : kzScore(r)+'/10'}</div></div>
+  </div>`;
+}
+function renderKaizenGrid(keys, refTs){
+  const ring = kzMembers();
+  if(!ring.length) return '<div class="empty-note">Chưa thiết lập danh sách thành viên (vòng ghi nhận).</div>';
+  keys = keys.filter(k=>ring.some(m=>kaizenStatus(m,k)!=='na'));             // bỏ cột thứ Hai chưa áp dụng Kaizen
+  if(!keys.length) return '<div class="empty-note">Chưa có thứ Hai nào cần nộp Kaizen trong khoảng này.</div>';
+  const nowK = dayKey(monOnOrAfter(nowMs())), monthNo = mondaysInMonth(refTs).monthNo;
+  // cột "Tháng" đứng ngay sau tên để đọc được trên điện thoại không cần kéo ngang
+  const head = `<tr><th class="rg-name">Thành viên</th><th>Tháng ${monthNo}</th>${keys.map(k=>`<th class="${k===nowK?'is-today':''}">T2<br>${fmtDMs(keyToMs(k))}</th>`).join('')}</tr>`;
+  const rows = ring.map(m=>`<tr><td class="rg-name">${memberBadge(m)}</td><td>${kzMonthCell(monthKaizen(m, refTs))}</td>${keys.map(k=>`<td class="${k===nowK?'is-today':''}">${kzStatusIcon(kaizenStatus(m,k))}</td>`).join('')}</tr>`).join('');
+  return `<div class="rp-scroll"><table class="rg">${head}${rows}</table></div>
+    <div class="rp-legend">✓ đúng hạn · ⏰ nộp sau 18:00 thứ Hai (tính nghỉ) · ✕ nghỉ · 🛡 được miễn · … đang mở · · chưa tới · — chưa áp dụng</div>`;
+}
+function renderKaizenDiscipline(){
+  const now = nowMs(), m = mondaysInMonth(now);
+  return `<section class="rp-section"><div class="rp-sec-title">📅 Kỷ luật Kaizen — tháng ${m.monthNo}</div>
+    <div class="rc-sub" style="margin:4px 0 10px">Tối đa nghỉ 1 lần/tháng: 🟢 chưa nghỉ · 🟡 đã nghỉ 1 lần (hết lượt) · 🔴 từ 2 lần (vi phạm kỷ luật).</div>
+    ${m.keys.length ? renderKaizenGrid(m.keys, now) : '<div class="empty-note">Tháng này không có thứ Hai.</div>'}</section>`;
+}
+// KR3: điểm hiệu quả đội trung bình mỗi tuần
+function kzWeekStats(wk){
+  const list = (STATE.data.kaizen||[]).filter(r=>wkOf(r)===wk), scores = list.map(kzScore).filter(x=>x!==null);
+  return {n: list.length, avg: scores.length ? scores.reduce((a,b)=>a+b,0)/scores.length : null, scored: scores.length};
+}
+function renderKaizenScores(){
+  const weeks = [...new Set((STATE.data.kaizen||[]).map(wkOf).filter(Boolean))].sort().reverse().slice(0, 6);
+  const title = `<div class="rp-sec-title">⭐ Điểm hiệu quả đội (KR3: từ ${KZ_TARGET}/10)</div>`;
+  if(!weeks.length) return `<section class="rp-section">${title}<div class="empty-note">Chưa có phiếu Kaizen nào. Điểm sẽ hiện sau thứ Hai đầu tiên.</div></section>`;
+  const total = kzMembers().length;
+  const rows = weeks.map(wk=>{
+    const s = kzWeekStats(wk), pct = s.avg===null ? 0 : s.avg*10;
+    return `<div class="kz-wk">
+      <span class="kz-wk-d">T2 ${fmtDMs(keyToMs(wk))}</span>
+      <span class="kz-bar" title="Trung bình ${kzAvgText(s.avg)}/10 · ${s.scored} người chấm"><i style="width:${pct}%" class="${s.avg!==null && s.avg>=KZ_TARGET?'ok':'low'}"></i><b style="left:${KZ_TARGET*10}%"></b></span>
+      <span class="kz-wk-v"><strong>${kzAvgText(s.avg)}</strong>/10</span>
+      <span class="rp-muted kz-wk-n">${s.n}/${total} phiếu</span>
+    </div>`;
+  }).join('');
+  return `<section class="rp-section">${title}<div class="rc-sub" style="margin:4px 0 10px">Trung bình câu 7 của mọi phiếu trong tuần. Vạch dọc = mục tiêu ${KZ_TARGET}/10.</div>${rows}</section>`;
+}
+function kzSetView(v){ STATE.kzView = v; refreshKeepScroll(); }
+function kzMore(){ STATE.kaizenWeeks = (STATE.kaizenWeeks||2) + 3; refreshKeepScroll(); }
+function renderTeamKaizenFeed(){
+  const all = (STATE.data.kaizen||[]).slice();
+  const title = '<div class="rp-sec-title">📚 Kaizen của cả nhóm</div>';
+  if(!all.length) return `<section class="rp-section">${title}<div class="empty-note">Chưa có phiếu nào. Phiếu đầu tiên sẽ xuất hiện từ thứ Bảy.</div></section>`;
+  const view = STATE.kzView==='question' ? 'question' : 'person';
+  const weeks = [...new Set(all.map(wkOf).filter(Boolean))].sort().reverse();
+  const n = STATE.kaizenWeeks || 2, shown = weeks.slice(0, n), ring = kzMembers();
+  const order = r => { const i = ring.findIndex(x=>same(x, r.member)); return i<0 ? 99 : i; };
+  const body = shown.map(wk=>{
+    const items = all.filter(r=>wkOf(r)===wk).sort((a,b)=>order(a)-order(b)), s = kzWeekStats(wk);
+    const head = `<div class="rc-week-h">Kaizen hạn thứ Hai ${fmtDMY(keyToMs(wk))} · ${items.length} phiếu · ⭐ TB ${kzAvgText(s.avg)}/10</div>`;
+    if(view==='person') return head + items.map(renderKaizenCard).join('');
+    const qs = KZ_FIELDS.map((f,i)=>`<div class="kz-q"><div class="kz-q-t">${i+1}. ${esc(f.label)}</div>${items.map(r=>`<div class="kz-q-a">${memberBadge(r.member)}<div class="rc-ans-v">${kzText(r[f.k])}</div></div>`).join('')}</div>`).join('')
+      + `<div class="kz-q"><div class="kz-q-t">7. ${esc(KZ_SCORE.label)}</div><div class="kz-q-sc">${items.map(r=>`<span class="kz-q-chip">${memberBadge(r.member)} ${kzScore(r)===null?'—':kzScore(r)+'/10'}</span>`).join('')}</div><div class="rp-muted" style="margin-top:6px">Trung bình: <strong>${kzAvgText(s.avg)}/10</strong></div></div>`;
+    return head + qs;
+  }).join('');
+  const more = weeks.length>shown.length ? `<button class="btn btn-ghost btn-block btn-sm" onclick="kzMore()">Xem thêm tuần cũ hơn (${weeks.length-shown.length})</button>` : '';
+  const toggle = `<div class="chip-row kz-view"><button class="chip ${view==='person'?'active':''}" onclick="kzSetView('person')">👤 Theo người</button><button class="chip ${view==='question'?'active':''}" onclick="kzSetView('question')">❓ Theo câu hỏi</button></div>`;
+  return `<section class="rp-section">${title}<div class="rc-sub" style="margin:4px 0 10px">Cả nhóm cùng đọc; buổi sinh hoạt thứ Ba đi lần lượt từng câu (chọn "Theo câu hỏi").</div>${toggle}${body}${more}</section>`;
+}
+/* ---- report detail section ---- */
+function renderReportKaizen(P){
+  const keys = []; let d = sod(P.s);
+  while(d.getTime() < P.e){ if(vnDow(d)===1) keys.push(dayKey(d)); d = addDays(d,1); }
+  const body = !kzMembers().length ? '<div class="empty-note">Chưa thiết lập danh sách thành viên.</div>'
+    : (keys.length ? renderKaizenGrid(keys, Math.min(P.e - DAY_MS, nowMs())) : '<div class="empty-note">Khoảng thời gian đã chọn không có thứ Hai nào.</div>');
+  return rpSection('7','📝 Kaizen nhóm','Mỗi tuần, hạn 18:00 thứ Hai. Tối đa nghỉ 1 lần/tháng.',
+    body + `<button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="setTab('kaizen')">📝 Mở trang Kaizen để đọc các phiếu</button>`);
+}
+function kaizenStatsSpan(m){
+  const r = monthKaizen(m, nowMs());
+  if(!r.applicable) return '';
+  return `<span>📝 Kaizen T${r.monthNo} <strong>${r.done}/${r.total}</strong>${r.misses?` · nghỉ ${r.misses}`:''}</span>`;
+}
+
+function kaizenSeedFrom(){ return maxKey(seedFrom(), kaizenFrom()); }
+
+/* ---- khoan hồng 18:00 (v2.12) ----
+   Bản trước để lần sửa sau 18:00 ghi đè giờ viết buổi sáng. Những ngày trong khoảng LENIENT_FROM → LENIENT_TO
+   (máy chủ tự ghi khi đội "bắt đầu lại", xem TEAM.RESTART_FROM trong Code.gs) có ghi chép là tính đúng hạn. */
+function lenientFrom(){ const v = cfg('LENIENT_FROM'); return /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : ''; }
+function lenientTo(){ const v = cfg('LENIENT_TO'); return /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : ''; }
+
 /* ---------------- export backup ---------------- */
 function exportBackup(){
   const blob = new Blob([JSON.stringify(STATE.data, null, 2)], {type:'application/json'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = 'lam-chu-su-hoc-backup-'+todayISO()+'.json';
+  a.href = url; a.download = TEAM.FILE_SLUG+'-backup-'+todayISO()+'.json';
   document.body.appendChild(a); a.click(); a.remove();
   URL.revokeObjectURL(url);
   toast('Đã tải file sao lưu.');

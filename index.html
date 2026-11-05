@@ -17,7 +17,7 @@ var TEAM = {
   ADMINS: ['Nhưỡng'],            // quản trị: sửa mọi thẻ, đăng Nhịp vận hành, xoá dòng gieo hạt, đổi mật khẩu, đặt ngày bắt đầu tính kỷ luật
   ADMIN_IS_MEMBER: true,         // true = quản trị cũng là thành viên (hiện ở bảng xếp hạng, báo cáo, gieo hạt)
   DEFAULT_RING: ['Nhưỡng','Hào','Huy','Dịu','Loan','Ngân'],  // vòng ghi nhận mặc định
-  KAIZEN: true,                  // true = có tab 📝 Kaizen nhóm (hạn 18:00 thứ Hai, tính kỷ luật + gieo hạt); bỏ dòng này = không dùng
+  KAIZEN: true,                  // true = có tab 📝 Kaizen nhóm (hạn 24:00 thứ Hai, tính kỷ luật + gieo hạt); bỏ dòng này = không dùng
   FILE_SLUG: 'lam-chu-su-hoc'    // tên file sao lưu
 };
 /* ============================================================ */
@@ -993,7 +993,7 @@ mark{background:rgba(255,212,0,.38);color:inherit;border-radius:3px;padding:0 1p
    Backend: Google Apps Script Web App (Sheet làm database)
    ============================================================ */
 
-const APP_VERSION = 'v2.12.0';
+const APP_VERSION = 'v2.12.1';
 const SK = TEAM.STORE;                       // tiền tố mọi khoá localStorage
 // Máy chủ: link dán riêng trên máy này (menu › Máy chủ) thắng link gắn sẵn trong TEAM.API_URL
 let API_URL = (function(){ try { return localStorage.getItem(SK+'api') || TEAM.API_URL || ''; } catch(e){ return TEAM.API_URL || ''; } })();
@@ -3612,8 +3612,8 @@ function memberAlerts(m, events, P){
   if(rec.misses>=2) out.push({lvl:'red', text:'Nghỉ ghi nhận đồng đội '+rec.misses+' lần trong tháng '+rec.monthNo+' — vi phạm kỷ luật', tip:'Trao đổi trực tiếp, cam kết lại lịch ghi nhận mỗi thứ Năm.'});
   else if(rec.misses===1) out.push({lvl:'yellow', text:'Đã nghỉ 1 lần ghi nhận đồng đội tháng '+rec.monthNo+' — hết lượt nghỉ', tip:'Đặt nhắc lịch thứ Năm, ghi nhận trước 24:00.'});
   const kz = monthKaizen(m, nowMs());
-  if(kz.misses>=2) out.push({lvl:'red', text:'Nghỉ Kaizen '+kz.misses+' lần trong tháng '+kz.monthNo+' — vi phạm kỷ luật', tip:'Trao đổi trực tiếp, cam kết nộp Kaizen trước 18:00 thứ Hai.'});
-  else if(kz.misses===1) out.push({lvl:'yellow', text:'Đã nghỉ 1 lần Kaizen tháng '+kz.monthNo+' — hết lượt nghỉ', tip:'Đặt nhắc lịch sáng thứ Hai, nộp Kaizen trước 18:00.'});
+  if(kz.misses>=2) out.push({lvl:'red', text:'Nghỉ Kaizen '+kz.misses+' lần trong tháng '+kz.monthNo+' — vi phạm kỷ luật', tip:'Trao đổi trực tiếp, cam kết nộp Kaizen trước 24:00 thứ Hai.'});
+  else if(kz.misses===1) out.push({lvl:'yellow', text:'Đã nghỉ 1 lần Kaizen tháng '+kz.monthNo+' — hết lượt nghỉ', tip:'Đặt nhắc lịch thứ Hai, nộp Kaizen trước 24:00.'});
   if(inSeedScope(m)){
     const L = ledger(m, events);
     if(L.level==='red') out.push({lvl:'red', text:'Còn '+money(L.balance)+' chưa gieo hạt — có khoản quá '+SEED_STALE_DAYS+' ngày ('+L.age+' ngày)', tip:'Nhắc gieo hạt và bấm 🌱 Cập nhật đã gieo hạt ở mục Kỷ luật & gieo hạt.'});
@@ -3839,7 +3839,7 @@ function renderLeaderboard(lb, days){
   return `<div class="lb-card">
     ${summary}
     <div class="lb-scroll"><table class="lb">${head}${body}</table></div>
-    <div class="lb-rule">🔥 <strong>Streak</strong> = số ngày ghi chép hợp lệ liên tiếp. Ngày hợp lệ = có ít nhất 1 ghi chép <strong>trước 18:00</strong> (giờ VN); đã ghi trước 18:00 thì sửa lại sau 18:00 vẫn đúng hạn. Nghỉ lẻ <strong>1 ngày</strong> vẫn giữ chuỗi; nghỉ <strong>2 ngày liền</strong> thì chuỗi về 0. · ✓ đúng giờ · ⏰ ghi sau 18:00 (không tính, coi như nghỉ) · ✕ chưa ghi · … hôm nay còn hạn · 🛡 ngày miễn (không tính, không làm đứt chuỗi) · <strong>OFF</strong> ngày nghỉ trong tuần: mỗi tuần ngày thiếu đầu tiên tự được nghỉ, không tính tiền, không đứt chuỗi. · (·) trước ngày bắt đầu tính kỷ luật: không tính. · 💬 cột thứ Năm: ghi nhận đồng đội${kzc ? ' · 📝 cột thứ Hai: Kaizen, hạn 18:00' : ''} (mỗi việc tối đa nghỉ 1 lần/tháng). ${ruleNote} Bấm vào tên để xem chi tiết.</div>
+    <div class="lb-rule">🔥 <strong>Streak</strong> = số ngày ghi chép hợp lệ liên tiếp. Ngày hợp lệ = có ít nhất 1 ghi chép <strong>trước 18:00</strong> (giờ VN); đã ghi trước 18:00 thì sửa lại sau 18:00 vẫn đúng hạn. Nghỉ lẻ <strong>1 ngày</strong> vẫn giữ chuỗi; nghỉ <strong>2 ngày liền</strong> thì chuỗi về 0. · ✓ đúng giờ · ⏰ ghi sau 18:00 (không tính, coi như nghỉ) · ✕ chưa ghi · … hôm nay còn hạn · 🛡 ngày miễn (không tính, không làm đứt chuỗi) · <strong>OFF</strong> ngày nghỉ trong tuần: mỗi tuần ngày thiếu đầu tiên tự được nghỉ, không tính tiền, không đứt chuỗi. · (·) trước ngày bắt đầu tính kỷ luật: không tính. · 💬 cột thứ Năm: ghi nhận đồng đội${kzc ? ' · 📝 cột thứ Hai: Kaizen, hạn 24:00' : ''} (mỗi việc tối đa nghỉ 1 lần/tháng). ${ruleNote} Bấm vào tên để xem chi tiết.</div>
   </div>`;
 }
 
@@ -4449,7 +4449,7 @@ function debtItems(m, events){
       if(s!=='miss' && s!=='late') continue;
       const mon = k.slice(0,7), free = !freeUsed[mon]; freeUsed[mon] = true;
       items.push({k, type:'kaizen', amount: free ? 0 : seedRate('SEED_KAIZEN'), free,
-        reason: (s==='late' ? 'Nộp Kaizen muộn (sau 18:00 thứ Hai)' : 'Không nộp Kaizen') + (free ? ' — lượt nghỉ đầu tháng, miễn' : '')});
+        reason: (s==='late' ? 'Nộp Kaizen muộn (sau 24:00 thứ Hai)' : 'Không nộp Kaizen') + (free ? ' — lượt nghỉ đầu tháng, miễn' : '')});
     }
   }
   return items.sort((a,b)=>a.k.localeCompare(b.k) || (a.type<b.type?-1:1));
@@ -4625,12 +4625,12 @@ function weeklyReportText(){
   });
   L.push(''); L.push('📒 Nhật ký trước 18:00: '+ok+'/'+req+' ngày ('+(req ? Math.round(ok/req*100) : 0)+'%)');
   L.push(...(lines.length ? lines : ['• Cả nhóm ghi đủ, đúng giờ 👏']));
-  // Kaizen: phiếu hạn thứ Hai đầu tuần này (nếu đã qua 18:00), nếu chưa thì phiếu thứ Hai đầu tuần trước
+  // Kaizen: phiếu hạn thứ Hai đầu tuần này (nếu đã qua hạn), nếu chưa thì phiếu thứ Hai đầu tuần trước
   const kzK = nowMs() >= kzDeadline(eK) ? eK : sK;
   const kst = ring.map(m=>({m, s:kaizenStatus(m, kzK)})).filter(x=>!['na','future'].includes(x.s));
   if(kst.length){
     const counted = kst.filter(x=>x.s!=='exempt'), ws = kzWeekStats(kzK);
-    L.push(''); L.push('📝 Kaizen (hạn 18:00 thứ Hai '+fmtDMs(keyToMs(kzK))+'): '+counted.filter(x=>x.s==='ok').length+'/'+counted.length+' đúng hạn');
+    L.push(''); L.push('📝 Kaizen (hạn 24:00 thứ Hai '+fmtDMs(keyToMs(kzK))+'): '+counted.filter(x=>x.s==='ok').length+'/'+counted.length+' đúng hạn');
     kst.filter(x=>x.s==='miss' || x.s==='late' || x.s==='pending').forEach(x=>L.push('• '+x.m+': '+(x.s==='late' ? 'nộp muộn' : (x.s==='pending' ? 'chưa nộp' : 'không nộp'))));
     if(ws.avg!==null) L.push('⭐ Điểm hiệu quả đội: '+kzAvgText(ws.avg)+'/10 ('+ws.scored+' phiếu) — '+(ws.avg>=KZ_TARGET ? 'đạt' : 'chưa đạt')+' KR3 ≥ '+KZ_TARGET+'/10');
   }
@@ -4798,7 +4798,7 @@ function renderReportSeeds(P, days, events){
 }
 const BEHAVIORS = [
   {k:'j', icon:'📒', name:'Nhật ký trước 18:00',      norm:'Mỗi ngày',          seed:true},
-  {k:'k', icon:'📝', name:'Kaizen trước 18:00 thứ Hai', norm:'Mỗi thứ Hai', seed:true, kz:true},   // chỉ hiện khi TEAM.KAIZEN
+  {k:'k', icon:'📝', name:'Kaizen trước 24:00 thứ Hai', norm:'Mỗi thứ Hai', seed:true, kz:true},   // chỉ hiện khi TEAM.KAIZEN
   {k:'r', icon:'💬', name:'Ghi nhận đồng đội',        norm:'Mỗi thứ Năm',       seed:true},
   {k:'c', icon:'❓', name:'Trả lời câu hỏi chéo',     norm:'Trong 3 ngày',      seed:false},
   {k:'a', icon:'⏱', name:'Hành động xong đúng hạn',  norm:'Theo hạn đã đặt',   seed:false}
@@ -5301,8 +5301,8 @@ function nhipBannerHtml(){
 }
 
 /* ================================================================
-   KAIZEN NHÓM — mỗi tuần, hạn 18:00 thứ Hai (v2.11)
-   • Phiếu mở từ 00:00 thứ Bảy đến 18:00 thứ Hai; nộp sau hạn vẫn được nhưng tính là nghỉ
+   KAIZEN NHÓM — mỗi tuần, hạn 24:00 thứ Hai (v2.12.1)
+   • Phiếu mở từ 00:00 thứ Bảy đến 24:00 thứ Hai; nộp sau hạn vẫn được nhưng tính là nghỉ
    • Tối đa nghỉ 1 lần/tháng (🟡 / 🔴); gieo hạt như ghi nhận: lần nghỉ đầu mỗi tháng miễn
    • Câu hỏi giữ nguyên văn của đội; câu 7 là điểm hiệu quả đội 1–10 (KR3: ≥ 8/10)
    • Cả nhóm cùng đọc: xem theo người hoặc theo từng câu hỏi (dùng cho buổi sinh hoạt thứ Ba)
@@ -5316,7 +5316,7 @@ const KZ_FIELDS = [
   {k:'teamBetter',   short:'điều đội làm tốt hơn',        label:'Đâu là điều đội nhóm CHÚNG TA có thể làm tốt hơn ?'}
 ];
 const KZ_SCORE = {k:'teamScore', short:'mức độ hiệu quả đội nhóm', label:'Mức độ hiệu quả đội nhóm theo đúng tinh thần AL và bộ OKRs'};
-const KZ_HOUR = 18, KZ_TARGET = 8;
+const KZ_HOUR = 24, KZ_TARGET = 8;          // hạn = hết thứ Hai (24:00), Nhưỡng chốt 06/11/2026
 // Bật / tắt theo đội: TEAM.KAIZEN trong khối cấu hình đội (đội không dùng Kaizen thì không có tab, không tính lỗi)
 function kzOn(){ return !!(typeof TEAM!=='undefined' && TEAM.KAIZEN); }
 function kaizenFrom(){ return kzOn() ? cfgDate('KAIZEN_FROM') : '9999-12-31'; }
@@ -5324,14 +5324,14 @@ function kzMembers(){ return seedMembers(); }
 function inKaizen(m){ return kzOn() && !!m && kzMembers().some(x=>same(x,m)); }
 function monOnOrBefore(t){ const d = sod(t); return addDays(d, -((vnDow(d)+6)%7)); }
 function monOnOrAfter(t){ const d = sod(t); return addDays(d, (8 - vnDow(d)) % 7); }
-function kzDeadline(wk){ return keyToMs(wk) + KZ_HOUR*3600000; }           // thứ Hai 18:00
+function kzDeadline(wk){ return keyToMs(wk) + KZ_HOUR*3600000; }           // hết thứ Hai (24:00 = 0h thứ Ba)
 function kzOpenAt(wk){ return keyToMs(wk) - 2*DAY_MS; }                    // thứ Bảy 00:00
 function kzCounts(wk){ return dayKey(kzOpenAt(wk)) >= kaizenFrom(); }       // chỉ tính tuần mở phiếu sau ngày bắt đầu
 function kzWeekRange(wk){ const e = keyToMs(wk); return {s: e - 7*DAY_MS, e}; }
 function findKaizen(m, wk){ return (STATE.data.kaizen||[]).find(r=>same(r.member,m) && wkOf(r)===wk); }
 function kzScore(r){ const n = Number(r && r.teamScore); return (n>=1 && n<=10) ? n : null; }
 function kzAvgText(n){ return n===null ? '—' : String(Math.round(n*10)/10).replace('.', ','); }
-// ok · late (nộp sau 18:00 thứ Hai = tính nghỉ) · miss · exempt · pending (đang mở) · future · na (không áp dụng)
+// ok · late (nộp sau 24:00 thứ Hai = tính nghỉ) · miss · exempt · pending (đang mở) · future · na (không áp dụng)
 function kaizenStatus(m, wk){
   if(!inKaizen(m)) return 'na';
   const r = findKaizen(m, wk), now = nowMs();
@@ -5364,17 +5364,17 @@ function monthKaizen(m, refTs){
 }
 function kzMonthCell(rec){
   if(!rec.applicable) return '<span class="rp-muted" title="Chưa có thứ Hai nào cần nộp Kaizen trong tháng">—</span>';
-  if(rec.total===0) return rec.pending ? '<span class="lb-rc wait" title="Kaizen đang mở — hạn 18:00 thứ Hai">…</span>' : '<span class="rp-muted">—</span>';
+  if(rec.total===0) return rec.pending ? '<span class="lb-rc wait" title="Kaizen đang mở — hạn 24:00 thứ Hai">…</span>' : '<span class="rp-muted">—</span>';
   const tip = rec.level==='red' ? 'Vi phạm kỷ luật: nghỉ Kaizen '+rec.misses+' lần' : (rec.level==='yellow' ? 'Cảnh báo: đã nghỉ Kaizen 1 lần — hết lượt nghỉ' : 'Đạt — chưa nghỉ Kaizen lần nào');
   return `<span class="lb-rc ${rec.level}" title="${tip}">${rec.done}/${rec.total}</span>${rec.misses?`<span class="lb-rc-miss ${rec.level}">nghỉ ${rec.misses}</span>`:''}`;
 }
 function kzChip(m, wk){
   const s = kaizenStatus(m, wk);
-  const map = {ok:['📝✓','Đã nộp Kaizen đúng hạn'], late:['📝⏰','Nộp Kaizen sau 18:00 thứ Hai — tính là nghỉ'], miss:['📝✕','Không nộp Kaizen — nghỉ'], exempt:['📝🛡','Được miễn Kaizen tuần này'], pending:['📝…','Kaizen đang mở — hạn 18:00 thứ Hai']};
+  const map = {ok:['📝✓','Đã nộp Kaizen đúng hạn'], late:['📝⏰','Nộp Kaizen sau 24:00 thứ Hai — tính là nghỉ'], miss:['📝✕','Không nộp Kaizen — nghỉ'], exempt:['📝🛡','Được miễn Kaizen tuần này'], pending:['📝…','Kaizen đang mở — hạn 24:00 thứ Hai']};
   return map[s] ? `<span class="lb-rchip kz ${s}" title="${map[s][1]}">${map[s][0]}</span>` : '';
 }
 function kzStatusIcon(s){
-  const map = {ok:['✓','Đúng hạn'], late:['⏰','Nộp sau 18:00 thứ Hai — tính là nghỉ'], miss:['✕','Nghỉ'], exempt:['🛡','Được miễn'], pending:['…','Đang mở, hạn 18:00 thứ Hai'], future:['·','Chưa tới'], na:['—','Chưa áp dụng']};
+  const map = {ok:['✓','Đúng hạn'], late:['⏰','Nộp sau 24:00 thứ Hai — tính là nghỉ'], miss:['✕','Nghỉ'], exempt:['🛡','Được miễn'], pending:['…','Đang mở, hạn 24:00 thứ Hai'], future:['·','Chưa tới'], na:['—','Chưa áp dụng']};
   const v = map[s] || map.na;
   return `<span class="rg-s ${s}" title="${v[1]}">${v[0]}</span>`;
 }
@@ -5405,9 +5405,9 @@ function kzBannerHtml(){
   if(!STATE.member || STATE.tab==='kaizen') return '';
   const t = myKaizenTask(), now = nowMs();
   if(t.mode==='open' && vnDow(now)===1)
-    return `<div class="rc-banner kz"><span>📝 Hôm nay hạn nộp <strong>Kaizen nhóm</strong> trước 18:00 · còn ${fmtLeft(kzDeadline(t.wk)-now)}</span><button class="btn btn-gold btn-sm" onclick="setTab('kaizen')">Viết Kaizen</button></div>`;
+    return `<div class="rc-banner kz"><span>📝 Hôm nay hạn nộp <strong>Kaizen nhóm</strong> trước 24:00 · còn ${fmtLeft(kzDeadline(t.wk)-now)}</span><button class="btn btn-gold btn-sm" onclick="setTab('kaizen')">Viết Kaizen</button></div>`;
   if(t.mode==='late')
-    return `<div class="rc-banner late"><span>⏰ Bạn chưa nộp <strong>Kaizen</strong> (hạn 18:00 thứ Hai ${fmtDMs(keyToMs(t.wk))}) — vẫn nộp được, nhưng tuần đó tính là nghỉ.</span><button class="btn btn-ghost btn-sm" onclick="setTab('kaizen')">Nộp ngay</button></div>`;
+    return `<div class="rc-banner late"><span>⏰ Bạn chưa nộp <strong>Kaizen</strong> (hạn 24:00 thứ Hai ${fmtDMs(keyToMs(t.wk))}) — vẫn nộp được, nhưng tuần đó tính là nghỉ.</span><button class="btn btn-ghost btn-sm" onclick="setTab('kaizen')">Nộp ngay</button></div>`;
   return '';
 }
 /* ---- tab ---- */
@@ -5415,7 +5415,7 @@ function renderKaizenTab(){
   const t = myKaizenTask();
   return `<div class="rp-head">
       <div class="rp-h1">📝 Kaizen nhóm</div>
-      <div class="rc-sub">Mỗi tuần viết Kaizen 7 câu, hạn <strong>18:00 thứ Hai</strong> (phiếu mở từ thứ Bảy). Tối đa nghỉ 1 lần/tháng; nộp sau 18:00 thứ Hai vẫn được nhưng tính là nghỉ. Cả nhóm cùng đọc để chọn cải tiến trong buổi sinh hoạt thứ Ba.</div>
+      <div class="rc-sub">Mỗi tuần viết Kaizen 7 câu, hạn <strong>24:00 thứ Hai</strong> (phiếu mở từ thứ Bảy). Tối đa nghỉ 1 lần/tháng; nộp sau 24:00 thứ Hai vẫn được nhưng tính là nghỉ. Cả nhóm cùng đọc để chọn cải tiến trong buổi sinh hoạt thứ Ba.</div>
     </div>`
     + renderMyKaizenCard(t)
     + renderKaizenScores()
@@ -5430,7 +5430,7 @@ function renderMyKaizenCard(t){
   if(t.mode==='closed'){
     const last = findKaizen(me, t.wk), open = kzOpenAt(t.nextK), now = nowMs();
     return `<section class="rp-section">${title}
-      <div class="rc-closed">🔒 Phiếu Kaizen tuần tới mở vào <strong>thứ Bảy ${fmtDMY(open)}</strong> (còn ${fmtLeft(open-now)}), hạn <strong>18:00 thứ Hai ${fmtDMs(keyToMs(t.nextK))}</strong>.</div>
+      <div class="rc-closed">🔒 Phiếu Kaizen tuần tới mở vào <strong>thứ Bảy ${fmtDMY(open)}</strong> (còn ${fmtLeft(open-now)}), hạn <strong>24:00 thứ Hai ${fmtDMs(keyToMs(t.nextK))}</strong>.</div>
       ${last ? `<div class="rc-sub" style="margin:10px 0 6px">Kaizen gần nhất của bạn:</div>${renderKaizenCard(last)}` : ''}
     </section>`;
   }
@@ -5442,9 +5442,9 @@ function renderKaizenForm(t){
   const me = STATE.member, wk = t.wk, rec = findKaizen(me, wk), now = nowMs(), R = kzWeekRange(wk);
   let status;
   if(t.mode==='exempt'){ const ex = exemptionOf(me, wk, 'kaizen'); status = `<div class="rc-status ok">🛡 Bạn được miễn Kaizen tuần này${ex && ex.reason ? ' ('+esc(ex.reason)+')' : ''} — không bắt buộc, vẫn gửi được nếu muốn.</div>`; }
-  else if(t.mode==='open') status = `<div class="rc-status open">🟢 Đang mở — hạn chót <strong>18:00 thứ Hai ${fmtDMs(keyToMs(wk))}</strong> (còn ${fmtLeft(kzDeadline(wk)-now)})</div>`;
-  else if(t.mode==='submitted') status = `<div class="rc-status ok">✓ Đã gửi lúc ${fmtHM(toMs(rec.createdAt))} ${fmtDMs(toMs(rec.createdAt))} — vẫn sửa được đến 18:00 thứ Hai</div>`;
-  else status = `<div class="rc-status late">⏰ Đã quá hạn 18:00 thứ Hai ${fmtDMs(keyToMs(wk))}. Bạn vẫn nộp được để cả nhóm đọc, nhưng tuần này tính là <strong>nghỉ</strong>.</div>`;
+  else if(t.mode==='open') status = `<div class="rc-status open">🟢 Đang mở — hạn chót <strong>24:00 thứ Hai ${fmtDMs(keyToMs(wk))}</strong> (còn ${fmtLeft(kzDeadline(wk)-now)})</div>`;
+  else if(t.mode==='submitted') status = `<div class="rc-status ok">✓ Đã gửi lúc ${fmtHM(toMs(rec.createdAt))} ${fmtDMs(toMs(rec.createdAt))} — vẫn sửa được đến 24:00 thứ Hai</div>`;
+  else status = `<div class="rc-status late">⏰ Đã quá hạn 24:00 thứ Hai ${fmtDMs(keyToMs(wk))}. Bạn vẫn nộp được để cả nhóm đọc, nhưng tuần này tính là <strong>nghỉ</strong>.</div>`;
   const fields = KZ_FIELDS.map((f,i)=>{
     const dk = kzDraftKey(wk, f.k), d = getDraft(dk), v = d!==undefined ? d : (rec ? (rec[f.k]||'') : '');
     return `<label class="rc-field"><span class="rc-q">${i+1}. ${esc(f.label)} <span class="req">*</span></span><textarea id="kz_${f.k}" rows="3" oninput="setDraft('${dk}', this.value); kzGrow(this)">${esc(v)}</textarea></label>`;
@@ -5523,7 +5523,7 @@ function renderKaizenGrid(keys, refTs){
   const head = `<tr><th class="rg-name">Thành viên</th><th>Tháng ${monthNo}</th>${keys.map(k=>`<th class="${k===nowK?'is-today':''}">T2<br>${fmtDMs(keyToMs(k))}</th>`).join('')}</tr>`;
   const rows = ring.map(m=>`<tr><td class="rg-name">${memberBadge(m)}</td><td>${kzMonthCell(monthKaizen(m, refTs))}</td>${keys.map(k=>`<td class="${k===nowK?'is-today':''}">${kzStatusIcon(kaizenStatus(m,k))}</td>`).join('')}</tr>`).join('');
   return `<div class="rp-scroll"><table class="rg">${head}${rows}</table></div>
-    <div class="rp-legend">✓ đúng hạn · ⏰ nộp sau 18:00 thứ Hai (tính nghỉ) · ✕ nghỉ · 🛡 được miễn · … đang mở · · chưa tới · — chưa áp dụng</div>`;
+    <div class="rp-legend">✓ đúng hạn · ⏰ nộp sau 24:00 thứ Hai (tính nghỉ) · ✕ nghỉ · 🛡 được miễn · … đang mở · · chưa tới · — chưa áp dụng</div>`;
 }
 function renderKaizenDiscipline(){
   const now = nowMs(), m = mondaysInMonth(now);
@@ -5580,7 +5580,7 @@ function renderReportKaizen(P){
   while(d.getTime() < P.e){ if(vnDow(d)===1) keys.push(dayKey(d)); d = addDays(d,1); }
   const body = !kzMembers().length ? '<div class="empty-note">Chưa thiết lập danh sách thành viên.</div>'
     : (keys.length ? renderKaizenGrid(keys, Math.min(P.e - DAY_MS, nowMs())) : '<div class="empty-note">Khoảng thời gian đã chọn không có thứ Hai nào.</div>');
-  return rpSection('7','📝 Kaizen nhóm','Mỗi tuần, hạn 18:00 thứ Hai. Tối đa nghỉ 1 lần/tháng.',
+  return rpSection('7','📝 Kaizen nhóm','Mỗi tuần, hạn 24:00 thứ Hai. Tối đa nghỉ 1 lần/tháng.',
     body + `<button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="setTab('kaizen')">📝 Mở trang Kaizen để đọc các phiếu</button>`);
 }
 function kaizenStatsSpan(m){

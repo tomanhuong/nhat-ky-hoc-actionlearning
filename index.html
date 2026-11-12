@@ -466,6 +466,31 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .rc-dg-n{display:inline-block;min-width:18px;text-align:center;border-radius:999px;background:rgba(255,255,255,.08);color:var(--ink);font-size:10px;padding:0 5px;margin-left:2px;}
 .rc-dg ul{margin:4px 0 0 18px;padding:0;font-size:13px;line-height:1.5;}
 .rc-dg li{margin-bottom:2px;}
+/* v2.13.1: nhật ký tuần theo vấn đề */
+.dg-sum{margin-top:-4px;}
+.dg-legend{font-size:11.5px;color:var(--ink-faint);margin:0 0 8px;}
+.dg-p{border:1px solid var(--border-soft);border-radius:10px;background:rgba(255,255,255,.03);margin:0 0 10px;}
+.dg-p>summary{cursor:pointer;list-style:none;padding:10px 12px 8px;display:flex;flex-direction:column;gap:4px;}
+.dg-p>summary::-webkit-details-marker{display:none;}
+.dg-p-t{font-family:'Crimson Text',Georgia,serif;font-size:17px;font-weight:700;color:var(--ink);line-height:1.3;}
+.dg-p>summary .dg-p-t::after{content:' ▾';color:var(--ink-faint);font-size:13px;}
+.dg-p:not([open])>summary .dg-p-t::after{content:' ▸';}
+.dg-loose>.dg-p-t{display:block;padding:10px 12px 0;font-size:15.5px;color:var(--ink-dim);}
+.dg-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;}
+.dg-body{padding:0 12px 10px;}
+.dg-desc{font-size:13.5px;color:var(--ink-dim);margin:0 0 6px;white-space:pre-wrap;overflow-wrap:anywhere;}
+.dg-sec{margin:8px 0 0;}
+.dg-sec-t{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:var(--ink-dim);margin-bottom:2px;}
+.dg-sec ul,.dg-sec ol,.dg-loose ul{margin:4px 0 0 20px;padding:0;font-size:14.5px;line-height:1.5;overflow-wrap:anywhere;}
+.dg-body li{margin-bottom:6px;}
+.dg-old{opacity:.62;}
+.dg-ans{font-size:13.5px;color:var(--ink-dim);margin-top:1px;}
+.dg-wait{font-style:italic;color:var(--ink-faint);}
+.dg-tag{display:inline-block;border-radius:999px;padding:0 7px;font-size:11px;font-family:'Space Mono',monospace;font-weight:700;line-height:18px;margin-right:4px;vertical-align:1px;white-space:nowrap;}
+.dg-tag.nw{background:rgba(45,212,191,.16);color:var(--teal);}
+.dg-tag.ok{background:rgba(52,211,153,.16);color:#34d399;}
+.dg-tag.late{background:rgba(248,113,113,.18);color:#fca5a5;}
+.dg-tag.old,.dg-tag.st{background:rgba(255,255,255,.07);color:var(--ink-dim);font-weight:400;}
 .rc-none{font-size:12px;color:var(--ink-faint);margin:2px 0 0 4px;}
 .rc-field{display:flex;flex-direction:column;gap:3px;margin-bottom:12px;}
 .rc-q{font-size:15px;font-weight:600;}
@@ -1039,7 +1064,7 @@ mark{background:rgba(255,212,0,.38);color:inherit;border-radius:3px;padding:0 1p
    Backend: Google Apps Script Web App (Sheet làm database)
    ============================================================ */
 
-const APP_VERSION = 'v2.13.0';
+const APP_VERSION = 'v2.13.1';
 const SK = TEAM.STORE;                       // tiền tố mọi khoá localStorage
 // Máy chủ: link dán riêng trên máy này (menu › Máy chủ) thắng link gắn sẵn trong TEAM.API_URL
 let API_URL = (function(){ try { return localStorage.getItem(SK+'api') || TEAM.API_URL || ''; } catch(e){ return TEAM.API_URL || ''; } })();
@@ -4158,7 +4183,9 @@ function renderRecogBanner(){
   }
   el.innerHTML = parts.join('');
 }
-/* ---- buddy's week, gathered for the reader ---- */
+/* ---- buddy's week, gathered for the reader ----
+   v2.13.1: xếp theo từng vấn đề (Nhưỡng chốt 12/11): vấn đề có hoạt động trong tuần → cả chuỗi câu hỏi · hành động · bài học,
+   mục trong tuần có nhãn "mới" / ✓; mục không gắn vấn đề và câu hỏi chéo cho đồng đội để riêng ở cuối. */
 function buddyWeekDigest(name, wk){
   const e = keyToMs(wk), s = e - 7*DAY_MS, D = STATE.data;
   const inW = t => t!==null && t!==undefined && t>=s && t<e;
@@ -4166,7 +4193,7 @@ function buddyWeekDigest(name, wk){
   const map = dayStatusMap(nfc(name), buildEvents());
   let ok = 0, late = 0;
   for(let i=0;i<7;i++){ const x = map[dayKey(s+i*DAY_MS)]; if(x && x.st==='ok') ok++; else if(x) late++; }
-  return {
+  const d = {
     s, e, ok, late,
     probs: mine(D.problems).filter(p=>inW(toMs(p.createdAt))),
     actsDone: mine(D.actions).filter(a=>inW(doneTs(a))),
@@ -4175,25 +4202,67 @@ function buddyWeekDigest(name, wk){
     ans: mine(D.questions).filter(q=>q.answer && String(q.answer).trim() && inW(answeredTs(q))),
     lrn: mine(D.learnings).filter(l=>inW(toMs(l.createdAt)))
   };
+  // nhãn "trong tuần" của từng mục
+  const qTag = q => ({nw: inW(toMs(q.createdAt)), ans: !!(q.answer && String(q.answer).trim()) && inW(answeredTs(q))});
+  const aTag = a => ({nw: inW(toMs(a.createdAt)), done: inW(doneTs(a))});
+  const lTag = l => ({nw: inW(toMs(l.createdAt)), applied: inW(toMs(l.appliedAt))});
+  const hot = t => Object.keys(t).some(k=>t[k]);
+  const byC = (a,b)=>(toMs(a.createdAt)||0)-(toMs(b.createdAt)||0);
+  const pids = new Set((D.problems||[]).map(p=>p.id));
+  d.tree = mine(D.problems).map(p=>{
+    const qs = (D.questions||[]).filter(q=>q.problemId===p.id).sort(byC).map(q=>({r:q, t:qTag(q)}));
+    const acts = (D.actions||[]).filter(a=>a.problemId===p.id).sort(stepCompare).map(a=>({r:a, t:aTag(a)}));
+    const lrn = (D.learnings||[]).filter(l=>l.problemId===p.id).sort((a,b)=>(Number(a.order)||0)-(Number(b.order)||0) || byC(a,b)).map(l=>({r:l, t:lTag(l)}));
+    const pt = {nw: inW(toMs(p.createdAt)), done: inW(doneTs(p)), edit: touchList(p.touches).some(x=>inW(toMs(x)))};
+    const n = [...qs, ...acts, ...lrn].filter(x=>hot(x.t)).length;
+    return {p, pt, qs, acts, lrn, n, active: n>0 || pt.nw || pt.done || pt.edit};
+  }).filter(x=>x.active).sort((a,b)=>(b.n-a.n) || ((toMs(b.p.createdAt)||0)-(toMs(a.p.createdAt)||0)));
+  const loose = r => !r.problemId || !pids.has(r.problemId);
+  d.loose = {
+    qs: mine(D.questions).filter(loose).map(q=>({r:q, t:qTag(q)})).filter(x=>hot(x.t)),
+    acts: mine(D.actions).filter(loose).sort(byC).map(a=>({r:a, t:aTag(a)})).filter(x=>hot(x.t)),
+    lrn: mine(D.learnings).filter(loose).sort(byC).map(l=>({r:l, t:lTag(l)})).filter(x=>hot(x.t))
+  };
+  // câu hỏi chéo bạn ấy đặt cho vấn đề của đồng đội
+  const pm = {}; (D.problems||[]).forEach(p=>{ pm[p.id] = p; });
+  d.cross = (D.questions||[]).filter(q=>same(q.askedBy,name) && !same(q.member,name) && inW(toMs(q.createdAt))).sort(byC).map(q=>({r:q, p:pm[q.problemId]||null}));
+  return d;
 }
 function renderBuddyDigest(name, wk, self){
   const d = buddyWeekDigest(name, wk);
-  // v2.9.5: hiện đủ mọi mục, nguyên văn, để người ghi nhận không phải mở từng vấn đề
-  const list = (arr, fn)=> arr.length
-    ? `<ul>${arr.map(x=>`<li>${fn(x)}</li>`).join('')}</ul>`
-    : '<div class="rc-none">—</div>';
-  const grp = (icon, title, arr, fn)=> `<div class="rc-dg"><div class="rc-dg-t">${icon} ${title} <span class="rc-dg-n">${arr.length}</span></div>${list(arr, fn)}</div>`;
-  return `<details class="rc-digest" ${self?'':'open'}><summary>📖 Nhật ký tuần ${self?'của bạn — xem lại trước khi viết':'của '+esc(name)} · ${fmtDMs(d.s)} → ${fmtDMs(d.e - DAY_MS)}</summary>
-    <div class="rc-dg-stats"><span>✓ <strong>${d.ok}</strong>/7 ngày ghi đúng giờ</span>${d.late?`<span>⏰ ${d.late} ngày ghi muộn</span>`:''}</div>
-    <div class="rc-dg-grid">
-      ${grp('📌','Vấn đề mới', d.probs, p=>esc(p.title))}
-      ${grp('✅','Hành động hoàn thành', d.actsDone, a=>esc(a.text)+(a.outcome?` <span class="rp-muted">→ ${esc(a.outcome)}</span>`:''))}
-      ${grp('➕','Hành động mới cam kết', d.actsNew, a=>esc(a.text))}
-      ${grp('❓','Câu hỏi đặt ra', d.qs, q=>esc(q.text))}
-      ${grp('💬','Câu trả lời', d.ans, q=>`<i>${esc(q.text)}</i> — ${esc(q.answer)}`)}
-      ${grp('💡','Bài học', d.lrn, l=>esc(l.text))}
-    </div>
-    ${(!d.probs.length && !d.actsNew.length && !d.actsDone.length && !d.lrn.length && !d.qs.length && !d.ans.length) ? `<div class="hint" style="padding:0 2px 6px">${self ? 'Tuần này bạn chưa có ghi chép nào trong app.' : 'Tuần này đồng đội chưa có ghi chép — đây cũng là điều đáng ghi nhận và đề xuất.'}</div>` : ''}
+  const tag = (cls, txt)=>`<span class="dg-tag ${cls}">${txt}</span>`;
+  const qLi = x=>{ const q = x.r, t = x.t, cross = q.askedBy && !same(q.askedBy, q.member);
+    return `<li class="${t.nw||t.ans?'':'dg-old'}">${t.nw?tag('nw','mới'):''}${esc(q.text)}${cross?` <span class="rp-muted">— ${esc(q.askedBy)} hỏi</span>`:''}${q.answer && String(q.answer).trim()
+      ? `<div class="dg-ans">💬 ${esc(q.answer)}${t.ans && !t.nw ? ' '+tag('ok','trả lời tuần này') : ''}</div>`
+      : `<div class="dg-ans dg-wait">… chưa trả lời</div>`}</li>`; };
+  const aLi = x=>{ const a = x.r, t = x.t, dn = doneTs(a), dl = toMs(a.deadline);
+    const st = dn ? tag(t.done?'ok':'old', '✓ xong '+fmtDMs(dn)) : (dl ? tag(dl < nowMs() ? 'late' : 'old', 'hạn '+fmtDMs(dl)) : '');
+    return `<li class="${t.nw||t.done?'':'dg-old'}">${t.nw?tag('nw','mới'):''}${isTrue(a.breakthrough)?'⚡ ':''}${esc(a.text)} ${st}${a.outcome?`<div class="dg-ans">→ ${esc(a.outcome)}</div>`:''}</li>`; };
+  const lLi = x=>{ const l = x.r, t = x.t, ap = toMs(l.appliedAt) || (l.status==='applied' ? toMs(l.updatedAt) : null);
+    return `<li class="${t.nw||t.applied?'':'dg-old'}">${t.nw?tag('nw','mới'):''}${esc(l.text)}${ap ? ' '+tag(t.applied?'ok':'old', '✓ áp dụng '+fmtDMs(ap)) : ''}</li>`; };
+  const sec = (icon, title, arr, li, ol)=> arr.length ? `<div class="dg-sec"><div class="dg-sec-t">${icon} ${title} <span class="rc-dg-n">${arr.length}</span></div><${ol?'ol':'ul'}>${arr.map(li).join('')}</${ol?'ol':'ul'}></div>` : '';
+  const pBlock = x=>{ const p = x.p, key = 'dg_'+nfc(name)+'_'+p.id;
+    const st = PROBLEM_STATUS[p.status] || PROBLEM_STATUS.new;
+    const meta = [x.pt.nw ? tag('nw','mới tạo '+fmtDMs(toMs(p.createdAt))) : `<span class="rp-muted">từ ${fmtDMs(toMs(p.createdAt))}</span>`,
+      x.pt.done ? tag('ok','✓ hoàn thành tuần này') : tag('st', esc(st))];
+    if(toMs(p.plannedDate) && p.status!=='done') meta.push(`<span class="rp-muted">hạn ${fmtDMs(toMs(p.plannedDate))}</span>`);
+    const body = (p.desc ? `<div class="dg-desc">${esc(p.desc)}</div>` : '')
+      + sec('❓','Câu hỏi', x.qs, qLi) + sec('✅','Hành động', x.acts, aLi, true) + sec('💡','Bài học', x.lrn, lLi)
+      + (p.result && String(p.result).trim() ? `<div class="dg-desc">🏁 Kết quả: ${esc(p.result)}</div>` : '')
+      + (!x.qs.length && !x.acts.length && !x.lrn.length ? '<div class="rc-none">Chưa có câu hỏi, hành động hay bài học.</div>' : '');
+    return `<details class="dg-p" ${qIsOpen(key, true)?'open':''} ontoggle="qToggle(this,'${jsq(key)}')"><summary><span class="dg-p-t">🎯 ${esc(p.title||'(chưa đặt tên)')}</span><span class="dg-meta">${meta.join(' ')}</span></summary><div class="dg-body">${body}</div></details>`; };
+  const L = d.loose, nLoose = L.qs.length + L.acts.length + L.lrn.length;
+  const looseHtml = nLoose ? `<div class="dg-p dg-loose"><div class="dg-p-t">📎 Không gắn vấn đề</div><div class="dg-body">${sec('❓','Câu hỏi', L.qs, qLi)}${sec('✅','Hành động', L.acts, aLi)}${sec('💡','Bài học', L.lrn, lLi)}</div></div>` : '';
+  const crossHtml = d.cross.length ? `<div class="dg-p dg-loose"><div class="dg-p-t">🤝 Hỏi chéo đồng đội</div><div class="dg-body"><ul>${d.cross.map(x=>`<li><span class="rp-muted">${x.p ? 'Vấn đề của '+esc(x.r.member)+': '+esc(clip(x.p.title,80)) : esc(x.r.member)}</span><div>❓ ${esc(x.r.text)}</div>${x.r.answer && String(x.r.answer).trim() ? `<div class="dg-ans">💬 ${esc(x.r.answer)}</div>` : '<div class="dg-ans dg-wait">… chưa trả lời</div>'}</li>`).join('')}</ul></div></div>` : '';
+  const nNew = d.tree.filter(x=>x.pt.nw).length;
+  const empty = !d.tree.length && !nLoose && !d.cross.length;
+  const oKey = 'dgo_'+(self?'me':nfc(name))+'_'+wk;
+  return `<details class="rc-digest" ${qIsOpen(oKey, !self)?'open':''} ontoggle="qToggle(this,'${jsq(oKey)}')"><summary>📖 Nhật ký tuần ${self?'của bạn — xem lại trước khi viết':'của '+esc(name)} · ${fmtDMs(d.s)} → ${fmtDMs(d.e - DAY_MS)}</summary>
+    <div class="rc-dg-stats"><span>✓ <strong>${d.ok}</strong>/7 ngày ghi đúng giờ</span>${d.late?`<span>⏰ ${d.late} ngày ghi muộn</span>`:''}<span>🎯 ${d.tree.length} vấn đề có hoạt động${nNew?` (${nNew} mới)`:''}</span></div>
+    <div class="rc-dg-stats dg-sum"><span>❓ ${d.qs.length} câu hỏi mới</span><span>💬 ${d.ans.length} trả lời</span><span>✅ ${d.actsNew.length} hành động mới, ${d.actsDone.length} xong</span><span>💡 ${d.lrn.length} bài học</span></div>
+    ${d.tree.length || nLoose ? '<div class="dg-legend"><span class="dg-tag nw">mới</span> thêm trong tuần · <span class="dg-tag ok">✓</span> xong trong tuần · mục mờ là từ trước</div>' : ''}
+    ${d.tree.map(pBlock).join('')}${looseHtml}${crossHtml}
+    ${empty ? `<div class="hint" style="padding:0 2px 6px">${self ? 'Tuần này bạn chưa có ghi chép nào trong app.' : 'Tuần này đồng đội chưa có ghi chép — đây cũng là điều đáng ghi nhận và đề xuất.'}</div>` : ''}
   </details>`;
 }
 /* ---- tab ---- */

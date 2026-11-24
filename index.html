@@ -18,7 +18,8 @@ var TEAM = {
   ADMINS: ['Nhưỡng'],            // quản trị: sửa mọi thẻ, đăng Nhịp vận hành, xoá dòng gieo hạt, đổi mật khẩu, đặt ngày bắt đầu tính kỷ luật
   ADMIN_IS_MEMBER: true,         // true = quản trị cũng là thành viên (hiện ở bảng xếp hạng, báo cáo, gieo hạt)
   DEFAULT_RING: ['Nhưỡng','Hào','Huy','Dịu','Loan','Ngân'],  // vòng ghi nhận mặc định
-  AL_SHARE: {from:'2026-11-24', first:'Huy'},  // chia sẻ kiến thức AL ở buổi 🔧 Sinh hoạt vận hành: buổi đầu + người đầu, sau đó xoay theo vòng ghi nhận (đổi tay trong app); bỏ dòng này = không dùng
+  AL_SHARE: {from:'2026-11-24', first:'Huy'},  // chia sẻ kiến thức AL ở buổi 🔧 Sinh hoạt vận hành (có dòng 🎤 trên thẻ 📅); bỏ dòng này = không dùng
+  LEAD_RING: {from:'2026-11-24', first:'Huy'}, // v2.13.3: Lead tuần xoay theo vòng ghi nhận từ buổi này, người đầu là first; buổi có 🎓 Coach thì Coach kiêm Lead (không tính lượt). Lead buổi 🔧 là người 🎤 chia sẻ AL. Bỏ dòng này = Lead, Thư ký đọc nguyên từ bảng, người chia sẻ xoay riêng như v2.13
   KAIZEN: true,                  // true = có tab 📝 Kaizen nhóm (hạn 24:00 thứ Hai, tính kỷ luật + gieo hạt); bỏ dòng này = không dùng
   FILE_SLUG: 'lam-chu-su-hoc'    // tên file sao lưu
 };
@@ -411,6 +412,24 @@ header.app-header p{font-size:14px;color:var(--ink-dim);font-style:italic;margin
 .score-box.pri{background:rgba(var(--gold-rgb),.16);}
 .result-box textarea{border-color:rgba(var(--teal-rgb),.5);}
 .mini-add{display:flex;gap:8px;margin-top:8px;}
+/* v2.13.4: gợi ý 7 dạng câu hỏi */
+.q7-btn{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin-top:10px;padding:8px 14px;border-radius:999px;border:1px solid rgba(var(--gold-rgb),.45);background:rgba(var(--gold-rgb),.08);color:var(--gold-text);font:600 14px 'Crimson Text',Georgia,serif;cursor:pointer;}
+.q7-btn[aria-expanded="true"]{background:rgba(var(--gold-rgb),.16);}
+.q7-box{margin-top:8px;padding:12px 12px 4px;border:1px solid var(--border-soft);border-radius:var(--radius);background:var(--surface);}
+.q7-memo{font-size:15px;color:var(--ink);margin:0 0 8px;}
+.q7-g{margin:12px 0 6px;font-size:15px;color:var(--ink-strong);font-weight:600;}
+.q7-gd{font-size:14px;color:var(--ink-dim);margin:0 0 6px;}
+.q7-t{border-top:1px solid var(--border-soft);}
+.q7-t>summary{min-height:44px;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:16px;color:var(--ink);list-style:none;}
+.q7-t>summary::-webkit-details-marker{display:none;}
+.q7-t>summary .q7-s{color:var(--ink-dim);font-size:14px;}
+.q7-t[open]>summary{color:var(--gold-text);}
+.q7-body{padding:0 2px 10px;font-size:15px;color:var(--ink);}
+.q7-body .q7-k{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-dim);margin:8px 0 2px;font-family:'Space Mono',monospace;}
+.q7-body p{margin:0;}
+.q7-cau{color:var(--teal-text);font-weight:600;}
+.q7-ex{display:block;width:100%;text-align:left;min-height:44px;margin:4px 0 0;padding:8px 10px;border-radius:var(--radius-sm);border:1px dashed var(--border);background:transparent;color:var(--ink);font:italic 15px 'Crimson Text',Georgia,serif;cursor:pointer;}
+.q7-use{margin-top:8px;}
 .mini-add input{flex:1;}
 .hint{font-size:12px;color:var(--ink-faint);margin-top:6px;font-style:italic;}
 .disabled-panel{opacity:.45;pointer-events:none;}
@@ -954,6 +973,9 @@ mark{background:rgba(var(--gold-rgb),.38);color:inherit;border-radius:3px;paddin
 .sh-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--border-soft);}
 .sh-d{font-size:15px;}
 .sh-sel{min-height:40px;max-width:55%;}
+.sh-fix{text-align:right;max-width:45%;flex-shrink:0;}
+.sh-sub{font-size:14px;margin-top:2px;}
+.ld-sel{max-width:42%;}
 
 /* ===== v2.13.2 · luật giao diện (soát 16/11/2026): vùng chạm 44px, chữ ≥ 12px, nội dung 16px, giảm chuyển động ===== */
 /* Vùng chạm: nút, chip, ô nhập cao tối thiểu 44px */
@@ -1109,7 +1131,7 @@ html body input:not([type=checkbox]):not([type=radio]):not([type=range]),html bo
    Backend: Google Apps Script Web App (Sheet làm database)
    ============================================================ */
 
-const APP_VERSION = 'v2.13.2'; // v2.13.2 (16/11): bộ màu Đêm xanh than gom vào :root · vùng chạm 44px · chữ ≥ 12px, nội dung 16px · tên cho nút ký hiệu · bỏ khoá phóng to · giảm chuyển động
+const APP_VERSION = 'v2.13.4'; // v2.13.4 (24/11): gợi ý 7 dạng câu hỏi (3 Động lực · 3 Năng lực · 1 Thăm dò) trên ô câu hỏi · v2.13.3 (24/11): Lead tuần xoay theo vòng ghi nhận (đệ nhị thân), Coach kiêm Lead, Lead buổi 🔧 là người 🎤 chia sẻ AL, Thư ký = Lead buổi trước · v2.13.2 (16/11): bộ màu Đêm xanh than gom vào :root · vùng chạm 44px · chữ ≥ 12px, nội dung 16px · tên cho nút ký hiệu · bỏ khoá phóng to · giảm chuyển động
 const SK = TEAM.STORE;                       // tiền tố mọi khoá localStorage
 // Máy chủ: link dán riêng trên máy này (menu › Máy chủ) thắng link gắn sẵn trong TEAM.API_URL
 let API_URL = (function(){ try { return localStorage.getItem(SK+'api') || TEAM.API_URL || ''; } catch(e){ return TEAM.API_URL || ''; } })();
@@ -2418,10 +2440,82 @@ function onSlider(key, val){
   box.querySelector('.l').textContent = '/ 1000 điểm' + (pri?' — ĐẠT NGƯỠNG ƯU TIÊN':'');
 }
 
+/* ================================================================
+   v2.13.4 · GỢI Ý 7 DẠNG CÂU HỎI (Nhưỡng gửi 24/11/2026; câu mẫu em soạn từ buổi demo "Leading with Questions", chờ duyệt)
+   Khái niệm giữ nguyên văn Nhưỡng gửi. Câu mẫu viết theo ngôi tự hỏi mình.
+   Sửa nội dung: chỉ sửa hằng số Q7_GROUPS và Q7 dưới đây.
+   ================================================================ */
+const Q7_GROUPS = [
+  {id:'dl', name:'1. Nhóm Câu hỏi ĐỘNG LỰC (Khai thác ý chí, thái độ, sự phù hợp)', desc:'Nhóm này dùng để đo lường xem họ có "muốn" làm hay không, và điều gì thúc đẩy họ tiến về phía trước.'},
+  {id:'nl', name:'2. Nhóm Câu hỏi NĂNG LỰC (Khai thác tư duy, kỹ năng, phương pháp)', desc:'Nhóm này dùng để đo lường xem họ có "biết cách" làm hay không, tư duy của họ sắc bén đến đâu.'},
+  {id:'gt', name:'⚖️ Điểm giao thoa: Câu hỏi THĂM DÒ', desc:''}
+];
+const Q7 = [
+  {g:'dl', ic:'💗', name:'Cảm tính', s:'cảm xúc, năng lượng',
+   def:'Khai thác trực tiếp trạng thái tinh thần. Năng lượng và thái độ của một người thường bị chi phối mạnh mẽ bởi cảm xúc của họ đối với công việc hoặc môi trường xung quanh.',
+   cau:'Khi … , mình cảm thấy thế nào?',
+   mau:['Khi giải quyết xong vấn đề này, mình sẽ cảm thấy thế nào?', 'Trên thang 1–10, năng lượng của mình với việc này đang mấy điểm?']},
+  {g:'dl', ic:'🌊', name:'Lắng đọng', s:'giá trị cốt lõi, trăn trở',
+   def:'Đây là đỉnh cao của câu hỏi động lực. Khi chạm vào "giá trị cốt lõi" hay "sự trăn trở", bạn đang tìm ra mỏ neo giữ chân họ lại khi gặp khó khăn, hoặc lý do sâu xa khiến họ cống hiến.',
+   cau:'Vì sao … lại quan trọng với mình?',
+   mau:['Vì sao vấn đề này quan trọng với mình, đến mức mình không bỏ qua được?', 'Điều gì mình nhận ra về chính bản thân trong cách mình đang giải quyết vấn đề này?']},
+  {g:'dl', ic:'🧭', name:'Khám phá', s:'giới hạn, khát vọng ẩn sâu',
+   def:'Bằng cách đưa họ vào bối cảnh phi lý hoặc khắc nghiệt, bạn đang kiểm tra giới hạn của động lực, sự đam mê và những khát vọng ẩn sâu mà đôi khi chính họ cũng chưa gọi tên được.',
+   cau:'Nếu … , mình sẽ … ?',
+   mau:['Nếu chỉ còn 1 tuần và không ai giúp, mình sẽ làm gì đầu tiên cho vấn đề này?', 'Nếu chắc chắn không thất bại, mình muốn vấn đề này đi xa tới đâu?']},
+  {g:'nl', ic:'🔎', name:'Làm rõ', s:'số liệu, định nghĩa cụ thể',
+   def:'Đánh giá khả năng nắm bắt vấn đề, sự chú ý đến chi tiết và tính chính xác của người trả lời. Một người có năng lực tốt sẽ không nói chung chung mà luôn có số liệu, định nghĩa cụ thể.',
+   cau:'Cụ thể là ai / bao nhiêu / khi nào … ?',
+   mau:['Cụ thể là những ai, bao nhiêu người đang gặp việc này?', 'Kết quả mình muốn sẽ đo được bằng con số nào?']},
+  {g:'nl', ic:'🧩', name:'Phân tích', s:'nguyên nhân gốc rễ',
+   def:'Đo lường tư duy phản biện (Critical Thinking) và kỹ năng giải quyết vấn đề (Problem Solving). Khả năng tìm ra "nguyên nhân gốc rễ" là biểu hiện rõ nhất của năng lực thực thi hiệu quả.',
+   cau:'Điều gì đang khiến … ?',
+   mau:['Điều gì đang khiến mình chưa làm được việc này?', 'Trong những gì mình đã làm, việc nào hiệu quả, việc nào chưa, vì sao?']},
+  {g:'nl', ic:'🔗', name:'Kết nối', s:'mắt xích, đầu vào – đầu ra',
+   def:'Đo lường tư duy hệ thống (Systems Thinking). Khả năng nhìn thấy các mắt xích (đầu vào, đầu ra, quy trình) chứng tỏ họ có năng lực bao quát, lập kế hoạch và quản trị rủi ro tốt.',
+   cau:'… liên quan tới … như thế nào?',
+   mau:['Vấn đề này ảnh hưởng tới những việc và những người nào khác?', 'Ai, nguồn lực nào có thể giúp mình, và mình đang có sự hỗ trợ nào?']},
+  {g:'gt', ic:'⚖️', name:'Thăm dò', s:'kiểm chứng, dò mục đích',
+   def:'Riêng Câu hỏi THĂM DÒ là một dạng linh hoạt, có thể thuộc về cả hai nhóm tùy thuộc vào mục đích (điểm thăm dò) trong đầu bạn lúc đó. Thiên về Năng lực: Nếu bạn dùng nó để "test" xem thông tin người đó cung cấp có tính xác thực, logic và khớp với dữ liệu bạn đang có hay không (Ví dụ: Dự án này vượt tiến độ, bạn có thể chia sẻ bước nào đã được rút ngắn không?). Thiên về Động lực: dùng để dò xem mức muốn và mức cam kết thật sự của người đó.',
+   cau:'Mình nói … — điều gì cho thấy đúng vậy?',
+   mau:['Mình nói việc này đã ổn — bước nào, số liệu nào cho thấy vậy?', 'Nếu việc này phải lùi một tháng, mình có thật sự thấy tiếc không?']}
+];
+function q7Html(){
+  const item = (t, i) => `<details class="q7-t"><summary>${t.ic} <strong>${esc(t.name)}</strong> <span class="q7-s">· ${esc(t.s)}</span></summary><div class="q7-body">
+    <div class="q7-k">Khái niệm</div><p>${esc(t.def)}</p>
+    <div class="q7-k">Cấu trúc</div><p class="q7-cau">${esc(t.cau)}</p>
+    <div class="q7-k">Câu mẫu · chạm để dùng</div>${t.mau.map((m, j)=>`<button class="q7-ex" onclick="useQ7(${i},${j})">${esc(m)}</button>`).join('')}
+    <button class="btn btn-sm q7-use" onclick="useQ7(${i},-1)">✍️ Viết theo cấu trúc này</button></div></details>`;
+  return `<p class="q7-memo">Nhớ <strong>3 Động lực · 3 Năng lực · 1 Thăm dò</strong>. Chạm một dạng để xem khái niệm, cấu trúc, câu mẫu.</p>`
+    + Q7_GROUPS.map(g=>`<div class="q7-g">${esc(g.name)}</div>${g.desc?`<p class="q7-gd">${esc(g.desc)}</p>`:''}${Q7.map((t,i)=>t.g===g.id?item(t,i):'').join('')}`).join('');
+}
+// khung gợi ý là vùng vẽ riêng: bật/tắt không vẽ lại ô nhập (luật 2–3)
+function toggleQ7(){
+  const box = document.getElementById('q7Box'), btn = document.getElementById('q7Btn'); if(!box) return;
+  STATE.q7Open = box.classList.contains('hidden');
+  if(STATE.q7Open && !box.innerHTML) box.innerHTML = q7Html();
+  box.classList.toggle('hidden', !STATE.q7Open);
+  if(btn) btn.setAttribute('aria-expanded', String(STATE.q7Open));
+}
+// đưa câu mẫu (j ≥ 0) hoặc cấu trúc (j = -1) vào ô; ô đang có chữ thì không ghi đè
+function useQ7(i, j){
+  const t = Q7[i], inp = document.getElementById('newQuestionText'); if(!t || !inp) return;
+  if(inp.value.trim()){ toast('Ô câu hỏi đang có chữ — lưu hoặc xoá câu đó trước, rồi chọn lại.'); inp.focus(); return; }
+  const v = j >= 0 ? t.mau[j] : t.cau;
+  inp.value = v;
+  if(MODAL.problem && MODAL.problem.id) setDraft('newq_'+MODAL.problem.id, v);
+  inp.focus();
+  const k = v.indexOf('…');
+  if(k >= 0) inp.setSelectionRange(k, k + 1); else inp.setSelectionRange(v.length, v.length);
+  inp.scrollIntoView({block:'center', behavior:'smooth'});
+}
+
 function renderProblemDetailSections(p, questions, actions, learnings){
   return `
     <div class="section-title" style="margin-top:22px">Câu hỏi làm rõ về vấn đề</div>
     <div id="modalQuestions">${renderModalQuestions(questions)}</div>
+    <button id="q7Btn" class="q7-btn" aria-expanded="${STATE.q7Open?'true':'false'}" aria-controls="q7Box" onclick="toggleQ7()">💡 Gợi ý 7 dạng câu hỏi</button>
+    <div id="q7Box" class="q7-box ${STATE.q7Open?'':'hidden'}">${STATE.q7Open ? q7Html() : ''}</div>
     <div class="mini-add">
       <input id="newQuestionText" type="text" placeholder="Gõ câu hỏi làm rõ rồi nhấn Enter..." value="${esc(getDraft('newq_'+p.id)||'')}" oninput="setDraft('newq_${p.id}', this.value)" onkeydown="if(event.key==='Enter' && !event.isComposing && event.keyCode!==229){event.preventDefault();addProblemQuestion();}"/>
       <button class="btn btn-teal btn-sm" onclick="addProblemQuestion()">Lưu</button>
@@ -5794,6 +5888,9 @@ function lenientTo(){ const v = cfg('LENIENT_TO'); return /^\d{4}-\d{2}-\d{2}$/.
      (| 24/11 | 🔧 | Ngân | Nhưỡng |) → anh sửa tài liệu là thẻ "📅 Tuần này" tự đổi
    • Người chia sẻ kiến thức AL (buổi 🔧): xoay theo vòng ghi nhận, bắt đầu từ TEAM.AL_SHARE;
      buổi nào đổi tay thì lưu ở Config AL_SHARE (Sheet), mọi máy thấy như nhau
+   • v2.13.3 (TEAM.LEAD_RING): Lead tuần xoay theo vòng ghi nhận; buổi 🎓 Coach thì Coach kiêm Lead,
+     vòng không tính lượt. Lead buổi 🔧 là người 🎤 chia sẻ. Thư ký = Lead buổi trước (trùng thì lấy
+     Lead trước nữa). Đổi tay Lead một buổi: Config AL_SHARE.lead {'yyyy-mm-dd':'Tên'}
    • Thanh tab gọn: Vấn đề · Câu hỏi · Hành động (gồm Bài học, Thực hành) · Báo cáo;
      Kaizen, Ghi nhận, Nhịp vận hành nằm trong menu ☰
    ================================================================ */
@@ -5837,7 +5934,8 @@ const SESSION_TYPES = {
 };
 function nhipSchedule(){
   const d = nhipDoc(); if(!d) return [];
-  if(STATE._schedSrc === d.content && STATE._sched) return STATE._sched;
+  const src = d.content + '\u0001' + cfg('AL_SHARE') + '\u0001' + buddyRing().join(',');
+  if(STATE._schedSrc === src && STATE._sched) return STATE._sched;
   const now = nowMs(), y0 = vnD(now).getUTCFullYear(), out = [];
   String(d.content).split(/\r?\n/).forEach(line=>{
     if(!/^\s*\|/.test(line)) return;
@@ -5852,9 +5950,31 @@ function nhipSchedule(){
     out.push({k: dayKey(best), type, coach: c[2].includes('🎓'), lead: c[2].replace(/🎓/g,'').trim(), sec: c[3].replace(/🎓/g,'').trim(), note: c[1].replace(/[🌍💡🔧]/gu,'').trim()});
   });
   out.sort((a,b)=>a.k.localeCompare(b.k));
-  STATE._schedSrc = d.content; STATE._sched = out;
+  applyLeadRing(out);
+  STATE._schedSrc = src; STATE._sched = out;
   return out;
 }
+// v2.13.3: Lead tuần xoay theo vòng ghi nhận (vòng đệ nhị thân) từ TEAM.LEAD_RING.from
+function leadRingOn(){ const L = (typeof TEAM!=='undefined' && TEAM.LEAD_RING) || null; return !!(L && L.from && L.first); }
+function applyLeadRing(out){
+  if(!leadRingOn()) return;
+  const L = TEAM.LEAD_RING, ring = buddyRing(), i0 = ring.findIndex(x=>same(x, L.first));
+  if(!ring.length || i0 < 0) return;
+  const over = shareCfg().lead;
+  let j = 0;
+  out.forEach((s, i)=>{
+    if(s.k < L.from) return;                       // buổi cũ: giữ đúng bảng
+    s.tableLead = s.lead; s.tableSec = s.sec;
+    if(!s.coach){                                  // buổi 🎓 Coach: Coach kiêm Lead, vòng không tính lượt
+      s.autoLead = ring[(i0 + j) % ring.length]; j++;
+      s.leadSet = !!(over[s.k] && isValidRingName(over[s.k]));
+      s.lead = s.leadSet ? over[s.k] : s.autoLead;
+    }
+    s.sec = '';                                    // Thư ký = Lead buổi trước; trùng Lead buổi này thì lấy Lead trước nữa
+    for(let p = i - 1; p >= 0; p--){ if(out[p].lead && !same(out[p].lead, s.lead)){ s.sec = out[p].lead; break; } }
+  });
+}
+function isValidRingName(n){ return buddyRing().some(x=>same(x, n)); }
 // buổi sáng thứ 3 sắp tới: từ sau 6h00 thứ 3 tuần trước đến hết 6h00 buổi đó
 function nextSession(){
   const now = nowMs();
@@ -5865,7 +5985,7 @@ function nextSession(){
 function shareCfg(){
   let o = {}; try { o = JSON.parse(cfg('AL_SHARE') || '{}') || {}; } catch(e){ o = {}; }
   const d = (typeof TEAM!=='undefined' && TEAM.AL_SHARE) || {};
-  return {from: o.from || d.from || '', first: o.first || d.first || '', set: (o.set && typeof o.set==='object') ? o.set : {}};
+  return {from: o.from || d.from || '', first: o.first || d.first || '', set: (o.set && typeof o.set==='object') ? o.set : {}, lead: (o.lead && typeof o.lead==='object') ? o.lead : {}};
 }
 function shareOn(){ const c = shareCfg(); return !!(c.from && c.first); }
 function opsSessionsFrom(k){ return nhipSchedule().filter(s=>s.type==='ops' && s.k >= k); }
@@ -5876,7 +5996,10 @@ function autoSharer(k){
   const idx = opsSessionsFrom(c.from).findIndex(s=>s.k===k); if(idx < 0) return '';
   return ring[(i0 + idx) % ring.length];
 }
-function sharerFor(k){ const c = shareCfg(); return c.set[k] || autoSharer(k); }
+function sharerFor(k){
+  if(leadRingOn()){ const s = nhipSchedule().find(x=>x.k===k); return s ? s.lead : ''; }   // v2.13.3: Lead buổi 🔧 là người chia sẻ
+  const c = shareCfg(); return c.set[k] || autoSharer(k);
+}
 function canEditShare(){
   const me = STATE.member, s = nextSession();
   return isAdmin(me) || !!(s && same(s.lead, me));
@@ -5891,8 +6014,10 @@ function weekCardHtml(){
   const when = today ? 'Sáng nay' : 'Thứ 3 ' + fmtDMs(t);
   return `<div class="wk-card">
     <div class="wk-l1">📅 <strong>${when}</strong> · ${T.ic} ${T.name}${s.note?' ('+esc(s.note)+')':''} · <strong>${T.time}</strong> <span class="wk-dim">(vào ${T.arrive})</span></div>
-    <div class="wk-l2">${who(s.coach ? '🎓 Coach' : '🧭 Lead', s.lead)}${who('✍️ Thư ký', s.sec)}${s.type==='ops' && shareOn() ? who('🎤 Chia sẻ AL', sharer || '?') : ''}</div>
-    <div class="wk-acts"><button class="wk-link" onclick="setTab('nhip')">📖 Kịch bản ›</button>${s.type==='ops' && shareOn() ? `<button class="wk-link" onclick="openShareModal()">🎤 Lịch chia sẻ AL ›</button>` : ''}</div>
+    <div class="wk-l2">${s.type==='ops' && shareOn() && sharer && same(sharer, s.lead)
+      ? who((s.coach ? '🎓 Coach' : '🧭 Lead') + ' · 🎤 chia sẻ AL', s.lead)
+      : who(s.coach ? '🎓 Coach' : '🧭 Lead', s.lead) + (s.type==='ops' && shareOn() ? who('🎤 Chia sẻ AL', sharer || '?') : '')}${who('✍️ Thư ký', s.sec)}</div>
+    <div class="wk-acts"><button class="wk-link" onclick="setTab('nhip')">📖 Kịch bản ›</button>${leadRingOn() ? `<button class="wk-link" onclick="openShareModal()">🧭 Lịch Lead &amp; chia sẻ ›</button>` : (s.type==='ops' && shareOn() ? `<button class="wk-link" onclick="openShareModal()">🎤 Lịch chia sẻ AL ›</button>` : '')}</div>
   </div>`;
 }
 
@@ -5903,6 +6028,7 @@ function openShareModal(){
   renderModal(); showModal();
 }
 function renderShareModal(){
+  if(leadRingOn()){ renderLeadModal(); return; }
   const c = shareCfg(), ring = buddyRing(), can = canEditShare(), today = dayKey(nowMs());
   const rows = opsSessionsFrom(c.from || today).filter(s=>s.k >= today || dayKey(keyToMs(s.k)) === today);
   const body = rows.length ? rows.map(s=>{
@@ -5917,8 +6043,26 @@ function renderShareModal(){
     ${body}
     ${can && rows.length ? `<button class="btn btn-gold btn-block" style="margin-top:12px" onclick="saveShare()">💾 Lưu lịch chia sẻ</button>` : `<div class="hint" style="margin-top:10px">Nhưỡng và Lead tuần đổi được người chia sẻ.</div>`}`;
 }
+/* v2.13.3: lịch Lead tuần (vòng ghi nhận) — Lead buổi 🔧 là người 🎤 chia sẻ AL */
+function renderLeadModal(){
+  const L = TEAM.LEAD_RING, ring = buddyRing(), can = canEditShare();
+  const rows = nhipSchedule().filter(s=>s.k >= L.from && keyToMs(s.k) + 6*3600000 > nowMs());   // buổi chưa xong (đến hết 6h00)
+  const body = rows.length ? rows.map(s=>{
+    const T = SESSION_TYPES[s.type], sub = [s.type==='ops' && shareOn() ? '🎤 Lead chia sẻ AL' : '', s.sec ? 'Thư ký ' + esc(s.sec) : ''].filter(Boolean).join(' · ');
+    const pick = s.coach ? `<div class="sh-fix"><strong>🎓 ${esc(s.lead)}</strong><div class="rp-muted">Coach kiêm Lead</div></div>`
+      : can ? `<select id="ld_${s.k}" class="sh-sel ld-sel" aria-label="Lead buổi ${fmtDMs(keyToMs(s.k))}"><option value="">Tự xoay: ${esc(s.autoLead||'—')}</option>${ring.map(m=>`<option value="${esc(m)}" ${s.leadSet && same(m, s.lead)?'selected':''}>${esc(m)}</option>`).join('')}</select>`
+      : `<div class="sh-fix"><strong>${esc(s.lead || '—')}</strong>${s.leadSet?'<div class="rp-muted">đổi tay</div>':''}</div>`;
+    return `<div class="sh-row"><div class="sh-d">Thứ 3 ${fmtDMs(keyToMs(s.k))} · ${T.ic} ${T.name}${s.note ? ' (' + esc(s.note) + ')' : ''}${sub ? `<div class="rp-muted sh-sub">${sub}</div>` : ''}</div>${pick}</div>`;
+  }).join('') : '<div class="empty-note">Chưa có buổi nào sắp tới trong bảng phân công (tài liệu Nhịp).</div>';
+  document.getElementById('modalBox').innerHTML = `
+    <div class="add-head"><div class="modal-title">🧭 Lịch Lead tuần &amp; 🎤 chia sẻ AL</div><button class="lv-x" title="Đóng" aria-label="Đóng" onclick="closeModal(true)">✕</button></div>
+    <div class="modal-sub">Lead tuần xoay theo vòng ghi nhận (đệ nhị thân), bắt đầu từ <strong>${esc(L.first)}</strong> (${fmtDMs(keyToMs(L.from))}). Buổi có 🎓 Coach thì Coach kiêm Lead. Buổi 🔧: Lead chia sẻ kiến thức AL 25 phút (5h08–5h33). Thư ký là Lead buổi trước. Đổi tay một buổi thì các buổi khác vẫn xoay như cũ.</div>
+    ${body}
+    ${can && rows.some(s=>!s.coach) ? `<button class="btn btn-gold btn-block" style="margin-top:12px" onclick="saveShare()">💾 Lưu lịch Lead</button>` : `<div class="hint" style="margin-top:10px">Nhưỡng và Lead của buổi sắp tới đổi được Lead từng buổi.</div>`}`;
+}
 function saveShare(){
-  if(!canEditShare()){ toast('Chỉ Nhưỡng và Lead tuần đổi được lịch chia sẻ.'); return; }
+  if(!canEditShare()){ toast(leadRingOn() ? 'Chỉ Nhưỡng và Lead của buổi sắp tới đổi được lịch Lead.' : 'Chỉ Nhưỡng và Lead tuần đổi được lịch chia sẻ.'); return; }
+  if(leadRingOn()){ saveLeadPlan(); return; }
   const c = shareCfg(), set = Object.assign({}, c.set);
   opsSessionsFrom(c.from || dayKey(nowMs())).forEach(s=>{
     const el = document.getElementById('sh_'+s.k); if(!el) return;
@@ -5936,6 +6080,28 @@ function saveShare(){
   });
   toast('✓ Đã lưu lịch chia sẻ AL.');
   closeModal(true);
+}
+
+function saveLeadPlan(){
+  const c = shareCfg(), lead = Object.assign({}, c.lead);
+  nhipSchedule().filter(s=>s.k >= TEAM.LEAD_RING.from && keyToMs(s.k) + 6*3600000 > nowMs() && !s.coach).forEach(s=>{
+    const el = document.getElementById('ld_'+s.k); if(!el) return;
+    if(el.value) lead[s.k] = el.value; else delete lead[s.k];
+  });
+  let o = {}; try { o = JSON.parse(cfg('AL_SHARE') || '{}') || {}; } catch(e){ o = {}; }
+  const value = JSON.stringify(Object.assign({}, o, {from:c.from, first:c.first, set:c.set, lead}));
+  const old = STATE.data.config.AL_SHARE;
+  STATE.data.config = Object.assign({}, STATE.data.config, {AL_SHARE: value});
+  saveCache();
+  queuedPost({type:'config', op:'setConfig', key:'AL_SHARE', value, by:STATE.member}).then(res=>{
+    if(res && res.ok) return;
+    STATE.data.config = Object.assign({}, STATE.data.config, {AL_SHARE: old}); saveCache();
+    toast(res && res.error==='forbidden_key' ? 'Máy chủ chưa phải bản mới — dán Code.gs v2.13 rồi chọn Phiên bản mới.' : 'Chưa lưu được lịch Lead — thử lại.');
+    renderAll();
+  });
+  toast('✓ Đã lưu lịch Lead.');
+  closeModal(true);
+  renderAll();
 }
 
 /* ---------------- export backup ---------------- */
